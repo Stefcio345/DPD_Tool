@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\DPD_App.props" />
+</Project>
