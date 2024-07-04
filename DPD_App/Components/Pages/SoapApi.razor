@@ -1,0 +1,84 @@
+﻿@page "/SoapAPI"
+@rendermode InteractiveServer
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<MudGrid>
+    <MudItem xs="6">
+        <MudSelect T="API_METHODS" @bind-Value="currentMethod" Label="Select method">
+            @foreach (API_METHODS item in Enum.GetValues(typeof(API_METHODS)))
+            {
+                <MudSelectItem Value="@item">@item</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="6">
+        <MudSelect T="string" @bind-Value="_url" Label="Select enviroment">
+            <MudSelectItem Value="@(Globals.WSDL_ADDRESS)">PROD</MudSelectItem>
+            <MudSelectItem Value="@(Globals.WSDL_DEMO_ADDRESS)">DEMO</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="Request" Variant="Variant.Outlined" Text="@_requestShow" Lines="40"/>
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" Text="@_responseShow" Lines="40"/>
+    </MudItem>
+    <MudItem xs="3">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="IncrementCount">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                <MudText Class="ms-2">Processing</MudText>
+            }
+            else
+            {
+                <MudText>Send</MudText>
+            }
+        </MudButton>
+    </MudItem>
+    <MudItem xs="3">
+        <MudItem xs="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify</MudButton>
+        </MudItem>
+    </MudItem>
+    <MudItem xs="3">
+        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
+    </MudItem>
+    <MudItem xs="3">
+        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    string _url;
+    API_METHODS currentMethod;
+    string _request = "";
+    string _response = "";
+    string _requestShow = "";
+    string _responseShow = "";
+    private bool _processing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Set default request
+        _request = XMLDocument.CreateSoapEnvelope(new GeneratePackages().generateXML());
+        _requestShow = XMLDocument.Prettify(_request);
+    }
+
+    async Task IncrementCount()
+    {
+        _processing = true;
+        _response = await Request.CallWebService(_url, _request);
+        _responseShow = XMLDocument.Prettify(_response);
+        _processing = false;
+    }
+    
+    async Task Prettify()
+    {
+        _requestShow = XMLDocument.Prettify(_request);
+        _responseShow = XMLDocument.Prettify(_response);
+    }
+}

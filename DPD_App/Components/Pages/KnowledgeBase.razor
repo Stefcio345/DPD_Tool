@@ -1,0 +1,19 @@
+﻿@page "/KnowledgeBase"
+@rendermode InteractiveServer
+
+<MudSelect T="API_METHODS" @bind-Value="currentMethod" Label="Select method">
+    @foreach (API_METHODS item in Enum.GetValues(typeof(API_METHODS)))
+    {
+        <MudSelectItem Value="@item">@item</MudSelectItem>
+    }
+</MudSelect>
+
+<MudSelect T="string" Label="Coffee" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@("Cappuccino")" />
+    <MudSelectItem Value="@("Cafe Latte")" />
+    <MudSelectItem Value="@("Espresso")" />
+</MudSelect>
+
+@code {
+    private API_METHODS currentMethod = 0;
+}

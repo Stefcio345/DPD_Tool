@@ -9,3 +9,21 @@ public class Globals
     public static string PASSWORD = "thetu4Ee";
     public static string MASTER_FID = "1495";
 }
+
+public enum API_METHODS
+{
+    GeneratePackagesNumbers,
+    GenerateInternationalPackageNumbers,
+    GenerateSpedLabels,
+    GenerateProtocol,
+    FindPostalCode,
+    GenerateReturnPackages,
+    GenerateDomesticReturnLabel,
+    GenerateReturnLabel,
+    GenerateShipment,
+    AppendParcelsToPackage,
+    GetCourierOderAvailability,
+    GenerateProtocolsWithDestinations,
+    PackagesPickupCall,
+    ImportDeliveryBusinessEvent
+}

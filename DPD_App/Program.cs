@@ -1,11 +1,13 @@
 using DPD_App;
 using DPD_App.Components;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 
@@ -26,8 +28,4 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 
-//app.Run();
-
-var generatePackages = new GeneratePackages();
-
-Console.WriteLine(Request.CallWebService(Globals.WSDL_DEMO_ADDRESS, generatePackages.generateXML()).Result);
+app.Run();
