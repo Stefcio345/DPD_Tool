@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "mkmJL9JYkCAWJLW5dIc9oadUFdG0LrCz9vVjxhvinvk=",
+  "Hash": "jqXsfRgyTY3e7CDho/PXyfMboHobfrPFpwSZHxXQnAs=",
   "Source": "DPD_App",
   "BasePath": "_content/DPD_App",
   "Mode": "Default",
@@ -91,25 +91,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\Franek\\Desktop\\DPD_App\\DPD_App\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\DPD_App.bundle.scp.css"
-    },
-    {
-      "Identity": "C:\\Users\\Franek\\Desktop\\DPD_App\\DPD_App\\wwwroot\\app.css",
-      "SourceId": "DPD_App",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Franek\\Desktop\\DPD_App\\DPD_App\\wwwroot\\",
-      "BasePath": "_content/DPD_App",
-      "RelativePath": "app.css",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\app.css"
     },
     {
       "Identity": "C:\\Users\\Franek\\Desktop\\DPD_App\\DPD_App\\wwwroot\\bootstrap\\bootstrap.min.css",

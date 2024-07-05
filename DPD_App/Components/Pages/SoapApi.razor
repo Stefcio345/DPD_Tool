@@ -4,6 +4,7 @@
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
+<MudPopoverProvider/>
 
 <MudGrid>
     <MudItem xs="6">
@@ -24,7 +25,7 @@
         <MudTextField T="string" Label="Request" Variant="Variant.Outlined" Text="@_requestShow" Lines="40"/>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" Text="@_responseShow" Lines="40"/>
+        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" Text="@_responseShow" Lines="40" ReadOnly="true"/>
     </MudItem>
     <MudItem xs="3">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="IncrementCount">
@@ -53,7 +54,7 @@
 </MudGrid>
 
 @code {
-    string _url;
+    string _url = Globals.WSDL_DEMO_ADDRESS;
     API_METHODS currentMethod;
     string _request = "";
     string _response = "";
