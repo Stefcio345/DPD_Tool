@@ -1,4 +1,6 @@
-﻿namespace DPD_App;
+﻿using System.Runtime.Serialization;
+
+namespace DPD_App;
 
 public class Globals
 {
@@ -8,6 +10,8 @@ public class Globals
     public static string LOGIN = "test";
     public static string PASSWORD = "thetu4Ee";
     public static string MASTER_FID = "1495";
+
+    public static string MAP_KEY = "";
 }
 
 public enum API_METHODS
@@ -26,4 +30,18 @@ public enum API_METHODS
     GenerateProtocolsWithDestinations,
     PackagesPickupCall,
     ImportDeliveryBusinessEvent
+}
+
+public enum COUNTRIES
+{
+    [EnumMember(Value = "Poland")]
+    PL,
+    [EnumMember(Value = "SP")]
+    SP,
+    [EnumMember(Value = "DE")]
+    DE,
+    [EnumMember(Value = "BE")]
+    BE,
+    [EnumMember(Value = "FR")]
+    FR,
 }

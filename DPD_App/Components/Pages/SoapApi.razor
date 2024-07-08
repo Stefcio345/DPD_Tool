@@ -1,5 +1,4 @@
 ﻿@page "/SoapAPI"
-@rendermode InteractiveServer
 
 <PageTitle>Counter</PageTitle>
 
@@ -22,13 +21,13 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" Label="Request" Variant="Variant.Outlined" Text="@_requestShow" Lines="40"/>
+        <MudTextField T="string" Label="Request" Variant="Variant.Outlined" @bind-Value="_requestShow" Lines="40"/>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" Text="@_responseShow" Lines="40" ReadOnly="true"/>
+        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" @bind-Value="_responseShow" Lines="40" ReadOnly="true"/>
     </MudItem>
     <MudItem xs="3">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="IncrementCount">
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
             @if (_processing)
             {
                 <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
@@ -69,7 +68,7 @@
         _requestShow = XMLDocument.Prettify(_request);
     }
 
-    async Task IncrementCount()
+    async Task SendRequest()
     {
         _processing = true;
         _response = await Request.CallWebService(_url, _request);
@@ -79,7 +78,13 @@
     
     async Task Prettify()
     {
-        _requestShow = XMLDocument.Prettify(_request);
-        _responseShow = XMLDocument.Prettify(_response);
+        _requestShow = XMLDocument.Prettify(_requestShow);
+        _responseShow = XMLDocument.Prettify(_responseShow);
+        StateHasChanged();
+        Console.WriteLine(XMLDocument.Prettify(_requestShow));
     }
+    
+    //TODO Dodanie linku trackingowego dla paczki
+    //TODO Check boxy będą się wyłączać jeżeli usługi nie będą pasować
+    //Optional można ukryć wywołanie
 }
