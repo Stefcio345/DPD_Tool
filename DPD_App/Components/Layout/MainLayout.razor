@@ -1,37 +1,32 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" DefaultScrollbar="false"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
-<div class="page">
-    <div class="sidebar">
+
+<MudGrid Spacing="0">
+    <MudItem xs="12">
+        <MudAppBar Color="Color.Primary" Fixed="false" Elevation="3">
+            <MudText Typo="Typo.h3" Edge="Edge.Start">DPD Tool</MudText>
+            <MudSpacer />
+            <MudSwitch @bind-Value="_isDarkMode" Color="Color.Tertiary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode"/>
+
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
+        </MudAppBar>
+    </MudItem>
+
+    <MudItem xs="2">
         <NavMenu/>
-    </div>
-
-    <main>
-        <div>
-            <MudAppBar Color="Color.Primary" Fixed="false">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
-                <MudSpacer />
-                <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
-                <MudSwitch @bind-Value="_isDarkMode" Color="Color.Tertiary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode"/>
-                
-                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
-            </MudAppBar>
-        </div>
-
-        <article class="content px-4">
+    </MudItem>
+    
+    <MudItem xs="10">
+        <MudPaper Height="100%" Width="100%" Class="pa-6">
             @Body
-        </article>
-    </main>
-</div>
+        </MudPaper>
+    </MudItem>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+</MudGrid>
 
 @code{
     private MudTheme _theme = new();

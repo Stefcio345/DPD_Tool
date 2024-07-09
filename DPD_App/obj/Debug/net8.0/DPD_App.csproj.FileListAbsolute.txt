@@ -19,7 +19,6 @@ C:\Users\Franek\Desktop\DPD_App\DPD_App\obj\Debug\net8.0\staticwebassets\msbuild
 C:\Users\Franek\Desktop\DPD_App\DPD_App\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.DPD_App.props
 C:\Users\Franek\Desktop\DPD_App\DPD_App\obj\Debug\net8.0\staticwebassets.pack.json
 C:\Users\Franek\Desktop\DPD_App\DPD_App\obj\Debug\net8.0\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
-C:\Users\Franek\Desktop\DPD_App\DPD_App\obj\Debug\net8.0\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
 C:\Users\Franek\Desktop\DPD_App\DPD_App\obj\Debug\net8.0\scopedcss\bundle\DPD_App.styles.css
 C:\Users\Franek\Desktop\DPD_App\DPD_App\obj\Debug\net8.0\scopedcss\projectbundle\DPD_App.bundle.scp.css
 C:\Users\Franek\Desktop\DPD_App\DPD_App\obj\Debug\net8.0\DPD_App.dll

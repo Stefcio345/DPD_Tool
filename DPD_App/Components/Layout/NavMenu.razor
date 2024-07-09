@@ -1,41 +1,14 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">DPD_App</a>
-    </div>
-</div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler"/>
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home Page
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="SoapAPI">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> SOAP API
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="MyPudoAPI">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> MyPudoAPI
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="PudoFinder">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> PudoFinder
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="KnowledgeBase">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Knowledge Base
-            </NavLink>
-        </div>
-    </nav>
-</div>
+﻿<MudPaper Width="100%" Height="100%" Class="pa-4 mud-theme-primary" Elevation="3" Square="true">
+    <MudNavMenu Bordered="true" Color="Color.Success">
+        
+        <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home">Home page</MudNavLink>
+        <MudNavLink Href="/GenerateLabels" Icon="@Icons.Material.Filled.Label">Generate Labels</MudNavLink>
+        <MudNavLink Href="/MyPudoAPI" Icon="@Icons.Material.Filled.DataObject">MyPudoAPI</MudNavLink>
+        <MudNavLink Href="/PudoFinder" Icon="@Icons.Material.Filled.Map">PudoFinder</MudNavLink>
+        <MudNavLink Href="/SoapAPI" Icon="@Icons.Material.Filled.Api">Soap API</MudNavLink>
+        <MudNavGroup Title="Knowegle Base" Expanded="false" Icon="@Icons.Material.Filled.AutoStories">
+            <MudNavLink Href="/KnowledgeBase">Users</MudNavLink>
+            <MudNavLink Href="/KnowledgeBase">Security</MudNavLink>
+        </MudNavGroup>
+    </MudNavMenu>
+</MudPaper>

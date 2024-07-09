@@ -1,8 +1,8 @@
-﻿@page "/SoapAPI"
+﻿@page "/GenerateLabels"
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>GenerateLabels</PageTitle>
 
-<h1>Counter</h1>
+<h1>Generate Labels</h1>
 <MudPopoverProvider/>
 
 <MudGrid>
@@ -24,7 +24,7 @@
         <MudTextField T="string" Label="Request" Variant="Variant.Outlined" @bind-Value="_requestShow" Lines="40"/>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" @bind-Value="_responseShow" Lines="40" ReadOnly="true" />
+        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" @bind-Value="_responseShow" Lines="40" ReadOnly="true"/>
     </MudItem>
     <MudItem xs="3">
         <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
