@@ -1,22 +1,16 @@
-﻿namespace DPD_App;
+﻿using System.Xml.Serialization;
+using DPD_App;
 
-public class AuthDataV1: GenerateXML
+[XmlRoot(ElementName="authDataV1", Namespace="")]
+public class AuthDataV1
 {
-    public string login { get; set; } = Globals.LOGIN;
-    public string? masterFid { get; set; } = Globals.MASTER_FID;
-    public string password { get; set; } = Globals.PASSWORD;
 
-    public AuthDataV1()
-    {
-        
-    }
+    [XmlElement(ElementName = "login", Namespace = "")]
+    public string Login { get; set; } = Globals.LOGIN;
 
-    public string generateXML()
-    {
-        return "<authDataV1>" +
-               $"<{nameof(login)}>{login}</{nameof(login)}>" +
-               $"<{nameof(masterFid)}>{masterFid}</{nameof(masterFid)}>" +
-               $"<{nameof(password)}>{password}</{nameof(password)}>" +
-               "</authDataV1>";
-    }
+    [XmlElement(ElementName = "masterFid", Namespace = "")]
+    public string MasterFid { get; set; } = Globals.MASTER_FID;
+
+    [XmlElement(ElementName = "password", Namespace = "")]
+    public string Password { get; set; } = Globals.PASSWORD;
 }

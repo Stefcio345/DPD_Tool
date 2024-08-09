@@ -1,35 +1,36 @@
-﻿namespace DPD_App;
+﻿using System.Xml.Serialization;
+using DPD_App;
 
-public class Packages : GenerateXML
-{
-    public List<Parcel> Parcels = [new Parcel()];
-    public string payerType { get; set; } = "THIRD_PARTY";
-    public string? thirdPartyFID { get; set; } = Globals.MASTER_FID;
-    public Sender sender { get; set; } = new Sender();
-    public Receiver receiver { get; set; } = new Receiver();
-    public string? ref1 { get; set; } = "ref1_abc";
-    public string? ref2 { get; set; } = "ref2_def";
-    public string? ref3 { get; set; } = "ref3_ghi";
-    public Services services { get; set; } = new Services();
-    public string generateXML()
-    {
-        return "<openUMLFeV11>" +
-               "<packages>" +
-               GenerateXMLFromParcels() +
-               sender.generateXML() +
-               receiver.generateXML() +
-               $"<{nameof(payerType)}>{payerType}</{nameof(payerType)}>" +
-               $"<{nameof(thirdPartyFID)}>{thirdPartyFID}</{nameof(thirdPartyFID)}>" +
-               $"<{nameof(ref1)}>{ref1}</{nameof(ref1)}>" +
-               $"<{nameof(ref2)}>{ref2}</{nameof(ref2)}>" +
-               $"<{nameof(ref3)}>{ref3}</{nameof(ref3)}>" +
-               services.generateXML() +
-               "</packages>" +
-               "</openUMLFeV11>";
-    }
+[XmlRoot(ElementName="packages", Namespace="")]
+public class Packages { 
+    
+    [XmlElement(ElementName="Package")] 
+    public Package Package { get; set; }
 
-    private string GenerateXMLFromParcels()
-    {
-        return Parcels.Aggregate("", (current, parcel) => current + parcel.generateXML());
-    }
+    [XmlElement(ElementName = "parcels", Namespace = "")]
+    public List<Parcels> Parcels { get; set; } = [new Parcels()];
+
+    [XmlElement(ElementName = "payerType", Namespace = "")]
+    public string PayerType { get; set; } = "THIRD_PARTY";
+
+    [XmlElement(ElementName = "thirdPartyFID", Namespace = "")]
+    public string ThirdPartyFID { get; set; } = Globals.MASTER_FID;
+
+    [XmlElement(ElementName = "receiver", Namespace = "")]
+    public Receiver Receiver { get; set; } = new Receiver();
+
+    [XmlElement(ElementName = "sender", Namespace = "")]
+    public Sender Sender { get; set; } = new Sender();
+
+    [XmlElement(ElementName = "ref1", Namespace = "")]
+    public string Ref1 { get; set; } = "ref1_abc";
+
+    [XmlElement(ElementName="ref2", Namespace="")] 
+    public string Ref2 { get; set; } = "ref2_def";
+
+    [XmlElement(ElementName="ref3", Namespace="")] 
+    public string Ref3 { get; set; } = "ref3_ghi";
+
+    [XmlElement(ElementName = "services", Namespace = "")]
+    public Services Services { get; set; } = new Services();
 }

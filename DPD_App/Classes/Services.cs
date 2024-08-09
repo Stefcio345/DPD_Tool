@@ -1,92 +1,24 @@
 ﻿namespace DPD_App;
 
-public class Services: GenerateXML
+public class Services
 {
-    public bool isDeclaredValue { get; set; } = false;
     public DeclaredValue declaredValue { get; set; }
     
-    public bool isCod { get; set; } = false;
     public Cod cod { get; set; }
     
-    public bool isDpdPickup { get; set; } = false;
     public DpdPickup dpdPickup { get; set; }
     
-    public bool isDpdFood { get; set; } = false;
     public DpdFood dpdFood { get; set; }
     
-    public bool isGuarentee { get; set; } = false;
     public Guarantee guarentee { get; set; }
 
-    public bool rod { get; set; } = false;
-    public bool inPers { get; set; } = false;
-    public bool provPers { get; set; } = false;
-    public bool dpdLQ { get; set; } = false;
-    public bool digitalLabel { get; set; } = false;
-    public bool pudoToSend { get; set; } = false;
+    public object rod { get; set; }
+    public object inPers { get; set; }
+    public object provPers { get; set; }
+    public object dpdLQ { get; set; }
+    public object digitalLabel { get; set; }
+    public object pudoToSend { get; set; }
     
-    public string generateXML()
-    {
-        var xmlString = "<services>";
-        
-        if (isDeclaredValue)
-        {
-            xmlString += declaredValue.generateXML();
-        }
-
-        if (isCod)
-        {
-            xmlString += cod.generateXML();
-        }
-        
-        if (isDpdPickup)
-        {
-            xmlString += dpdPickup.generateXML();
-        }
-        
-        if (isDpdFood)
-        {
-            xmlString += dpdFood.generateXML();
-        }
-        
-        if (isGuarentee)
-        {
-            xmlString += guarentee.generateXML();
-        }
-        
-        if (rod)
-        {
-            xmlString += "<rod/>";
-        }
-        
-        if (inPers)
-        {
-            xmlString += "<inPers/>";
-        }
-        
-        if (provPers)
-        {
-            xmlString += "<provPers/>";
-        }
-        
-        if (dpdLQ)
-        {
-            xmlString += "<dpdLQ/>";
-        }
-
-        if (digitalLabel)
-        {
-            xmlString += "<digitalLabel/>";
-        }
-        
-        if (pudoToSend)
-        {
-            xmlString += "<pudoToSend/>";
-        }
-
-        xmlString += "</services>";
-
-        return xmlString;
-    }
 }
 
 public class DeclaredValue: GenerateXML
