@@ -12,6 +12,16 @@ public class Globals
     public static string MASTER_FID = "1495";
 
     public static string MAP_KEY = "";
+    
+    public static List<Country> Countries = new List<Country>
+    {
+        new Country("Poland", "PL", "POL"),
+        new Country("Belgium", "BE", "BEL"),
+        new Country("Croatia", "HR", "HRV"),
+        new Country("Czech Republic", "CZ", "CZE"),
+        new Country("Denmark", "DK", "DNK"),
+        new Country("Estonia", "EE", "EST"),
+    };
 }
 
 public enum API_METHODS
@@ -32,16 +42,21 @@ public enum API_METHODS
     ImportDeliveryBusinessEvent
 }
 
-public enum COUNTRIES
+public class Country
 {
-    [EnumMember(Value = "Poland")]
-    PL,
-    [EnumMember(Value = "SP")]
-    SP,
-    [EnumMember(Value = "DE")]
-    DE,
-    [EnumMember(Value = "BE")]
-    BE,
-    [EnumMember(Value = "FR")]
-    FR,
+    public string IsoCodeA2 { get; set; }
+    public string IsoCodeA3 { get; set; }
+    public string Name { get; set; }
+
+    public Country(string name, string isoCodeA2, string isoCodeA3)
+    {
+        IsoCodeA2 = isoCodeA2;
+        IsoCodeA3 = isoCodeA3;
+        Name = name;
+    }
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }

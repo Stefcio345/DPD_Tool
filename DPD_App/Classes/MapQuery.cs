@@ -3,7 +3,7 @@
 public class MapQuery
 {
     public string Key { get; set; }
-    public COUNTRIES Country { get; set; }
+    public Country Country { get; set; }
     public List<MapFilters> FiltersList { get; set; }
 
     public MapQuery(string key)
@@ -13,6 +13,6 @@ public class MapQuery
 
     public override string ToString()
     {
-        return $"//pudofinder.dpd.com.pl/widget?key={Key}&query={Country}";
+        return $"//pudofinder.dpd.com.pl/widget?key={Key}&query={Country.IsoCodeA2}";
     }
 }

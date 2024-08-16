@@ -1,16 +1,247 @@
 ﻿@page "/MyPudoAPI"
+@using System.Text.Json
 
 <PageTitle>MyPudoAPI</PageTitle>
 <MudPopoverProvider/>
 
+
 <h1>My Pudo API</h1>
+<MudGrid>
+
+    <MudItem xs="12">
+        <MudDivider DividerType="DividerType.Middle" Class="my-6"/>
+        <h3>Parameters</h3>
+    </MudItem>
+    
+
+
+    <!-- My Pudo API Key -->
+    <MudItem xs="12">
+        <MudTextField Value="key" T="string" Label="MyPudoAPI Key" Variant="Variant.Outlined" ValueChanged="OnKeyChanged"/>
+    </MudItem>
+
+    <!-- Filtering select -->
+    <MudItem xs="12">
+        <MudForm>
+            <MudRadioGroup T="string" ValueChanged="ChangedFilter">
+                <MudRadio Value="@("Country")" Color="Color.Primary">Country</MudRadio>
+                <MudRadio Value="@("Point ID")" Color="Color.Primary">Point ID</MudRadio>
+                <MudRadio Value="@("Address")" Color="Color.Primary">Address</MudRadio>
+                <MudRadio Value="@("Geolocation")" Color="Color.Primary">Geolocation</MudRadio>
+            </MudRadioGroup>
+        </MudForm>
+    </MudItem>
+    
+    @switch (SelectedFiltering)
+    {
+        case "Country":
+            <MudItem xs="3">
+                <MudSelect T="Country" Value="SelectedCountry" Label="Select country" ValueChanged="OnCountrySelect" Variant="Variant.Outlined">
+                    @foreach (Country item in Globals.Countries)
+                    {
+                    <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            break;
+            
+        case "Point ID":
+            <MudItem xs="12">
+                <MudTextField T="string" Value="@PointID" Label="Point ID" Variant="Variant.Outlined" ValueChanged="OnPointIDSelect" />
+            </MudItem>
+            break;
+            
+        case "Address":
+            <MudItem xs="3">
+                <MudTextField T="string" Value="City" Label="City" Variant="Variant.Outlined" ValueChanged="OnAddressSelectCity"/>
+            </MudItem>
+            <MudItem xs="3">
+                <MudTextField T="string" Value="ZipCode" Label="Zip Code" Variant="Variant.Outlined" ValueChanged="OnAddressSelectZipCode"/>
+            </MudItem>
+            break;
+            
+        case "Geolocation":
+            <MudItem xs="3">
+                <MudTextField T="string" Value="Latitude" Label="Latitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLatitude"/>
+            </MudItem>
+            <MudItem xs="3">
+                <MudTextField T="string" Value="Longitude" Label="Longitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLongitude"/>
+            </MudItem>
+            <MudItem xs="3">
+                <MudTextField T="string" Value="Distance" Label="Distance" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectDistance"/>
+            </MudItem>
+            break;
+    }
+    
+    <!-- Query text -->
+    <MudItem xs="12">
+        <MudDivider DividerType="DividerType.Middle" Class="my-6"/>
+        <MudTextField @bind-Value="PudoLink" Label="Query" ReadOnly="true" Variant="Variant.Outlined"/>
+    </MudItem>
+    
+    <MudItem xs="3">
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
+            @if (_processing)
+            {
+            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+            <MudText Class="ms-2">Processing</MudText>
+            }
+            else
+            {
+            <MudText>Send</MudText>
+            }
+        </MudButton>
+    </MudItem>
+    
+    <MudItem xs="12">
+        <MudPaper Height="900px" Width="100%" Class="overflow-auto">
+                <MudText Typo="Typo.h6">Response</MudText>
+                <pre style="font-family: monospace;">
+                    @response
+                </pre>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 
 @code {
-    private int currentCount = 0;
+    bool _processing;
+    private string key;
+    private string PudoLink;
+    private Country SelectedCountry;
+    private string PointID;
+    private string response;
+    private string SelectedFiltering;
+    //private MarkupString repsonseShow = "<b>Awesome</b> x xD";
 
-    private void IncrementCount()
+    private string City;
+    private string ZipCode;
+
+    private string Latitude;
+    private string Longitude;
+    private string Distance;
+    
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        SelectedCountry = Globals.Countries[0];
     }
+    
+    private void OnKeyChanged(string obj)
+    {
+        key = obj;
+        @switch (SelectedFiltering)
+        {
+            case "Country":
+                PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/bycountry?countryCode={SelectedCountry.IsoCodeA3}&key={key}";
+                break;
+            
+            case "Point ID":
+                PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/details?pudoId={PointID}&key={key}";
+                break;
+            
+            case "Address":
+                PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/byaddress?requestID=zap001&city={City}&zipCode={ZipCode}&key={key}";
+                break;
+            
+            case "Geolocation":
+                PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/bylonglat?requestID=zap001&latitude={Latitude}&longitude={Longitude}&max_distance_search={Distance}&key={key}";
+                break;
+        }
+        StateHasChanged();
+    }
+    
+    private void ChangedFilter(string obj)
+    {
+        SelectedFiltering = obj;
+        @switch (SelectedFiltering)
+        {
+            case "Country":
+                PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/bycountry?countryCode={SelectedCountry.IsoCodeA3}&key={key}";
+                break;
+            
+            case "Point ID":
+                PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/details?pudoId={PointID}&key={key}";
+                break;
+            
+            case "Address":
+                PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/byaddress?requestID=zap001&city={City}&zipCode={ZipCode}&key={key}";
+                break;
+            
+            case "Geolocation":
+                PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/bylonglat?requestID=zap001&latitude={Latitude}&longitude={Longitude}&max_distance_search={Distance}&key={key}";
+                break;
+        }
+        StateHasChanged();
+    }
+
+    //Query By country
+    private void OnCountrySelect(Country obj)
+    {
+        SelectedCountry = obj;
+        PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/bycountry?countryCode={SelectedCountry.IsoCodeA3}&key={key}";
+        StateHasChanged();
+    }
+    
+    //Query By Point ID
+    private void OnPointIDSelect(string pointID)
+    {
+        PointID = pointID;
+        PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/details?pudoId={PointID}&key={key}";
+        StateHasChanged();
+    }
+    
+    //Query By Address
+    private void OnAddressSelectZipCode(string zipCode)
+    {
+        ZipCode = zipCode;
+        PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/byaddress?requestID=zap001&city={City}&zipCode={ZipCode}&key={key}";
+        StateHasChanged();
+    }
+    private void OnAddressSelectCity(string city)
+    {
+        City = city;
+        PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/byaddress?requestID=zap001&city={City}&zipCode={ZipCode}&key={key}";
+        StateHasChanged();
+    }
+    
+    //Query By Geolocation
+    private void OnGeolocationSelectLatitude(string latitude)
+    {
+        Latitude = latitude;
+        PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/bylonglat?requestID=zap001&latitude={Latitude}&longitude={Longitude}&max_distance_search={Distance}&key={key}";
+        StateHasChanged();
+    }
+    private void OnGeolocationSelectLongitude(string longitude)
+    {
+        Longitude = longitude;
+        PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/bylonglat?requestID=zap001&latitude={Latitude}&longitude={Longitude}&max_distance_search={Distance}&key={key}";
+        StateHasChanged();
+    }
+    private void OnGeolocationSelectDistance(string distance)
+    {
+        Distance = distance;
+        PudoLink = $"https://mypudo.dpd.com.pl/api/v2/pudo/list/bylonglat?requestID=zap001&latitude={Latitude}&longitude={Longitude}&max_distance_search={Distance}&key={key}";
+        StateHasChanged();
+    }
+    
+    //Send request
+    private async void SendRequest()
+    {
+        _processing = true;
+        response = await Request.SendHttpRequest(PudoLink);
+        // Convert JSON string to a pretty-printed format
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
+
+        response = JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(response), options);
+        //repsonseShow = new MarkupString(response);
+        _processing = false;
+        StateHasChanged();
+    }
+
+    //TODO Wyświetlać całego XML na stronie
+    //TODO Polskie znaki w XML
+    //TODO Login/hasło/klucze na górze ekranu
 }

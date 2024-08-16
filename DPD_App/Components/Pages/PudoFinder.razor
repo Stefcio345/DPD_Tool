@@ -6,6 +6,7 @@
 <h1>PudoFinder</h1>
 
 <MudGrid>
+    
     <!-- Query text -->
     <MudItem xs="12">
         <MudTextField @bind-Value="ReadOnly" Label="Query" ReadOnly="true" Variant="Variant.Outlined"/>
@@ -13,10 +14,10 @@
 
     <!-- Country select -->
     <MudItem xs="3">
-        <MudSelect T="COUNTRIES" Value="SelectedCountry" Label="Select country" ValueChanged="OnCountrySelect">
-            @foreach (COUNTRIES item in Enum.GetValues(typeof(COUNTRIES)))
+        <MudSelect T="Country" Value="SelectedCountry" Label="Select country" ValueChanged="OnCountrySelect">
+            @foreach (Country item in Globals.Countries)
             {
-                <MudSelectItem Value="@item">@item</MudSelectItem>
+                <MudSelectItem Value="@item">@item.Name</MudSelectItem>
             }
         </MudSelect>
     </MudItem>
@@ -39,7 +40,7 @@
 </MudGrid>
 
 @code {
-    public COUNTRIES SelectedCountry { get; set; } = COUNTRIES.PL;
+    public Country SelectedCountry { get; set; } = Globals.Countries[0];
     public MapQuery ReadOnly { get; set; } = new MapQuery(Globals.MAP_KEY);
     
     protected override async Task OnInitializedAsync()
@@ -47,7 +48,7 @@
         ReadOnly.Country = SelectedCountry;
     }
 
-    private void OnCountrySelect(COUNTRIES obj)
+    private void OnCountrySelect(Country obj)
     {
         SelectedCountry = obj;
         ReadOnly.Country = SelectedCountry;
