@@ -1,35 +1,80 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" DefaultScrollbar="false"/>
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" DefaultScrollbar="false"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        
+        <MudGrid Spacing="4" Justify="Justify.Center">
+            <MudItem>
+                <MudTextField T="string" Label="Login" Value="@Globals.LOGIN" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged"></MudTextField>
+            </MudItem>
+            <MudItem>
+                <MudTextField T="string" Label="Password" Value="@Globals.PASSWORD"  Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="PasswordChanged"></MudTextField>
+            </MudItem>
+            <MudItem>
+                <MudTextField T="string" Label="FID/Numkat" Value="@Globals.MASTER_FID"  Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="FidChanged"></MudTextField>
+            </MudItem>
+        </MudGrid>
+        
+        <MudToggleIconButton @bind-Toggled="_isDarkMode"
+                             Icon="@Icons.Material.Filled.LightMode" Color="Color.Warning"
+                             ToggledIcon="@Icons.Material.Filled.ModeNight" ToggledColor="Color.Tertiary"
+                             title="Motyw strony"/>
 
-<MudGrid Spacing="0">
-    <MudItem xs="12">
-        <MudAppBar Color="Color.Primary" Fixed="false" Elevation="3">
-            <MudText Typo="Typo.h3" Edge="Edge.Start">DPD Tool</MudText>
-            <MudSpacer />
-            <MudSwitch @bind-Value="_isDarkMode" Color="Color.Tertiary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode"/>
-
-            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
-        </MudAppBar>
-    </MudItem>
-
-    <MudItem xs="2">
-        <NavMenu/>
-    </MudItem>
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit"/>
+    </MudAppBar>
     
-    <MudItem xs="10">
-        <MudPaper Height="100%" Width="100%" Class="pa-6">
-            @Body
-        </MudPaper>
-    </MudItem>
-
-</MudGrid>
+    <MudDrawer @bind-Open="@_open" Elevation="1">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">My App</MudText>
+        </MudDrawerHeader>
+        <NavMenu/>
+    </MudDrawer>
+    
+    <MudMainContent Class="pt-20 px-8">
+        @Body
+    </MudMainContent>
+</MudLayout>
 
 @code{
-    private MudTheme _theme = new();
     private bool _isDarkMode;
+    private bool _open = false;
     private MudThemeProvider _mudThemeProvider;
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            StateHasChanged();
+        }
+    }
+    
+    private void ToggleDrawer()
+    {
+        _open = !_open;
+    }
+
+    private void LoginChanged(string obj)
+    {
+        Globals.LOGIN = obj;
+        StateHasChanged();
+    }
+
+    private void PasswordChanged(string obj)
+    {
+        Globals.PASSWORD = obj;
+        StateHasChanged();
+    }
+    
+    private void FidChanged(string obj)
+    {
+        Globals.MASTER_FID = obj;
+        StateHasChanged();
+    }
+
 }

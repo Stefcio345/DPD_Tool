@@ -5,12 +5,12 @@ using DPD_App;
 public class AuthDataV1
 {
 
-    [XmlElement(ElementName = "login", Namespace = "")]
+    [XmlElement(ElementName = "login")]
     public string Login { get; set; } = Globals.LOGIN;
 
-    [XmlElement(ElementName = "masterFid", Namespace = "")]
+    [XmlElement(ElementName = "masterFid")]
     public string MasterFid { get; set; } = Globals.MASTER_FID;
 
-    [XmlElement(ElementName = "password", Namespace = "")]
+    [XmlElement(ElementName = "password")]
     public string Password { get; set; } = Globals.PASSWORD;
 }

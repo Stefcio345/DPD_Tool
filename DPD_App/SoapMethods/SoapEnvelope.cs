@@ -6,7 +6,16 @@ public class Body
 {
 
     [XmlElement(ElementName = "generatePackagesNumbersV9", Namespace = "http://dpdservices.dpd.com.pl/")]
-    public GeneratePackagesNumbersV9 GeneratePackagesNumbersV9 { get; set; } = new GeneratePackagesNumbersV9();
+    public GeneratePackagesNumbersV9 GeneratePackagesNumbersV9 { get; set; }
+    
+    [XmlElement(ElementName="generatePackagesNumbersV9Response", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public GeneratePackagesNumbersV9Response GeneratePackagesNumbersV9Response { get; set; } 
+    
+    [XmlElement(ElementName="generateSpedLabelsV4Response", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public GenerateSpedLabelsV4Response GenerateSpedLabelsV4Response { get; set; } 
+    
+    [XmlElement(ElementName="generateSpedLabelsV4", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public GenerateSpedLabelsV4 GenerateSpedLabelsV4 { get; set; } 
 }
 
 [XmlRoot(ElementName="Envelope", Namespace="http://schemas.xmlsoap.org/soap/envelope/")]

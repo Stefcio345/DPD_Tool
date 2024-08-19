@@ -42,6 +42,11 @@ public enum API_METHODS
     ImportDeliveryBusinessEvent
 }
 
+public enum CallTypes
+{
+    LABEL
+}
+
 public class Country
 {
     public string IsoCodeA2 { get; set; }

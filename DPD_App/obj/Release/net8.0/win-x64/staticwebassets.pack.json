@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Franek\\Desktop\\DPD_App\\DPD_App\\obj\\Release\\net8.0\\win-x64\\scopedcss\\projectbundle\\DPD_App.bundle.scp.css",
+      "PackagePath": "staticwebassets\\DPD_App.bundle.scp.css"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\win-x64\\staticwebassets\\msbuild.DPD_App.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\win-x64\\staticwebassets\\msbuild.build.DPD_App.props",
+      "PackagePath": "build\\DPD_App.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\win-x64\\staticwebassets\\msbuild.buildMultiTargeting.DPD_App.props",
+      "PackagePath": "buildMultiTargeting\\DPD_App.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\win-x64\\staticwebassets\\msbuild.buildTransitive.DPD_App.props",
+      "PackagePath": "buildTransitive\\DPD_App.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

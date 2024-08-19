@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "W5Zscjhk/BGpb1z5mzwsduVEW1/sG0eTaRv62YLDs5/KLo/0h7PC/CEE/Xg/+xUEoKFr5YI0XDTXG0k3sowmTQ==",
+  "dgSpecHash": "mWssKJiqUMuXyqHUDOOdd3cERYDZ5QFmQkbkQK/r538Gm2FYhtzsco1nT2ZpTmfJzB8mbR8Lnc+cktI2Ba1WhQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Franek\\Desktop\\DPD_App\\DPD_App\\DPD_App.csproj",
   "expectedPackageFiles": [
@@ -18,6 +18,7 @@
     "C:\\Users\\Franek\\.nuget\\packages\\microsoft.extensions.options\\8.0.2\\microsoft.extensions.options.8.0.2.nupkg.sha512",
     "C:\\Users\\Franek\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "C:\\Users\\Franek\\.nuget\\packages\\microsoft.jsinterop\\8.0.6\\microsoft.jsinterop.8.0.6.nupkg.sha512",
+    "C:\\Users\\Franek\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.5\\microsoft.net.illink.tasks.8.0.5.nupkg.sha512",
     "C:\\Users\\Franek\\.nuget\\packages\\mudblazor\\7.0.0\\mudblazor.7.0.0.nupkg.sha512",
     "C:\\Users\\Franek\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512"
   ],

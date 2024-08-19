@@ -9,7 +9,7 @@
 
 <MudGrid>
     <MudItem xs="6">
-        <MudSelect T="API_METHODS" @bind-Value="currentMethod" Label="Select method">
+        <MudSelect T="API_METHODS" Value="currentMethod" Label="Select method" ValueChanged="MethodSelected">
             @foreach (API_METHODS item in Enum.GetValues(typeof(API_METHODS)))
             {
                 <MudSelectItem Value="@item">@item</MudSelectItem>
@@ -23,10 +23,12 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" Label="Request" Variant="Variant.Outlined" @bind-Value="_requestShow" Lines="40"/>
+        <MudTextField @ref="request" T="string" Label="Request" Variant="Variant.Outlined" @bind-Value="_requestShow" Lines="40"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => request.SelectAsync())"/>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" @bind-Value="_responseShow" Lines="40" ReadOnly="true"/>
+        <MudTextField @ref="response" T="string" Label="Response" Variant="Variant.Outlined" @bind-Value="_responseShow" Lines="40" ReadOnly="true"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => response.SelectAsync())"/>
     </MudItem>
     <MudItem xs="3">
         <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
@@ -56,6 +58,8 @@
 
 @code {
     string _url = Globals.WSDL_DEMO_ADDRESS;
+    private MudTextField<string> request;
+    private MudTextField<string> response;
     API_METHODS currentMethod;
     string _requestShow = "";
     string _responseShow = "";
@@ -83,6 +87,7 @@
         _processing = true;
         _responseShow = XMLDocument.Prettify(await Request.SendSoapRequest(_url, _requestShow));
         _processing = false;
+        StateHasChanged();
     }
     
     async Task Prettify()
@@ -96,4 +101,27 @@
     //TODO Dodanie linku trackingowego dla paczki
     //TODO Check boxy będą się wyłączać jeżeli usługi nie będą pasować
     //Optional można ukryć wywołanie
+    
+    private void MethodSelected(API_METHODS obj)
+    {
+        currentMethod = obj;
+        switch (obj)
+        {
+            case API_METHODS.GeneratePackagesNumbers:
+                _requestShow = new GeneratePackagesNumbersV9().CreateSoapEnvelope();
+                _requestShow = XMLDocument.Prettify(_requestShow);
+                break;
+            case API_METHODS.GenerateSpedLabels:
+                _requestShow = new GenerateSpedLabelsV4().CreateSoapEnvelope();
+                _requestShow = XMLDocument.Prettify(_requestShow);
+                break;
+            default:
+                _requestShow = "Method currently not implemented";
+                break;
+        }
+
+        _responseShow = "";
+        StateHasChanged();
+    }
+
 }
