@@ -1,4 +1,0 @@
-C:\Users\Franek\Desktop\DPD_App\DPD_App\bin\Release\net8.0\win-x64\publish\appsettings.Development.json
-C:\Users\Franek\Desktop\DPD_App\DPD_App\bin\Release\net8.0\win-x64\publish\appsettings.json
-C:\Users\Franek\Desktop\DPD_App\DPD_App\bin\Release\net8.0\win-x64\publish\DPD_App.pdb
-C:\Users\Franek\Desktop\DPD_App\DPD_App\bin\Release\net8.0\win-x64\publish\DPD_App.exe
