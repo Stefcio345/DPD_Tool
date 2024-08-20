@@ -1,48 +1,59 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" DefaultScrollbar="false"/>
+<MudPopoverProvider/>
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" DefaultScrollbar="false" Theme="_themeManager.Theme"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
 <MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-        
+
+    <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
+    <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
+    
+    <MudAppBar Elevation="_themeManager.AppBarElevation">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
+
         <MudGrid Spacing="4" Justify="Justify.Center">
             <MudItem>
                 <MudTextField T="string" Label="Login" Value="@Globals.LOGIN" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged"></MudTextField>
             </MudItem>
             <MudItem>
-                <MudTextField T="string" Label="Password" Value="@Globals.PASSWORD"  Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="PasswordChanged"></MudTextField>
+                <MudTextField T="string" Label="Password" Value="@Globals.PASSWORD" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="PasswordChanged"></MudTextField>
             </MudItem>
             <MudItem>
-                <MudTextField T="string" Label="FID/Numkat" Value="@Globals.MASTER_FID"  Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="FidChanged"></MudTextField>
+                <MudTextField T="string" Label="FID/Numkat" Value="@Globals.MASTER_FID" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="FidChanged"></MudTextField>
             </MudItem>
         </MudGrid>
-        
+
         <MudStack Row="true">
             <MudToggleIconButton @bind-Toggled="_isDarkMode"
                                  Icon="@Icons.Material.Filled.LightMode" Color="Color.Primary"
                                  ToggledIcon="@Icons.Material.Filled.ModeNight" ToggledColor="Color.Default"
                                  title="Motyw strony" Variant="Variant.Filled" Size="Size.Large"/>
 
-            <MudIconButton Icon="@Icons.Material.Filled.Settings" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" />
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="@ToggleSettings"/>
         </MudStack>
-        
+
     </MudAppBar>
-    
-    <MudDrawer @bind-Open="@_open" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Mini" Elevation="1">
+
+    <MudDrawer @bind-Open="@_openSettings" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary">
+        <Settings/>
+    </MudDrawer>
+
+    <MudDrawer @bind-Open="@_open" ClipMode="_themeManager.DrawerClipMode" Variant="DrawerVariant.Mini" Elevation="_themeManager.DrawerElevation">
         <NavMenu/>
     </MudDrawer>
-    
+
     <MudMainContent Class="pt-20 px-8">
         @Body
     </MudMainContent>
+
 </MudLayout>
 
 @code{
     private bool _isDarkMode;
     private bool _open = false;
+    private bool _openSettings = false;
     private MudThemeProvider _mudThemeProvider = new MudThemeProvider();
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -57,6 +68,11 @@
     private void ToggleDrawer()
     {
         _open = !_open;
+    }
+    
+    private void ToggleSettings(MouseEventArgs obj)
+    {
+        _openSettings = !_openSettings;
     }
 
     private void LoginChanged(string obj)
@@ -76,5 +92,26 @@
         Globals.MASTER_FID = obj;
         StateHasChanged();
     }
+    
 //TODO add profiles
+
+    private ThemeManagerTheme _themeManager = new ThemeManagerTheme();
+    public bool _themeManagerOpen = false;
+
+    void OpenThemeManager(bool value)
+    {
+        _themeManagerOpen = value;
+    }
+
+    void UpdateTheme(ThemeManagerTheme value)
+    {
+        _themeManager = value;
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
+    }
+
 }

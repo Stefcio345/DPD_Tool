@@ -1,0 +1,10 @@
+﻿<MudDrawerHeader>
+    <MudText Typo="Typo.h6">Settings</MudText>
+</MudDrawerHeader>
+
+<MudSwitch T="bool" @bind-Value="SmallNavbar" ThumbIcon="@(SmallNavbar == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(SmallNavbar == true ? Color.Success : Color.Error)">Date from</MudSwitch>
+
+@code
+{
+    public bool SmallNavbar;
+}

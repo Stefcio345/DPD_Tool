@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DPD_App")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c5ed225c0d9fe31a79fc868d905b0d0c70896b15")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0b6211cfd15311bd1ab26d098157939554ed7a0")]
 [assembly: System.Reflection.AssemblyProductAttribute("DPD_App")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DPD_App")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
