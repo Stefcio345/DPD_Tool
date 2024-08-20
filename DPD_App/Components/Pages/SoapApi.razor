@@ -9,7 +9,7 @@
 
 <MudGrid>
     <MudItem xs="6">
-        <MudSelect T="API_METHODS" Value="currentMethod" Label="Select method" ValueChanged="MethodSelected">
+        <MudSelect T="API_METHODS" Value="_currentMethod" Label="Select method" ValueChanged="MethodSelected">
             @foreach (API_METHODS item in Enum.GetValues(typeof(API_METHODS)))
             {
                 <MudSelectItem Value="@item">@item</MudSelectItem>
@@ -23,12 +23,10 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField @ref="request" T="string" Label="Request" Variant="Variant.Outlined" @bind-Value="_requestShow" Lines="40"
-                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => request.SelectAsync())"/>
+        <MudTextField T="string" Label="Request" Variant="Variant.Outlined" Value="_request" Lines="40" TextChanged="RequestChanged"/>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField @ref="response" T="string" Label="Response" Variant="Variant.Outlined" @bind-Value="_responseShow" Lines="40" ReadOnly="true"
-                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => response.SelectAsync())"/>
+        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" Value="_response" Lines="40" TextChanged="ResponseChanged"/>
     </MudItem>
     <MudItem xs="3">
         <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
@@ -58,44 +56,30 @@
 
 @code {
     string _url = Globals.WSDL_DEMO_ADDRESS;
-    private MudTextField<string> request;
-    private MudTextField<string> response;
-    API_METHODS currentMethod;
-    string _requestShow = "";
-    string _responseShow = "";
+    API_METHODS _currentMethod;
+    string _request = "";
+    string _response = "";
     private bool _processing = false;
 
     protected override async Task OnInitializedAsync()
     {
-        //Deserialziacja
-        //var request = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header/><soapenv:Body><dpd:generatePackagesNumbersV9 xmlns:dpd=\"http://dpdservices.dpd.com.pl/\"><openUMLFeV11><packages><parcels><weight>32</weight><weightAdr>20</weightAdr><sizeX>10</sizeX><sizeY>20</sizeY><sizeZ>30</sizeZ><content>Puszka pandory 1</content><customerData1>klienta dane 11</customerData1><customerData2>klienta dane 22</customerData2><customerData3>klienta dane 33</customerData3></parcels><parcels><weight>33.5</weight><weightAdr>33.5</weightAdr><sizeX>10</sizeX><sizeY>20</sizeY><sizeZ>30</sizeZ><content>Puszka pandory 2</content><customerData1>klienta dane 12</customerData1><customerData2>klienta dane 22</customerData2><customerData3>klienta dane 33</customerData3></parcels><payerType>THIRD_PARTY</payerType><thirdPartyFID>1495</thirdPartyFID><receiver><company/><name>3434</name><city>Warszawa</city><address>34</address><countryCode>PL</countryCode><postalCode>99418</postalCode><phone>123123123</phone><email>pan@chcepaczke.pl</email></receiver><sender><company>qw</company><name>wq</name><address>Gajdy 39</address><city>Radom</city><countryCode>PL</countryCode><postalCode>02274</postalCode><phone>543332222</phone><email>ktos@pocztowy.pl</email></sender><ref1>cos tam 1</ref1><ref2>cos tam 2</ref2><ref3>cos tam 3</ref3><services><rod/><declaredValue><amount>12</amount><currency>PLN</currency></declaredValue></services></packages></openUMLFeV11><pkgNumsGenerationPolicyV1>ALL_OR_NOTHING</pkgNumsGenerationPolicyV1><langCode>PL</langCode><authDataV1><login>test</login><masterFid>1495</masterFid><password>thetu4Ee</password></authDataV1></dpd:generatePackagesNumbersV9></soapenv:Body></soapenv:Envelope>";
-        //Envelope result;
-        //var serializer = new XmlSerializer(typeof(Envelope));
-        //using (var reader = new StringReader(request))
-        //{                
-        //    result = (Envelope)serializer.Deserialize(reader);
-        //    Console.WriteLine(result.Body.GeneratePackagesNumbersV9.OpenUMLFeV11.Packages.Receiver.Address);
-        //}
-        
         //Serializacja
-        _requestShow = new GeneratePackagesNumbersV9().CreateSoapEnvelope();
-        _requestShow = XMLDocument.Prettify(_requestShow);
+        _request = new GeneratePackagesNumbersV9().CreateSoapEnvelope();
     }
 
     async Task SendRequest()
     {
         _processing = true;
-        _responseShow = XMLDocument.Prettify(await Request.SendSoapRequest(_url, _requestShow));
+        _response = XMLDocument.Prettify(await Request.SendSoapRequest(_url, _request));
         _processing = false;
         StateHasChanged();
     }
     
     async Task Prettify()
     {
-        _requestShow = XMLDocument.Prettify(_requestShow);
-        _responseShow = XMLDocument.Prettify(_responseShow);
+        _request = XMLDocument.Prettify(_request);
+        _response = XMLDocument.Prettify(_response);
         StateHasChanged();
-        Console.WriteLine(XMLDocument.Prettify(_requestShow));
     }
     
     //TODO Dodanie linku trackingowego dla paczki
@@ -104,23 +88,33 @@
     
     private void MethodSelected(API_METHODS obj)
     {
-        currentMethod = obj;
+        _currentMethod = obj;
         switch (obj)
         {
             case API_METHODS.GeneratePackagesNumbers:
-                _requestShow = new GeneratePackagesNumbersV9().CreateSoapEnvelope();
-                _requestShow = XMLDocument.Prettify(_requestShow);
+                _request = new GeneratePackagesNumbersV9().CreateSoapEnvelope();
                 break;
             case API_METHODS.GenerateSpedLabels:
-                _requestShow = new GenerateSpedLabelsV4().CreateSoapEnvelope();
-                _requestShow = XMLDocument.Prettify(_requestShow);
+                _request = new GenerateSpedLabelsV4().CreateSoapEnvelope();
                 break;
             default:
-                _requestShow = "Method currently not implemented";
+                _request = "Method currently not implemented";
                 break;
         }
 
-        _responseShow = "";
+        _response = "";
+        StateHasChanged();
+    }
+
+    private void RequestChanged(string obj)
+    {
+        _request = XMLDocument.Prettify(obj);
+        StateHasChanged();
+    }
+
+    private void ResponseChanged(string obj)
+    {
+        _response = XMLDocument.Prettify(obj);
         StateHasChanged();
     }
 

@@ -22,6 +22,27 @@ public class Globals
         new Country("Denmark", "DK", "DNK"),
         new Country("Estonia", "EE", "EST"),
     };
+    
+    public static List<MapFilter> MapFilters = new List<MapFilter>
+    {
+        new MapFilter("Open late", "open_late"),
+        new MapFilter("Open on Saturdays", "open_saturdays"),
+        new MapFilter("Open on Sundays", "open_sundays"),
+        new MapFilter("Facilitations for people with disabilities", "disabled_friendly"),
+        new MapFilter("Parking", "parking"),
+        new MapFilter("Reception", "direct_delivery"),
+        new MapFilter("Cash on delivery", "direct_delivery_cod"),
+        new MapFilter("Sending a paid shipment", "dropoff_online"),
+        new MapFilter("On-site drop-off + payment and BZT", "dropoff_offline"),
+        new MapFilter("Return shipment", "swap_parcel"),
+        new MapFilter("DPD Food", "d_fresh"),
+        new MapFilter("Fitting room", "fitting_room"),
+        new MapFilter("Card payment", "card_payment"),
+        new MapFilter("Return documents", "rod"),
+        new MapFilter("LQ", "dpd_lq"),
+        new MapFilter("Ship without labels", "digital_label"),
+        new MapFilter("Parcel machines", "swip_box"),
+    };
 }
 
 public enum API_METHODS
@@ -58,6 +79,25 @@ public class Country
         IsoCodeA2 = isoCodeA2;
         IsoCodeA3 = isoCodeA3;
         Name = name;
+    }
+
+    public override string ToString()
+    {
+        return Name;
+    }
+}
+
+public class MapFilter
+{
+    public bool IsActive { get; set; }
+    public string Name { get; set; }
+    public string Value { get; set; }
+
+    public MapFilter(string name, string value)
+    {
+        IsActive = false;
+        Name = name;
+        Value= value;
     }
 
     public override string ToString()

@@ -20,18 +20,18 @@
             </MudItem>
         </MudGrid>
         
-        <MudToggleIconButton @bind-Toggled="_isDarkMode"
-                             Icon="@Icons.Material.Filled.LightMode" Color="Color.Warning"
-                             ToggledIcon="@Icons.Material.Filled.ModeNight" ToggledColor="Color.Tertiary"
-                             title="Motyw strony"/>
+        <MudStack Row="true">
+            <MudToggleIconButton @bind-Toggled="_isDarkMode"
+                                 Icon="@Icons.Material.Filled.LightMode" Color="Color.Primary"
+                                 ToggledIcon="@Icons.Material.Filled.ModeNight" ToggledColor="Color.Default"
+                                 title="Motyw strony" Variant="Variant.Filled" Size="Size.Large"/>
 
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" />
+        </MudStack>
+        
     </MudAppBar>
     
-    <MudDrawer @bind-Open="@_open" Elevation="1">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h6">My App</MudText>
-        </MudDrawerHeader>
+    <MudDrawer @bind-Open="@_open" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Mini" Elevation="1">
         <NavMenu/>
     </MudDrawer>
     
@@ -43,7 +43,7 @@
 @code{
     private bool _isDarkMode;
     private bool _open = false;
-    private MudThemeProvider _mudThemeProvider;
+    private MudThemeProvider _mudThemeProvider = new MudThemeProvider();
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -53,7 +53,7 @@
             StateHasChanged();
         }
     }
-    
+
     private void ToggleDrawer()
     {
         _open = !_open;
@@ -76,5 +76,5 @@
         Globals.MASTER_FID = obj;
         StateHasChanged();
     }
-
+//TODO add profiles
 }
