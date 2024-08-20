@@ -2,29 +2,29 @@
 
 public class Services
 {
-    public DeclaredValue declaredValue { get; set; }
+    public DeclaredValue? declaredValue { get; set; }
     
-    public Cod cod { get; set; }
+    public Cod? cod { get; set; }
     
-    public DpdPickup dpdPickup { get; set; }
+    public DpdPickup? dpdPickup { get; set; }
     
-    public DpdFood dpdFood { get; set; }
+    public DpdFood? dpdFood { get; set; }
     
-    public Guarantee guarentee { get; set; }
+    public Guarantee? guarentee { get; set; }
 
-    public object rod { get; set; }
-    public object inPers { get; set; }
-    public object provPers { get; set; }
-    public object dpdLQ { get; set; }
-    public object digitalLabel { get; set; }
-    public object pudoToSend { get; set; }
+    public object? rod { get; set; }
+    public object? inPers { get; set; }
+    public object? provPers { get; set; }
+    public object? dpdLQ { get; set; }
+    public object? digitalLabel { get; set; }
+    public object? pudoToSend { get; set; }
     
 }
 
 public class DeclaredValue: GenerateXML
 {
     public double amount { get; set; }
-    public string currency { get; set; }
+    public string? currency { get; set; }
 
     public string generateXML()
     {
@@ -38,7 +38,7 @@ public class DeclaredValue: GenerateXML
 public class Cod: GenerateXML
 {
     public double amount { get; set; }
-    public string currency { get; set; }
+    public string? currency { get; set; }
 
     public string generateXML()
     {
@@ -51,7 +51,7 @@ public class Cod: GenerateXML
 
 public class DpdPickup: GenerateXML
 {
-    public string pudo { get; set; }
+    public string? pudo { get; set; }
 
     public string generateXML()
     {
@@ -83,7 +83,7 @@ public class Guarantee: GenerateXML
     public bool nextday { get; set; } = false;
     public bool today { get; set; } = false;
     
-    public string type { get; set; }
+    public string? type { get; set; }
     public string? value { get; set; }
 
     public string generateXML()

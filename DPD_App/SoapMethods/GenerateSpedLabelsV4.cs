@@ -48,7 +48,8 @@ public class GenerateSpedLabelsV4: SoapBody
     public GenerateSpedLabelsV4(string waybill)
     {
         DpdServicesParamsV1 = new DpdServicesParamsV1();
-        DpdServicesParamsV1.Session.Packages.Parcels[0].Waybill = waybill;
+        if (DpdServicesParamsV1.Session.Packages.Parcels != null)
+            DpdServicesParamsV1.Session.Packages.Parcels[0].Waybill = waybill;
         OutputDocFormatV1 = "PDF";
         OutputDocPageFormatV1 = "LBL_PRINTER";
         OutputLabelType = "BIC3";

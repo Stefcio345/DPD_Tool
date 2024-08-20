@@ -13,12 +13,12 @@ public class Session
     public string SessionType { get; set; } = "DOMESTIC";
     
     [XmlElement(ElementName="statusInfo", Namespace="")] 
-    public StatusInfo StatusInfo { get; set; } 
+    public StatusInfo? StatusInfo { get; set; } 
 }
 
 [XmlRoot(ElementName="statusInfo", Namespace="")]
 public class StatusInfo { 
 
     [XmlElement(ElementName="status", Namespace="")] 
-    public string Status { get; set; } 
+    public string? Status { get; set; } 
 }

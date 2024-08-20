@@ -6,34 +6,34 @@ using DPD_App;
 public class Packages { 
     
     [XmlElement(ElementName="Package")] 
-    public Package Package { get; set; }
+    public Package? Package { get; set; }
     
     [XmlElement("parcels")]
-    public Parcels[] Parcels { get; set; }
+    public Parcels[]? Parcels { get; set; }
 
     [XmlElement(ElementName = "payerType", Namespace = "")]
-    public string PayerType { get; set; }
+    public string? PayerType { get; set; }
 
     [XmlElement(ElementName = "thirdPartyFID", Namespace = "")]
-    public string ThirdPartyFID { get; set; }
+    public string? ThirdPartyFID { get; set; }
 
     [XmlElement(ElementName = "receiver", Namespace = "")]
-    public Receiver Receiver { get; set; }
+    public Receiver? Receiver { get; set; }
 
     [XmlElement(ElementName = "sender", Namespace = "")]
-    public Sender Sender { get; set; }
+    public Sender? Sender { get; set; }
 
     [XmlElement(ElementName = "ref1", Namespace = "")]
-    public string Ref1 { get; set; }
+    public string? Ref1 { get; set; }
 
     [XmlElement(ElementName="ref2", Namespace="")] 
-    public string Ref2 { get; set; }
+    public string? Ref2 { get; set; }
 
     [XmlElement(ElementName="ref3", Namespace="")] 
-    public string Ref3 { get; set; }
+    public string? Ref3 { get; set; }
 
     [XmlElement(ElementName = "services", Namespace = "")]
-    public Services Services { get; set; }
+    public Services? Services { get; set; }
     
     public Packages()
     {

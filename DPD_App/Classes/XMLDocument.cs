@@ -25,7 +25,7 @@ public class XMLDocument
             }
             return sb.ToString();
         }
-        catch(System.Xml.XmlException xex)
+        catch(System.Xml.XmlException)
         {
             return str;
         }

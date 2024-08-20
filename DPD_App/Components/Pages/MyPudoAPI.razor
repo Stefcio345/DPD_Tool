@@ -171,21 +171,21 @@
 
 
 @code {
-    private MudTextField<string> Query;
+    private MudTextField<string>? Query;
     bool _processing;
-    private string key;
-    private string PudoLink;
-    private Country SelectedCountry;
-    private string PointID;
-    private string response;
-    private string SelectedFiltering;
+    private string? key;
+    private string? PudoLink;
+    private Country? SelectedCountry;
+    private string? PointID;
+    private string? response;
+    private string? SelectedFiltering;
 
-    private string City;
-    private string ZipCode;
+    private string? City;
+    private string? ZipCode;
 
-    private string Latitude;
-    private string Longitude;
-    private string Distance;
+    private string? Latitude;
+    private string? Longitude;
+    private string? Distance;
     
     //Filters
     bool maxPudoNumber = false;
@@ -195,15 +195,16 @@
     bool dateFrom = false;
     
     int maxPudoNumberValue;
-    string partnerValue;
+    string? partnerValue;
     int holidayTolerantValue;
     DateTime? dateFromValue;
     
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         SelectedCountry = Globals.Countries[0];
+        return base.OnInitializedAsync();
     }
-    
+
     private void OnKeyChanged(string obj)
     {
         key = obj;

@@ -37,7 +37,7 @@
     <MudItem xs="12">
         <MudDivider DividerType="DividerType.Middle" Class="mt-0 mb-6"/>
         <MudTextField @ref="QueryBox" @bind-Value="Query" Label="Query" ReadOnly="true" Variant="Variant.Outlined"
-                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => QueryBox.SelectAsync())"/>
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => QueryBox?.SelectAsync())"/>
     </MudItem>
     
     <MudItem xs="12">
@@ -61,9 +61,9 @@
 </MudGrid>
 
 @code {
-    private MudTextField<string> QueryBox;
+    private MudTextField<string>? QueryBox;
     public Country? SelectedCountry { get; set; }
-    public string Query { get; set; }
+    public string? Query { get; set; }
     
     private string? key = Globals.MAP_KEY;
 

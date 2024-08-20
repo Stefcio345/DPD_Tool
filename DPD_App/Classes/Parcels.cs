@@ -14,31 +14,31 @@ public class Parcels {
     public string? Waybill { get; set; } 
 
     [XmlElement("weight", Namespace = "")]
-    public string Weight {get;set;}
+    public string? Weight {get;set;}
     
     [XmlElement(ElementName="adrWeight", Namespace = "")]
-    public string AdrWeight {get;set;}
+    public string? AdrWeight {get;set;}
 
     [XmlElement(ElementName="sizeX", Namespace="")] 
-    public string SizeX { get; set; }
+    public string? SizeX { get; set; }
 
     [XmlElement(ElementName="sizeY", Namespace="")] 
-    public string SizeY { get; set; }
+    public string? SizeY { get; set; }
 
     [XmlElement(ElementName="sizeZ", Namespace="")] 
-    public string SizeZ { get; set; }
+    public string? SizeZ { get; set; }
 
     [XmlElement(ElementName="content", Namespace="")] 
-    public string Content { get; set; }
+    public string? Content { get; set; }
 
     [XmlElement(ElementName="customerData1", Namespace="")] 
-    public string CustomerData1 { get; set; }
+    public string? CustomerData1 { get; set; }
 
     [XmlElement(ElementName="customerData2", Namespace="")] 
-    public string CustomerData2 { get; set; }
+    public string? CustomerData2 { get; set; }
 
     [XmlElement(ElementName="customerData3", Namespace="")] 
-    public string CustomerData3 { get; set; }
+    public string? CustomerData3 { get; set; }
 
     public Parcels()
     {
@@ -72,11 +72,11 @@ public class Parcels {
 public class Parcel { 
 
     [XmlElement(ElementName="Status")] 
-    public string Status { get; set; } 
+    public string? Status { get; set; } 
 
     [XmlElement(ElementName="ParcelId")] 
-    public int ParcelId { get; set; } 
+    public int? ParcelId { get; set; } 
 
     [XmlElement(ElementName="Waybill")] 
-    public string Waybill { get; set; } 
+    public string? Waybill { get; set; } 
 }
