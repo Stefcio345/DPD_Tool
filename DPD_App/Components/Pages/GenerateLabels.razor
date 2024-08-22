@@ -39,16 +39,13 @@
     <MudItem xs="3">
         <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
     </MudItem>
-    <MudItem xs="12">
+    <MudItem xs="6">
         @if (label is not null)
         {
             <MudCard style="height:750px">
                 <MudCardContent>
                     <iframe width="100%" height="100%" src="data:application/pdf;base64,@label" frameborder="0"></iframe>
                 </MudCardContent>
-                <MudCardActions>
-                    <MudIconButton Icon="@Icons.Material.Filled.Download" Color="Color.Default" />
-                </MudCardActions>
             </MudCard>
         }
         else
@@ -59,6 +56,13 @@
                 </MudCardContent>
             </MudCard>
         }
+    </MudItem>
+    <MudItem xs="6">
+        <MudCard>
+            <MudCardContent>
+                <h3>Tracking</h3>
+            </MudCardContent>
+        </MudCard>
     </MudItem>
 </MudGrid>
 

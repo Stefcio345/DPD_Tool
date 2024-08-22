@@ -10,8 +10,10 @@ public class Globals
     public static string LOGIN = "test";
     public static string PASSWORD = "thetu4Ee";
     public static string MASTER_FID = "1495";
+    public static string FID = "1495";
 
     public static string MAP_KEY = "";
+    public static string PUDO_KEY = "";
     
     public static List<Country> Countries = new List<Country>
     {
@@ -42,6 +44,13 @@ public class Globals
         new MapFilter("LQ", "dpd_lq"),
         new MapFilter("Ship without labels", "digital_label"),
         new MapFilter("Parcel machines", "swip_box"),
+    };
+    
+    public static List<Profile> Profiles = new List<Profile>
+    {
+        new Profile("Default", "test", "thetu4Ee", "1495","1495"),
+        new Profile("Profile 1", "1495", "thetu4Ee", "1495","1495"),
+        new Profile("Profile 3", "1234", "thetu4Ee", "1495","1495"),
     };
 }
 
@@ -103,5 +112,37 @@ public class MapFilter
     public override string ToString()
     {
         return Name;
+    }
+}
+
+public class Profile: ICloneable
+{
+    public string Login { get; set; }
+    public string Password { get; set; }
+    public string MasterFid { get; set; }
+    public string FID { get; set; }
+    public string WidgetKey { get; set; }
+    public string PudoKey { get; set; }
+    public string ProfileName { get; set; }
+
+    public Profile(string profileName, string login, string password, string masterFid, string fid, string widgetKey = "", string pudoKey ="")
+    {
+        ProfileName = profileName;
+        Login = login;
+        Password = password;
+        MasterFid = masterFid;
+        FID = fid;
+        WidgetKey = widgetKey;
+        PudoKey = pudoKey;
+    }
+
+    public override string ToString()
+    {
+        return this.ProfileName;
+    }
+
+    public object Clone()
+    {
+        return this.MemberwiseClone();
     }
 }

@@ -14,16 +14,24 @@ public class GeneratePackagesNumbersV9: SoapBody
 {
 
 	[XmlElement(ElementName = "openUMLFeV11", Namespace = "")]
-	public OpenUMLFeV11 OpenUMLFeV11 { get; set; } = new OpenUMLFeV11();
+	public OpenUMLFeV11 OpenUMLFeV11 { get; set; }
 
 	[XmlElement(ElementName = "pkgNumsGenerationPolicyV1", Namespace = "")]
-	public string PkgNumsGenerationPolicyV1 { get; set; } = "ALL_OR_NOTHING";
+	public string PkgNumsGenerationPolicyV1 { get; set; }
 
 	[XmlElement(ElementName = "langCode", Namespace = "")]
-	public string LangCode { get; set; } = "PL";
+	public string LangCode { get; set; }
 
 	[XmlElement(ElementName = "authDataV1", Namespace = "")]
-	public AuthDataV1 AuthDataV1 { get; set; } = new AuthDataV1();
+	public AuthDataV1 AuthDataV1 { get; set; }
+
+	public GeneratePackagesNumbersV9()
+	{
+		PkgNumsGenerationPolicyV1 = "ALL_OR_NOTHING";
+		LangCode = "PL";
+		AuthDataV1 = new AuthDataV1();
+		OpenUMLFeV11 = new OpenUMLFeV11();
+	}
 
 	public override string ToString()
 	{
