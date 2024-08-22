@@ -1,9 +1,12 @@
 ﻿using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace DPD_App;
 
 public class Globals
 {
+    public static string SaveLocation = "./Data/";
+    
     public static string WSDL_ADDRESS = "https://dpdservices.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL";
     public static string WSDL_DEMO_ADDRESS = "https://dpdservicesdemo.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL";
 
@@ -49,9 +52,59 @@ public class Globals
     public static List<Profile> Profiles = new List<Profile>
     {
         new Profile("Default", "test", "thetu4Ee", "1495","1495"),
-        new Profile("Profile 1", "1495", "thetu4Ee", "1495","1495"),
-        new Profile("Profile 3", "1234", "thetu4Ee", "1495","1495"),
     };
+
+    public static void SaveState()
+    {
+        SaveKeeper.SaveToFile(Globals.Profiles, "Profiles.xml");
+    }
+
+    public static void LoadState()
+    {
+        if (File.Exists(Globals.SaveLocation + "Profiles.xml"))
+        {
+            Globals.Profiles = SaveKeeper.LoadFromFile<List<Profile>>("Profiles.xml");
+        }
+        else
+        {
+            SaveKeeper.SaveToFile(Globals.Profiles, "Profiles.xml");
+        }
+    }
+}
+
+public class SaveKeeper()
+{
+    public static void SaveToFile<T>(T objectToSave, string filename)
+    {
+        TextWriter writer = null;
+        try
+        {
+            var serializer = new XmlSerializer(typeof(T));
+            writer = new StreamWriter(Globals.SaveLocation + filename, false);
+            serializer.Serialize(writer, objectToSave);
+        }
+        finally
+        {
+            if (writer != null)
+                writer.Close();
+        }
+
+    }
+    public static T LoadFromFile<T>(string filename)
+    {
+        TextReader reader = null;
+        try
+        {
+            var serializer = new XmlSerializer(typeof(T));
+            reader = new StreamReader(Globals.SaveLocation + filename);
+            return (T)serializer.Deserialize(reader);
+        }
+        finally
+        {
+            if (reader != null)
+                reader.Close();
+        }
+    }
 }
 
 public enum API_METHODS
@@ -125,6 +178,17 @@ public class Profile: ICloneable
     public string PudoKey { get; set; }
     public string ProfileName { get; set; }
 
+    public Profile()
+    {
+        ProfileName = "";
+        Login = "";
+        Password = "";
+        MasterFid = "";
+        FID = "";
+        WidgetKey = "";
+        PudoKey = "";
+    }
+
     public Profile(string profileName, string login, string password, string masterFid, string fid, string widgetKey = "", string pudoKey ="")
     {
         ProfileName = profileName;
@@ -146,3 +210,4 @@ public class Profile: ICloneable
         return this.MemberwiseClone();
     }
 }
+

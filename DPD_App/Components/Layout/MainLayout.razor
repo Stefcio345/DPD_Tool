@@ -273,6 +273,7 @@
         CurrentProfile.WidgetKey = profileToEdit.WidgetKey;
         CurrentProfile.FID = profileToEdit.FID;
         UpdateGlobals(CurrentProfile);
+        Globals.SaveState();
         Snackbar.Add("Changes saved successfully", Severity.Success);
         StateHasChanged();
     }
@@ -296,7 +297,8 @@
             CurrentProfile = new Profile("","","","","");
             UpdateGlobals(CurrentProfile);
         }
-        
+        Globals.SaveState();
+        Snackbar.Add("Profile deleted successfully", Severity.Info);
         StateHasChanged();
     }
 
@@ -310,6 +312,7 @@
     private void CreateNewProfile(MouseEventArgs obj)
     {
         Globals.Profiles.Add(NewProfile);
+        Globals.SaveState();
         Snackbar.Add("Profile created successfully", Severity.Success);
         _newProfileVisible = false;
     }
