@@ -5,17 +5,24 @@ public class Services
     public DeclaredValue? declaredValue { get; set; }
     
     public Cod? cod { get; set; }
-    
+    public Duty? duty { get; set; }
+
     public DpdPickup? dpdPickup { get; set; }
     
     public DpdFood? dpdFood { get; set; }
     
     public Guarantee? guarentee { get; set; }
 
+    public object? cud { get; set; }
     public object? rod { get; set; }
     public object? inPers { get; set; }
-    public object? provPers { get; set; }
+    public object? privPers { get; set; }
+    public object? dpdExpress { get; set; }
+    public object? pallet { get; set; }
+    public object? dox { get; set; }
     public object? dpdLQ { get; set; }
+    public object? tires { get; set; }
+    public object? tiresExport { get; set; }
     public object? digitalLabel { get; set; }
     public object? pudoToSend { get; set; }
     
@@ -93,4 +100,10 @@ public class Guarantee: GenerateXML
                $"<{nameof(value)}> + {value} + </{value}>" +
                $"</guarantee>";
     }
+}
+
+public class Duty
+{
+    public string amount;
+    public string currency;
 }

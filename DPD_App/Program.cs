@@ -36,6 +36,7 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 Globals.SaveState();
+//TODO repair global variables
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

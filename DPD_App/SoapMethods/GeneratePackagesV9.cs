@@ -10,7 +10,7 @@ public class OpenUMLFeV11
 }
 
 [XmlRoot(ElementName="generatePackagesNumbersV9", Namespace="http://dpdservices.dpd.com.pl/")]
-public class GeneratePackagesNumbersV9: SoapBody
+public class GeneratePackagesNumbersV9: SoapBody, IAuthData
 {
 
 	[XmlElement(ElementName = "openUMLFeV11", Namespace = "")]
@@ -41,6 +41,13 @@ public class GeneratePackagesNumbersV9: SoapBody
 			serializer.Serialize(textWriter, this);
 			return textWriter.ToString();
 		}
+	}
+
+	public void UpdateAuthData(Profile profile)
+	{
+		this.AuthDataV1.Login = profile.Login;
+		this.AuthDataV1.Password = profile.Password;
+		this.AuthDataV1.MasterFid = profile.MasterFid;
 	}
 
 	public string CreateSoapEnvelope()

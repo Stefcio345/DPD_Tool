@@ -3,13 +3,12 @@
 
 <PageTitle>MyPudoAPI</PageTitle>
 
-
 <h1>My Pudo API</h1>
 <MudGrid>
 
     <!-- My Pudo API Key -->
     <MudItem xs="6">
-        <MudTextField Immediate="true" Value="key" T="string" Label="MyPudoAPI Key" Variant="Variant.Outlined" ValueChanged="OnKeyChanged"/>
+        <MudTextField Immediate="true" Value="CurrentProfile.PudoKey" T="string" Label="MyPudoAPI Key" Variant="Variant.Outlined" TextChanged="OnKeyChanged" ValueChanged="s => Console.WriteLine(s)"/>
         <!-- Filtering select -->
         <MudForm>
             <MudRadioGroup T="string" ValueChanged="ChangedFilter">
@@ -141,7 +140,7 @@
     <!-- Query text -->
     <MudItem xs="12">
         <MudDivider DividerType="DividerType.Middle" Class="my-6"/>
-        <MudTextField @ref="Query" T="string" Value="PudoLink" Label="Query" ReadOnly="true" Variant="Variant.Outlined"
+        <MudTextField @ref="Query" T="string" Value="PudoLink" Label="Query" Variant="Variant.Outlined"
                       Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => Query.SelectAsync())"/>
     </MudItem>
     
@@ -171,6 +170,9 @@
 
 
 @code {
+    [CascadingParameter]
+    public Profile CurrentProfile { get; set; }
+    
     private MudTextField<string>? Query;
     bool _processing;
     private string? key;
@@ -209,7 +211,6 @@
     {
         key = obj;
         UpdateQuery();
-        
     }
     
     private void ChangedFilter(string obj)

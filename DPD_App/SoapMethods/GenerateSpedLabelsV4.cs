@@ -14,7 +14,7 @@ public class DpdServicesParamsV1
 }
 
 [XmlRoot(ElementName="generateSpedLabelsV4", Namespace="http://dpdservices.dpd.com.pl/")]
-public class GenerateSpedLabelsV4: SoapBody
+public class GenerateSpedLabelsV4: SoapBody, IAuthData
 {
 
     [XmlElement(ElementName = "dpdServicesParamsV1", Namespace="")]
@@ -65,6 +65,13 @@ public class GenerateSpedLabelsV4: SoapBody
             serializer.Serialize(textWriter, this);
             return textWriter.ToString();
         }
+    }
+
+    public void UpdateAuthData(Profile profile)
+    {
+        this.AuthDataV1.Login = profile.Login;
+        this.AuthDataV1.Password = profile.Password;
+        this.AuthDataV1.MasterFid = profile.MasterFid;
     }
 
     public string CreateSoapEnvelope()

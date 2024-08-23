@@ -9,14 +9,6 @@ public class Globals
     
     public static string WSDL_ADDRESS = "https://dpdservices.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL";
     public static string WSDL_DEMO_ADDRESS = "https://dpdservicesdemo.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL";
-
-    public static string LOGIN = "test";
-    public static string PASSWORD = "thetu4Ee";
-    public static string MASTER_FID = "1495";
-    public static string FID = "1495";
-
-    public static string MAP_KEY = "";
-    public static string PUDO_KEY = "";
     
     public static List<Country> Countries = new List<Country>
     {
@@ -64,6 +56,7 @@ public class Globals
         if (File.Exists(Globals.SaveLocation + "Profiles.xml"))
         {
             Globals.Profiles = SaveKeeper.LoadFromFile<List<Profile>>("Profiles.xml");
+            //TODO Add remembering choosen profile
         }
         else
         {
@@ -177,6 +170,7 @@ public class Profile: ICloneable
     public string WidgetKey { get; set; }
     public string PudoKey { get; set; }
     public string ProfileName { get; set; }
+    public bool IsChoosen { get; set; }
 
     public Profile()
     {

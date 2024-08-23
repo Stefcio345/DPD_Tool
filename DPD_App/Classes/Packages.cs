@@ -39,7 +39,7 @@ public class Packages {
     {
         Package = null;
         PayerType = "THIRD_PARTY";
-        ThirdPartyFID = Globals.MASTER_FID;
+        ThirdPartyFID = "1495";
         Ref1 = "ref1_abc";
         Ref2 = "ref2_def";
         Ref3 = "ref3_ghi";

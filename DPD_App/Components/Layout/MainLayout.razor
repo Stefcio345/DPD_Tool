@@ -11,7 +11,7 @@
     <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
     <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
     
-    <MudAppBar Elevation="_themeManager.AppBarElevation">
+    <MudAppBar Elevation="_themeManager.AppBarElevation" >
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
         
         <MudSpacer />
@@ -21,13 +21,13 @@
                 <MudText>Current Profile: @CurrentProfile.ProfileName</MudText>
             </MudItem>
             <MudItem>
-                <MudTextField T="string" Label="Login" @bind-Value="@Globals.LOGIN" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudTextField T="string" Label="Login" @bind-Value="@CurrentProfile.Login" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
             <MudItem>
-                <MudTextField T="string" Label="Password" @bind-Value="@Globals.PASSWORD" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudTextField T="string" Label="Password" @bind-Value="@CurrentProfile.Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
             <MudItem>
-                <MudTextField T="string" Label="FID/Numkat" @bind-Value="@Globals.MASTER_FID" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+                <MudTextField T="string" Label="FID/Numkat" @bind-Value="@CurrentProfile.MasterFid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             </MudItem>
         </MudGrid>
         
@@ -55,10 +55,12 @@
     <MudDrawer @bind-Open="@_open" ClipMode="DrawerClipMode.Docked" Variant="DrawerVariant.Mini" Elevation="_themeManager.DrawerElevation">
         <NavMenu/>
     </MudDrawer>
-
-    <MudMainContent Class="pt-20 px-8">
-        @Body
-    </MudMainContent>
+    
+    <CascadingValue Value="CurrentProfile">
+        <MudMainContent Class="pt-20 px-8">
+            @Body
+        </MudMainContent>
+    </CascadingValue>
 
 </MudLayout>
 
@@ -99,11 +101,6 @@
     void UpdateTheme(ThemeManagerTheme value)
     {
         _themeManager = value;
-        StateHasChanged();
-    }
-
-    protected override void OnInitialized()
-    {
         StateHasChanged();
     }
 
@@ -231,7 +228,7 @@
 @code
 {
     //Profiles
-    public Profile CurrentProfile = Globals.Profiles[0];
+    public Profile CurrentProfile { get; set; }
     private bool _profileSettingsVisible;
     private bool _profileMenuVisible;
     private bool _newProfileVisible;
@@ -242,7 +239,23 @@
     
     bool success;
     string[] errors = { };
-    
+
+    protected override Task OnInitializedAsync()
+    {
+        foreach (var profile in Globals.Profiles)
+        {
+            if(profile.IsChoosen)
+                CurrentProfile = profile;
+        }
+
+        if (CurrentProfile is null)
+        {
+            CurrentProfile = new Profile();
+        }
+
+        return base.OnInitializedAsync();
+    }
+
     void OpenProfilesSettings()
     {
         _profileMenuVisible = true;
@@ -250,8 +263,11 @@
 
     private void OnProfileChange(Profile obj)
     {
+        CurrentProfile.IsChoosen = false;
         CurrentProfile = obj;
-        UpdateGlobals(CurrentProfile);
+        CurrentProfile.IsChoosen = true;
+        //TODO save after quitting program
+        Globals.SaveState();
         StateHasChanged();
     }
 
@@ -272,20 +288,9 @@
         CurrentProfile.PudoKey = profileToEdit.PudoKey;
         CurrentProfile.WidgetKey = profileToEdit.WidgetKey;
         CurrentProfile.FID = profileToEdit.FID;
-        UpdateGlobals(CurrentProfile);
         Globals.SaveState();
         Snackbar.Add("Changes saved successfully", Severity.Success);
         StateHasChanged();
-    }
-
-    void UpdateGlobals(Profile profile)
-    {
-        Globals.LOGIN = profile.Login;
-        Globals.PASSWORD = profile.Password;
-        Globals.MASTER_FID = profile.MasterFid;
-        Globals.MAP_KEY = profile.WidgetKey;
-        Globals.PUDO_KEY = profile.PudoKey;
-        Globals.FID = profile.FID;
     }
 
     private void DeleteProfile(MouseEventArgs obj)
@@ -294,8 +299,7 @@
         _profileSettingsVisible = false;
         if (CurrentProfile == CurrentylEdited)
         {
-            CurrentProfile = new Profile("","","","","");
-            UpdateGlobals(CurrentProfile);
+            CurrentProfile = new Profile();
         }
         Globals.SaveState();
         Snackbar.Add("Profile deleted successfully", Severity.Info);
