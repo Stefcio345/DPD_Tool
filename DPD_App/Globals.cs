@@ -65,6 +65,32 @@ public class Globals
     }
 }
 
+public class AppSettings
+{
+
+    public bool LogRequests;
+    public bool MiniDrawer;
+
+    public void LoadFromFile()
+    {
+        if (File.Exists(Globals.SaveLocation + "Settings.xml"))
+        {
+            var temp = SaveKeeper.LoadFromFile<AppSettings>("Settings.xml");
+            LogRequests = temp.LogRequests;
+            MiniDrawer = temp.MiniDrawer;
+        }
+        else
+        {
+            SaveKeeper.SaveToFile(this, "Settings.xml");
+        }
+    }
+
+    public void SaveToFile()
+    {
+        SaveKeeper.SaveToFile(this, "Settings.xml");
+    }
+}
+
 public class SaveKeeper()
 {
     public static void SaveToFile<T>(T objectToSave, string filename)

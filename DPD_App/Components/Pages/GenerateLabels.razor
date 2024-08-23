@@ -238,8 +238,6 @@
 
         newPackage.OpenUMLFeV11.Packages.Receiver = _receiver;
         newPackage.OpenUMLFeV11.Packages.Sender = _sender;
-        
-
 
         _response = await Request.CallSoapWebService(_url, newPackage);
         
@@ -254,13 +252,11 @@
                 waybill = result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel.Waybill;
                 trackTraceLink = TrackingLink.getTrackTraceLink(waybill);
                 geoPostLink = TrackingLink.getGeoPostLink(waybill);
-                Console.WriteLine(_response);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 waybill = "Error";
-                Console.WriteLine(_response);
             }
         }
         

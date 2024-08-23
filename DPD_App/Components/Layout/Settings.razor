@@ -1,10 +1,19 @@
-﻿<MudDrawerHeader>
+﻿@using System.ComponentModel
+<MudDrawerHeader>
     <MudText Typo="Typo.h6">Settings</MudText>
 </MudDrawerHeader>
 
-<MudSwitch T="bool" @bind-Value="SmallNavbar" ThumbIcon="@(SmallNavbar == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(SmallNavbar == true ? Color.Success : Color.Error)">Date from</MudSwitch>
+<MudStack Class="mx-4">
+    <MudPaper>
+        <MudSwitch Class="px-4" T="bool" Value="settings.LogRequests" ThumbIcon="@(settings.LogRequests == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.LogRequests == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.LogRequests = b; settings.SaveToFile(); StateHasChanged();}">Log requests</MudSwitch>
+    </MudPaper>
+    <MudPaper>
+        <MudSwitch Class="px-4" T="bool" Value="settings.MiniDrawer" ThumbIcon="@(settings.MiniDrawer == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.MiniDrawer == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.MiniDrawer = b; settings.SaveToFile(); StateHasChanged();}">Mini Drawer</MudSwitch>
+    </MudPaper>
+</MudStack>
 
 @code
 {
-    public bool SmallNavbar;
+    [CascadingParameter]
+    public AppSettings settings { get; set; }
 }

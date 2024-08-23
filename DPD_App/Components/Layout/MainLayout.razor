@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.ComponentModel
+@inherits LayoutComponentBase
 @inject ISnackbar Snackbar
 
 <MudPopoverProvider/>
@@ -14,28 +15,19 @@
     <MudAppBar Elevation="_themeManager.AppBarElevation" >
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
         
-        <MudSpacer />
+        <MudPaper Elevation="6" Class="mx-4">
+            <MudText Class="mx-4" Typo="Typo.h4">DPD App</MudText>
+        </MudPaper>
         
-        <MudGrid Spacing="4" Justify="Justify.Center">
-            <MudItem>
-                <MudText>Current Profile: @CurrentProfile.ProfileName</MudText>
-            </MudItem>
-            <MudItem>
-                <MudTextField T="string" Label="Login" @bind-Value="@CurrentProfile.Login" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            </MudItem>
-            <MudItem>
-                <MudTextField T="string" Label="Password" @bind-Value="@CurrentProfile.Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            </MudItem>
-            <MudItem>
-                <MudTextField T="string" Label="FID/Numkat" @bind-Value="@CurrentProfile.MasterFid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            </MudItem>
-        </MudGrid>
+        <MudSpacer />
+
+        <MudIconButton OnClick="OpenProfilesSettings" Icon="@Icons.Material.Filled.AccountCircle" Variant="Variant.Filled" Size="Size.Large" />
+
+        <MudText Class="mx-4" Typo="Typo.h5">Current Profile: @CurrentProfile.ProfileName</MudText>
         
         <MudSpacer />
 
         <MudStack Row="true">
-
-            <MudIconButton OnClick="OpenProfilesSettings" Icon="@Icons.Material.Filled.AccountCircle" Variant="Variant.Filled" Size="Size.Large" />
 
             <MudToggleIconButton @bind-Toggled="_isDarkMode"
                                  Icon="@Icons.Material.Filled.LightMode" Color="Color.Primary"
@@ -48,11 +40,13 @@
 
     </MudAppBar>
 
-    <MudDrawer @bind-Open="@_openSettings" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary">
-        <Settings/>
-    </MudDrawer>
+    <CascadingValue Value="settings">
+        <MudDrawer @bind-Open="@_openSettings" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary">
+            <Settings/>
+        </MudDrawer>
+    </CascadingValue>
 
-    <MudDrawer @bind-Open="@_open" ClipMode="DrawerClipMode.Docked" Variant="DrawerVariant.Mini" Elevation="_themeManager.DrawerElevation">
+    <MudDrawer @bind-Open="@_open" ClipMode="DrawerClipMode.Docked" Variant="settings.MiniDrawer?DrawerVariant.Mini:DrawerVariant.Responsive" Elevation="_themeManager.DrawerElevation">
         <NavMenu/>
     </MudDrawer>
     
@@ -69,6 +63,7 @@
     private bool _open = false;
     private bool _openSettings = false;
     private MudThemeProvider _mudThemeProvider = new MudThemeProvider();
+    public AppSettings settings { get; set; }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -78,6 +73,8 @@
             StateHasChanged();
         }
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+        //Load settings
+
     }
 
     private void ToggleDrawer()
@@ -252,6 +249,11 @@
         {
             CurrentProfile = new Profile();
         }
+        
+        settings = new AppSettings();
+        
+        settings.LoadFromFile();
+        Request.Settings = settings;
 
         return base.OnInitializedAsync();
     }
