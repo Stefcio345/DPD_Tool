@@ -15,7 +15,7 @@ public class Request
         client.DefaultRequestHeaders.Add("SOAPAction", url);
         
         var content = new StringContent(body.CreateSoapEnvelope(), Encoding.UTF8, "text/xml");
-        if(Settings.LogRequests) Logger.Log("Request", content.ToString());
+        if(Settings.LogRequests) Logger.Log("Request", await content.ReadAsStringAsync());
 
         var response = await client.PostAsync(url, content);
         var responseString = await response.Content.ReadAsStringAsync();

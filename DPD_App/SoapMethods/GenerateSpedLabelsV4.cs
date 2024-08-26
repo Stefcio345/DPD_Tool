@@ -45,11 +45,20 @@ public class GenerateSpedLabelsV4: SoapBody, IAuthData
         AuthDataV1 = new AuthDataV1();
     }
     
-    public GenerateSpedLabelsV4(string waybill)
+    public GenerateSpedLabelsV4(List<string> waybills)
     {
         DpdServicesParamsV1 = new DpdServicesParamsV1();
         if (DpdServicesParamsV1.Session.Packages.Parcels != null)
-            DpdServicesParamsV1.Session.Packages.Parcels[0].Waybill = waybill;
+        {
+            for (var i = 0; i < waybills.Count; i++)
+            {
+                DpdServicesParamsV1.Session.Packages.Parcels.Add(new Parcels()
+                {
+                    Waybill = waybills[i]
+                });
+            }
+        }
+        
         OutputDocFormatV1 = "PDF";
         OutputDocPageFormatV1 = "LBL_PRINTER";
         OutputLabelType = "BIC3";

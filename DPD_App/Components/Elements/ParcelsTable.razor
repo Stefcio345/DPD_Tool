@@ -1,0 +1,159 @@
+﻿@inject ISnackbar Snackbar
+
+<MudTable @ref="@PackagesTable" T="Parcels" Items="@Parcels" Hover="true" LoadingProgressColor="Color.Info" FixedHeader="true" CommitEditIcon=""
+          SelectedItemChanged="OnSelectedItemChanged"
+          OnCommitEditClick="@(() => Snackbar.Add("Changes have been saved"))"
+          RowEditPreview="BackupItem"
+          RowEditCancel="ResetItemToOriginalValues">
+    <ColGroup>
+        <col style="width: 5%;" />
+        @if (dpdLQ)
+        {
+            <col style="width: 5%;"/>
+        }
+        <col style="width: 4%;" />
+        <col style="width: 4%;" />
+        <col style="width: 4%;" />
+        <col style="width: 20%;" />
+        <col style="width: 20%;" />
+        <col style="width: 20%;" />
+        <col style="width: 20%;" />
+        <col />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Weight</MudTh>
+        @if (dpdLQ)
+        {
+            <MudTh>Adr Weight</MudTh>
+        }
+        <MudTh>Width</MudTh>
+        <MudTh>Height</MudTh>
+        <MudTh>Depth</MudTh>
+        <MudTh>Content</MudTh>
+        <MudTh>Courier data 1</MudTh>
+        <MudTh>Courier data 2</MudTh>
+        <MudTh>Courier data 3</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Weight">@context.Weight</MudTd>
+        @if (dpdLQ)
+        {
+            <MudTd DataLabel="Adr Weight">@context.AdrWeight</MudTd>
+        }
+        <MudTd DataLabel="Width">@context.SizeX</MudTd>
+        <MudTd DataLabel="Height">@context.SizeY</MudTd>
+        <MudTd DataLabel="Depth">@context.SizeZ</MudTd>
+        <MudTd DataLabel="Content">@context.Content</MudTd>
+        <MudTd DataLabel="Courier data 1">@context.CustomerData1</MudTd>
+        <MudTd DataLabel="Courier data 2">@context.CustomerData2</MudTd>
+        <MudTd DataLabel="Courier data 3">@context.CustomerData3</MudTd>
+        <MudIconButton Class="my-2 ml-3" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" OnClick="@((b) => { RemovePackage(@context); StateHasChanged(); })"/>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Weight">
+            <MudTextField @bind-Value="@context.Weight"/>
+        </MudTd>
+        @if (dpdLQ)
+        {
+            <MudTd DataLabel="Adr Weight">
+                <MudTextField @bind-Value="@context.AdrWeight"/>
+            </MudTd>
+        }
+        <MudTd DataLabel="Width">
+            <MudTextField @bind-Value="@context.SizeX"/>
+        </MudTd>
+        <MudTd DataLabel="Height">
+            <MudTextField @bind-Value="@context.SizeY"/>
+        </MudTd>
+        <MudTd DataLabel="Depth">
+            <MudTextField @bind-Value="@context.SizeZ"/>
+        </MudTd>
+        <MudTd DataLabel="Content">
+            <MudTextField @bind-Value="@context.Content"/>
+        </MudTd>
+        <MudTd DataLabel="Courier data 1">
+            <MudTextField @bind-Value="@context.CustomerData1"/>
+        </MudTd>
+        <MudTd DataLabel="Courier data 2">
+            <MudTextField @bind-Value="@context.CustomerData2"/>
+        </MudTd>
+        <MudTd DataLabel="Courier data 3">
+            <MudTextField @bind-Value="@context.CustomerData3"/>
+        </MudTd>
+        <MudStack Row="true" Justify="Justify.SpaceBetween">
+            <MudIconButton Class="my-2 ml-3" Icon="@Icons.Material.Filled.Check" Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="OnCommitEditButtonClicked"/>
+            <MudIconButton Class="my-2 ml-3" Icon="@Icons.Material.Filled.Cancel" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" OnClick="OnCancelEditButtonClicked"/>
+        </MudStack>
+    </RowEditingTemplate>
+    <PagerContent>
+        <MudStack Row="true" Justify="Justify.FlexEnd">
+            <MudIconButton Class="px-8 ma-2" Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="AddPackage"/>
+        </MudStack>
+    </PagerContent>
+</MudTable>
+
+@code
+{
+    [CascadingParameter] public List<Parcels> Parcels { get; set; }
+    [CascadingParameter] public bool dpdLQ { get; set; }
+    private MudTable<Parcels> PackagesTable;
+    private Parcels ParcelBeforeEdit;
+    
+    private void AddPackage()
+    {
+        Parcels.Add(new Parcels());
+    }
+    
+    private void RemovePackage(Parcels parcel)
+    {
+        Parcels.Remove(parcel);
+    }
+    
+    private void OnCommitEditButtonClicked(MouseEventArgs e)
+    {
+        PackagesTable.RowEditCommit?.Invoke(PackagesTable.SelectedItem);
+        PackagesTable.OnCommitEditClick.InvokeAsync(e);
+        PackagesTable.SetSelectedItem(null);
+        StateHasChanged();
+    }
+    
+    private void OnSelectedItemChanged(object element)
+    {
+        PackagesTable.SetEditingItem(element);
+        StateHasChanged();
+    }
+    
+    private void OnCancelEditButtonClicked(MouseEventArgs e)
+    {
+        PackagesTable.RowEditCancel?.Invoke(PackagesTable.SelectedItem);
+        PackagesTable.OnCancelEditClick.InvokeAsync(e);
+        PackagesTable.SetSelectedItem(null);
+    }
+
+    private void BackupItem(object? element)
+    {
+        ParcelBeforeEdit = new Parcels()
+        {
+            Weight = ((Parcels)element).Weight,
+            SizeX = ((Parcels)element).SizeX,
+            SizeY = ((Parcels)element).SizeY,
+            SizeZ = ((Parcels)element).SizeZ,
+            Content = ((Parcels)element).Content,
+            CustomerData1 = ((Parcels)element).CustomerData1,
+            CustomerData2 = ((Parcels)element).CustomerData2,
+            CustomerData3 = ((Parcels)element).CustomerData3,
+        };
+    }
+    
+    private void ResetItemToOriginalValues(object element)
+    {
+        ((Parcels)element).Weight = ParcelBeforeEdit.Weight;
+        ((Parcels)element).SizeX = ParcelBeforeEdit.SizeX;
+        ((Parcels)element).SizeY = ParcelBeforeEdit.SizeY;
+        ((Parcels)element).SizeZ = ParcelBeforeEdit.SizeZ;
+        ((Parcels)element).Content = ParcelBeforeEdit.Content;
+        ((Parcels)element).CustomerData1 = ParcelBeforeEdit.CustomerData1;
+        ((Parcels)element).CustomerData2 = ParcelBeforeEdit.CustomerData2;
+        ((Parcels)element).CustomerData3 = ParcelBeforeEdit.CustomerData3;
+    }
+}

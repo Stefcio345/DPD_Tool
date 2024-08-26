@@ -5,7 +5,7 @@ using DPD_App;
 public class Parcels { 
     
     [XmlElement(ElementName="Parcel")] 
-    public Parcel? Parcel { get; set; } 
+    public List<Parcel>? Parcel { get; set; } 
     
     [XmlElement(ElementName="statusInfo", Namespace="")] 
     public StatusInfo? StatusInfo { get; set; } 

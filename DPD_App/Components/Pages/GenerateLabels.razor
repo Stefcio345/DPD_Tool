@@ -1,10 +1,17 @@
 ﻿@page "/GenerateLabels"
 @using System.Xml
 @using System.Xml.Serialization
+@using Microsoft.AspNetCore.Connections
 
 <PageTitle>GenerateLabels</PageTitle>
 
-<h1>Generate Labels</h1>
+<MudStack Row="true" Justify="Justify.SpaceBetween">
+    <MudText Typo="Typo.h3">Generate Labels</MudText>
+    <MudTabs Elevation="2" Rounded="true" @bind-ActivePanelIndex="activeMode">
+        <MudTabPanel Text="Simple" />
+        <MudTabPanel Text="Extended" />
+    </MudTabs>
+</MudStack>
 
 <MudGrid>
     <MudItem xs="12">
@@ -20,95 +27,109 @@
 
     <MudDivider Class="mt-6 mx-4"/>
     
-    <MudItem xs="9">
-        <MudStack Row="true" Class="mb-4" Spacing="2">
-            <MudText Typo="Typo.h5" >Sender details</MudText>
-            <MudToggleIconButton Size="Size.Small" @bind-Toggled="senderOn"
-                                 Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
-        </MudStack>
-        
-        @if (senderOn)
-        {
-            <MudStack Row="true" Wrap="Wrap.Wrap">
-                <MudTextField @bind-Value="_sender.Company" Label="Company" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_sender.Name" Label="Name" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_sender.Address" Label="Address" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_sender.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
-                <MudSelect T="string" @bind-Value="_sender.CountryCode" Label="CountryCode" Variant="Variant.Outlined">
-                    @foreach (var country in Globals.Countries)
-                    {
-                        <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudTextField @bind-Value="_sender.City" Label="City" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_sender.Phone" Label="Phone" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_sender.Email" Label="Email" Variant="Variant.Outlined"/>
+    <!-- Extended mode -->
+    @if (activeMode == 1)
+    {
+        <MudItem xs="9">
+            <MudStack Row="true" Class="mb-4" Spacing="2">
+                <MudText Typo="Typo.h5">Sender details</MudText>
+                <MudToggleIconButton Size="Size.Small" @bind-Toggled="senderOn"
+                                     Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
             </MudStack>
-        }
 
-        <MudDivider Class="my-6"/>
-        <MudStack Row="true" Class="mb-4" Spacing="2">
-            <MudText Typo="Typo.h5" >Receiver details</MudText>
-            <MudToggleIconButton Size="Size.Small" @bind-Toggled="recieverOn"
-                                 Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
-        </MudStack>
-        @if (recieverOn)
-        {
-            <MudStack Row="true" Wrap="Wrap.Wrap">
-                <MudTextField @bind-Value="_receiver.Company" Label="Company" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_receiver.Name" Label="Name" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_receiver.Address" Label="Address" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_receiver.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
-                <MudSelect T="string" @bind-Value="_receiver.CountryCode" Label="CountryCode" Variant="Variant.Outlined">
-                    @foreach (var country in Globals.Countries)
-                    {
-                        <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudTextField @bind-Value="_receiver.City" Label="City" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_receiver.Phone" Label="Phone" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="_receiver.Email" Label="Email" Variant="Variant.Outlined"/>
+            @if (senderOn)
+            {
+                <MudStack Row="true" Wrap="Wrap.Wrap">
+                    <MudTextField @bind-Value="_sender.Company" Label="Company" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_sender.Name" Label="Name" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_sender.Address" Label="Address" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_sender.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
+                    <MudSelect T="string" @bind-Value="_sender.CountryCode" Label="CountryCode" Variant="Variant.Outlined">
+                        @foreach (var country in Globals.Countries)
+                        {
+                            <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTextField @bind-Value="_sender.City" Label="City" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_sender.Phone" Label="Phone" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_sender.Email" Label="Email" Variant="Variant.Outlined"/>
+                </MudStack>
+            }
+
+            <MudDivider Class="my-6"/>
+            <MudStack Row="true" Class="mb-4" Spacing="2">
+                <MudText Typo="Typo.h5">Receiver details</MudText>
+                <MudToggleIconButton Size="Size.Small" @bind-Toggled="recieverOn"
+                                     Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
             </MudStack>
-        }
-    </MudItem>
-    
-    <MudItem xs="3">
-        <MudStack Row="true" Class="mb-4" Spacing="2">
-            <MudText Typo="Typo.h5" >Services</MudText>
-            <MudToggleIconButton Size="Size.Small" @bind-Toggled="servicesOn"
-                                 Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
-        </MudStack>
-        @if (servicesOn)
-        {
-            <MudStack Spacing="0">
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@cud" Label="Cud"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@rod" Label="Rod"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@inPers" Label="inPers"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@privPers" Label="privPers"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdExpress" Label="dpdExpress"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@pallet" Label="pallet"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@dox" Label="dox"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdLQ" Label="dpdLQ"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@tires" Label="tires"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@tiresExport" Label="tiresExport"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@digitalLabel" Label="digitalLabel"/>
-                <MudCheckBox Dense="true" T="bool" @bind-Value="@pudoToSend" Label="pudoToSend"/>
+            @if (recieverOn)
+            {
+                <MudStack Row="true" Wrap="Wrap.Wrap">
+                    <MudTextField @bind-Value="_receiver.Company" Label="Company" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_receiver.Name" Label="Name" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_receiver.Address" Label="Address" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_receiver.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
+                    <MudSelect T="string" Value="_receiver.CountryCode" Label="CountryCode" Variant="Variant.Outlined" ValueChanged="ReceiverCountryChanged">
+                        @foreach (var country in Globals.Countries)
+                        {
+                            <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTextField @bind-Value="_receiver.City" Label="City" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_receiver.Phone" Label="Phone" Variant="Variant.Outlined"/>
+                    <MudTextField @bind-Value="_receiver.Email" Label="Email" Variant="Variant.Outlined"/>
+                </MudStack>
+            }
+        </MudItem>
+
+        <MudItem xs="3">
+            <MudStack Row="true" Class="mb-4" Spacing="2">
+                <MudText Typo="Typo.h5">Services</MudText>
+                <MudToggleIconButton Size="Size.Small" @bind-Toggled="servicesOn"
+                                     Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
             </MudStack>
-        }
-    </MudItem>
-    
-    <MudDivider Class="mt-6 mx-4"/>
-    <MudItem xs="12">
-        <MudText Typo="Typo.h5" Class="mb-4">Additional details</MudText>
-        <MudStack Row="true">
-            <MudTextField @bind-Value="ref1" Label="ref1" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="ref2" Label="ref2" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="ref3" Label="ref3" Variant="Variant.Outlined" />
-        </MudStack>
-    </MudItem>
-    
-    
-    
+            @if (servicesOn)
+            {
+                <MudPaper>
+                    <MudStack Spacing="0">
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@cud" Label="Cud"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@rod" Label="Rod"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@inPers" Label="inPers"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@privPers" Label="privPers"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdExpress" Label="dpdExpress" Disabled="!international"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@pallet" Label="pallet" Disabled="!international"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@dox" Label="dox"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdLQ" Label="dpdLQ"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@tires" Label="tires"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@tiresExport" Label="tiresExport" Disabled="!international"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@digitalLabel" Label="digitalLabel"/>
+                        <MudCheckBox Dense="true" T="bool" @bind-Value="@pudoToSend" Label="pudoToSend"/>
+                    </MudStack>
+                </MudPaper>
+            }
+        </MudItem>
+
+        <MudDivider Class="mt-4 mx-4"/>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h5" Class="mb-2">Additional details</MudText>
+            <MudStack Row="true">
+                <MudTextField @bind-Value="ref1" Label="ref1" Variant="Variant.Outlined"/>
+                <MudTextField @bind-Value="ref2" Label="ref2" Variant="Variant.Outlined"/>
+                <MudTextField @bind-Value="ref3" Label="ref3" Variant="Variant.Outlined"/>
+            </MudStack>
+        </MudItem>
+
+        <MudDivider Class="mt-4 mx-4"/>
+        <MudItem xs="12">
+            <MudText Typo="Typo.h5" Class="mb-2">Parcels</MudText>
+            <CascadingValue Value="dpdLQ">
+                <CascadingValue Value="Parcels">
+                    <ParcelsTable/>
+                </CascadingValue>
+            </CascadingValue>
+        </MudItem>
+    }
+
     <MudItem xs="3">
         <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="GenerateLabel">
             @if (_processing)
@@ -141,7 +162,7 @@
         }
     </MudItem>
     <MudItem xs="6">
-        @if (waybill is not null)
+        @if (waybills.Count > 0)
         {
             <MudCard style="height:750px">
                 <MudCardContent>
@@ -165,6 +186,7 @@
 
 @code{
     //Package data
+    List<Parcels> Parcels = [new Parcels()];
     bool cud;
     bool rod;
     bool inPers;
@@ -179,6 +201,7 @@
     bool pudoToSend;
     Receiver _receiver;
     Sender _sender;
+    bool international;
     string ref1;
     string ref2;
     string ref3;
@@ -189,11 +212,12 @@
     string _url = Globals.WSDL_DEMO_ADDRESS;
     string _request = "";
     string _response = "";
-    private string waybill;
+    private List<string> waybills = new List<string>();
     private bool _processing = false;
     public bool recieverOn = true;
     public bool senderOn = true;
     public bool servicesOn = true;
+    public int activeMode;
 
     private string label;
     private string trackTraceLink;
@@ -219,6 +243,7 @@
     async Task GenerateLabel()
     {
         _processing = true;
+        waybills.Clear();
         //Create new package
         var newPackage = new GeneratePackagesNumbersV9();
         newPackage.UpdateAuthData(CurrentProfile);
@@ -238,6 +263,7 @@
 
         newPackage.OpenUMLFeV11.Packages.Receiver = _receiver;
         newPackage.OpenUMLFeV11.Packages.Sender = _sender;
+        newPackage.OpenUMLFeV11.Packages.Parcels = Parcels;
 
         _response = await Request.CallSoapWebService(_url, newPackage);
         
@@ -249,19 +275,22 @@
             result = (Envelope)serializer.Deserialize(reader);
             try
             {
-                waybill = result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel.Waybill;
-                trackTraceLink = TrackingLink.getTrackTraceLink(waybill);
-                geoPostLink = TrackingLink.getGeoPostLink(waybill);
+                foreach (var parcel in result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel)
+                {
+                    Console.WriteLine(parcel.Waybill);
+                    waybills.Add(parcel.Waybill);
+                }
+                //trackTraceLink = TrackingLink.getTrackTraceLink(waybill);
+                //geoPostLink = TrackingLink.getGeoPostLink(waybill);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                waybill = "Error";
             }
         }
         
         //Generate Label
-        var newLabel = new GenerateSpedLabelsV4(waybill);
+        var newLabel = new GenerateSpedLabelsV4(waybills);
         _response = await Request.CallSoapWebService(_url, newLabel);
         
         //Deserialize the label from response
@@ -273,5 +302,11 @@
         
         _processing = false;
     }
-    
+
+    private void ReceiverCountryChanged(string s)
+    {
+        _receiver.CountryCode = s;
+        international = (s != "PL");
+    }
+
 }

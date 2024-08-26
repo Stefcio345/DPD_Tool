@@ -1,6 +1,7 @@
 using System.Xml.Serialization;
 using DPD_App;
 using DPD_App.Components;
+using MudBlazor;
 using MudBlazor.Services;
 
 //Create necessary directories
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add mudBlazor services
 builder.Services.AddMudServices();
+builder.Services.AddMudMarkdownServices();
 builder.WebHost.UseStaticWebAssets();
 
 // Add services to the container.

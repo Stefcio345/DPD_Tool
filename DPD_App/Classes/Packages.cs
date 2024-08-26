@@ -9,7 +9,7 @@ public class Packages {
     public Package? Package { get; set; }
     
     [XmlElement("parcels")]
-    public Parcels[]? Parcels { get; set; }
+    public List<Parcels>? Parcels { get; set; }
 
     [XmlElement(ElementName = "payerType", Namespace = "")]
     public string? PayerType { get; set; }
