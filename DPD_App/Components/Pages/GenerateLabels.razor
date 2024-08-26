@@ -1,4 +1,5 @@
 ﻿@page "/GenerateLabels"
+@using System.Text.RegularExpressions
 @using System.Xml
 @using System.Xml.Serialization
 @using Microsoft.AspNetCore.Connections
@@ -16,12 +17,14 @@
 <MudGrid>
     <MudItem xs="12">
         <MudStack Row="true">
-        <MudTextField @bind-Value="CurrentProfile.Login" Label="Client number" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-        <MudTextField @bind-Value="CurrentProfile.Password" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-        <MudSelect T="string" @bind-Value="_url" Label="Select enviroment">
-            <MudSelectItem Value="@(Globals.WSDL_ADDRESS)">PROD</MudSelectItem>
-            <MudSelectItem Value="@(Globals.WSDL_DEMO_ADDRESS)">DEMO</MudSelectItem>
-        </MudSelect>
+            <MudTextField @ref="LoginField" T="string" Value="@CurrentProfile.Login" Label="Login" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged" Immediate="true"></MudTextField>
+            <MudTextField @ref="PasswordField" Value="CurrentProfile.Password" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            <MudTextField @ref="MasterFidField" Value="CurrentProfile.MasterFid" Label="MasterFid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            <MudTextField @ref="FidField" Value="CurrentProfile.FID" Label="Fid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            <MudSelect T="string" @bind-Value="_url" Label="Select enviroment">
+                <MudSelectItem Value="@(Globals.WSDL_ADDRESS)">PROD</MudSelectItem>
+                <MudSelectItem Value="@(Globals.WSDL_DEMO_ADDRESS)">DEMO</MudSelectItem>
+            </MudSelect>
         </MudStack>
     </MudItem>
 
@@ -110,17 +113,16 @@
         </MudItem>
 
         <MudDivider Class="mt-4 mx-4"/>
-        <MudItem xs="12">
+        <MudItem xs="3">
             <MudText Typo="Typo.h5" Class="mb-2">Additional details</MudText>
-            <MudStack Row="true">
-                <MudTextField @bind-Value="ref1" Label="ref1" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="ref2" Label="ref2" Variant="Variant.Outlined"/>
-                <MudTextField @bind-Value="ref3" Label="ref3" Variant="Variant.Outlined"/>
+            <MudStack>
+                <MudTextField Margin="Margin.Dense" @bind-Value="ref1" Label="ref1" Variant="Variant.Outlined"/>
+                <MudTextField Margin="Margin.Dense" @bind-Value="ref2" Label="ref2" Variant="Variant.Outlined"/>
+                <MudTextField Margin="Margin.Dense" @bind-Value="ref3" Label="ref3" Variant="Variant.Outlined"/>
             </MudStack>
         </MudItem>
-
-        <MudDivider Class="mt-4 mx-4"/>
-        <MudItem xs="12">
+        
+        <MudItem xs="9">
             <MudText Typo="Typo.h5" Class="mb-2">Parcels</MudText>
             <CascadingValue Value="dpdLQ">
                 <CascadingValue Value="Parcels">
@@ -128,6 +130,8 @@
                 </CascadingValue>
             </CascadingValue>
         </MudItem>
+        
+        <MudDivider Class="mt-4 mx-4"/>
     }
 
     <MudItem xs="3">
@@ -205,6 +209,12 @@
     string ref1;
     string ref2;
     string ref3;
+
+    private void Callback(string obj)
+    {
+        Console.WriteLine(obj);
+    }
+
 }
 
 @code {
@@ -222,6 +232,11 @@
     private string label;
     private string trackTraceLink;
     private string geoPostLink;
+
+    MudTextField<string>? LoginField = new MudTextField<string>();
+    MudTextField<string>? PasswordField;
+    MudTextField<string>? MasterFidField;
+    MudTextField<string>? FidField;
     
     //Deserialziacja
     //var request = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header/><soapenv:Body><dpd:generatePackagesNumbersV9 xmlns:dpd=\"http://dpdservices.dpd.com.pl/\"><openUMLFeV11><packages><parcels><weight>32</weight><weightAdr>20</weightAdr><sizeX>10</sizeX><sizeY>20</sizeY><sizeZ>30</sizeZ><content>Puszka pandory 1</content><customerData1>klienta dane 11</customerData1><customerData2>klienta dane 22</customerData2><customerData3>klienta dane 33</customerData3></parcels><parcels><weight>33.5</weight><weightAdr>33.5</weightAdr><sizeX>10</sizeX><sizeY>20</sizeY><sizeZ>30</sizeZ><content>Puszka pandory 2</content><customerData1>klienta dane 12</customerData1><customerData2>klienta dane 22</customerData2><customerData3>klienta dane 33</customerData3></parcels><payerType>THIRD_PARTY</payerType><thirdPartyFID>1495</thirdPartyFID><receiver><company/><name>3434</name><city>Warszawa</city><address>34</address><countryCode>PL</countryCode><postalCode>99418</postalCode><phone>123123123</phone><email>pan@chcepaczke.pl</email></receiver><sender><company>qw</company><name>wq</name><address>Gajdy 39</address><city>Radom</city><countryCode>PL</countryCode><postalCode>02274</postalCode><phone>543332222</phone><email>ktos@pocztowy.pl</email></sender><ref1>cos tam 1</ref1><ref2>cos tam 2</ref2><ref3>cos tam 3</ref3><services><rod/><declaredValue><amount>12</amount><currency>PLN</currency></declaredValue></services></packages></openUMLFeV11><pkgNumsGenerationPolicyV1>ALL_OR_NOTHING</pkgNumsGenerationPolicyV1><langCode>PL</langCode><authDataV1><login>test</login><masterFid>1495</masterFid><password>thetu4Ee</password></authDataV1></dpd:generatePackagesNumbersV9></soapenv:Body></soapenv:Envelope>";
@@ -246,7 +261,7 @@
         waybills.Clear();
         //Create new package
         var newPackage = new GeneratePackagesNumbersV9();
-        newPackage.UpdateAuthData(CurrentProfile);
+        newPackage.UpdateAuthData(new Profile("", LoginField.Value, PasswordField.Value, MasterFidField.Value, FidField.Value));
         
         if (cud) newPackage.OpenUMLFeV11.Packages.Services.cud = new object();
         if (rod) newPackage.OpenUMLFeV11.Packages.Services.rod = new object();
@@ -307,6 +322,17 @@
     {
         _receiver.CountryCode = s;
         international = (s != "PL");
+    }
+
+    //TODO Fix this
+    private void LoginChanged(string login)
+    {
+        if (Regex.IsMatch(login, "01$"))
+        {
+            var fid = login[..^2];
+            FidField.SetText(fid);
+            MasterFidField.SetText(fid);
+        }
     }
 
 }
