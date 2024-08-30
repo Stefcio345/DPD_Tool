@@ -12,7 +12,7 @@ public class MarkdownConverter
     static readonly Regex HeaderChecker = new Regex(@"^[#]+$");
     public static string ToHtml(string text)
     {
-        if (text == "")
+        if (text is null)
         {
             return "";
         }

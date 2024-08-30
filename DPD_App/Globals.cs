@@ -43,7 +43,7 @@ public class Globals
     
     public static List<Profile> Profiles = new List<Profile>
     {
-        new Profile("Default", "test", "thetu4Ee", "1495","1495"),
+        new Profile("Default Test", "test", "thetu4Ee", "1495","1495", "","", true),
     };
 
     public static void SaveState()
@@ -216,7 +216,7 @@ public class Profile: ICloneable
         PudoKey = "";
     }
 
-    public Profile(string profileName, string login, string password, string masterFid, string fid, string widgetKey = "", string pudoKey ="")
+    public Profile(string profileName, string login, string password, string masterFid, string fid, string widgetKey = "", string pudoKey ="", bool isChoosen=false)
     {
         ProfileName = profileName;
         Login = login;
@@ -225,6 +225,7 @@ public class Profile: ICloneable
         FID = fid;
         WidgetKey = widgetKey;
         PudoKey = pudoKey;
+        IsChoosen = isChoosen;
     }
 
     public override string ToString()
