@@ -17,10 +17,10 @@
 <MudGrid>
     <MudItem xs="12">
         <MudStack Row="true">
-            <MudTextField @ref="LoginField" T="string" Value="@CurrentProfile.Login" Label="Login" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged" Immediate="true"></MudTextField>
-            <MudTextField @ref="PasswordField" Value="CurrentProfile.Password" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            <MudTextField @ref="MasterFidField" Value="CurrentProfile.MasterFid" Label="MasterFid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            <MudTextField @ref="FidField" Value="CurrentProfile.FID" Label="Fid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            <MudTextField @ref="LoginField" T="string" Label="Login" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged" Immediate="true"></MudTextField>
+            <MudTextField @ref="PasswordField" T="string" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            <MudTextField @ref="MasterFidField" T="string" Label="MasterFid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            <MudTextField @ref="FidField" T="string" Label="Fid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             <MudSelect T="string" @bind-Value="_url" Label="Select enviroment">
                 <MudSelectItem Value="@(Globals.WSDL_ADDRESS)">PROD</MudSelectItem>
                 <MudSelectItem Value="@(Globals.WSDL_DEMO_ADDRESS)">DEMO</MudSelectItem>
@@ -218,7 +218,18 @@
 }
 
 @code {
-    [CascadingParameter] public Profile CurrentProfile { get; set; }
+    Profile _currentProfile;
+
+    [CascadingParameter]
+    public Profile CurrentProfile
+    {
+        get => _currentProfile;
+        set
+        {
+            _currentProfile = value;
+            UpdateCredentials(_currentProfile);
+        }
+    }
     string _url = Globals.WSDL_DEMO_ADDRESS;
     string _request = "";
     string _response = "";
@@ -233,7 +244,7 @@
     private string trackTraceLink;
     private string geoPostLink;
 
-    MudTextField<string>? LoginField = new MudTextField<string>();
+    MudTextField<string>? LoginField;
     MudTextField<string>? PasswordField;
     MudTextField<string>? MasterFidField;
     MudTextField<string>? FidField;
@@ -253,6 +264,12 @@
         _receiver = new Receiver();
         _sender = new Sender();
         return base.OnInitializedAsync();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender) UpdateCredentials(CurrentProfile);
+        return base.OnAfterRenderAsync(firstRender);
     }
 
     async Task GenerateLabel()
@@ -323,8 +340,7 @@
         _receiver.CountryCode = s;
         international = (s != "PL");
     }
-
-    //TODO Fix this
+    
     private void LoginChanged(string login)
     {
         if (Regex.IsMatch(login, "01$"))
@@ -333,6 +349,14 @@
             FidField.SetText(fid);
             MasterFidField.SetText(fid);
         }
+    }
+
+    private void UpdateCredentials(Profile profile)
+    {
+        if (LoginField != null) LoginField.SetText(profile.Login);
+        PasswordField.SetText(profile.Password);
+        MasterFidField.SetText(profile.MasterFid);
+        FidField.SetText(profile.FID);
     }
 
 }
