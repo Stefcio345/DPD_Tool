@@ -2,19 +2,26 @@
 
 public class TrackingLink
 {
-    public static string baselink { get; set; } =
-        "https://tracktrace.dpd.com.pl/parcelDetails?typ=1";
+    public string waybill;
 
-    public static string baseGeoPost = "https://www.dpdgroup.com/pl/mydpd/my-parcels/search?lang=PL&parcelNumber=";
-
-    public static string getTrackTraceLink(string waybill)
+    public TrackingLink(string waybill)
     {
-        return baselink + "&p1=" + waybill;
+        this.waybill = waybill;
     }
 
-    public static string getGeoPostLink(string waybill)
+    string _baselink { get; set; } =
+        "https://tracktrace.dpd.com.pl/parcelDetails?typ=1";
+
+    string _baseGeoPost = "https://www.dpdgroup.com/pl/mydpd/my-parcels/search?lang=PL&parcelNumber=";
+
+    public string getTrackTraceLink()
     {
-        return baseGeoPost + waybill;
+        return _baselink + "&p1=" + waybill;
+    }
+
+    public string getGeoPostLink()
+    {
+        return _baseGeoPost + waybill;
     }
     
 }

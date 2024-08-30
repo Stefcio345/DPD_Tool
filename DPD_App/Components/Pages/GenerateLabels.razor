@@ -5,7 +5,7 @@
 
 <PageTitle>GenerateLabels</PageTitle>
 
-<MudStack Row="true" Justify="Justify.SpaceBetween">
+<MudStack Row="true" Justify="Justify.SpaceBetween" Class="mb-4">
     <MudText Typo="Typo.h3">Generate Labels</MudText>
     <MudTabs Elevation="2" Rounded="true" @bind-ActivePanelIndex="activeMode">
         <MudTabPanel Text="Simple" />
@@ -158,28 +158,40 @@
         else
         {
             <MudCard>
-                <MudCardContent>
+                <MudCardContent Style="text-align: center">
                     <h3>Label</h3>
                 </MudCardContent>
             </MudCard>
         }
     </MudItem>
-    <MudItem xs="6">
+    <MudItem xs="3">
         @if (waybills.Count > 0)
         {
             <MudCard style="height:750px">
                 <MudCardContent>
-                    <MudLink Style="font-size: xx-large" Href="@trackTraceLink">TrackTrace</MudLink>
-                    <div>
-                        <MudLink Style="font-size: xx-large" Href="@geoPostLink">GeoPost</MudLink>
-                    </div>
+                    <MudTable Items="@TrackingLinks" Breakpoint="Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh>Waybill</MudTh>
+                            <MudTh>GeoPost</MudTh>
+                            <MudTh>TrackTrace</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Waybill" Style="font-size: large">@context.waybill</MudTd>
+                            <MudTd DataLabel="GeoPost">
+                                <MudLink Style="font-size: large" Href="@context.getGeoPostLink()">GeoPost</MudLink>
+                            </MudTd>
+                            <MudTd DataLabel="TrackTrace">
+                                <MudLink Style="font-size: large" Href="@context.getTrackTraceLink()">TrackTrace</MudLink>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
                 </MudCardContent>
             </MudCard>
         }
         else
         {
             <MudCard>
-                <MudCardContent>
+                <MudCardContent Style="text-align: center">
                     <h3>Tracking</h3>
                 </MudCardContent>
             </MudCard>
@@ -235,8 +247,7 @@
     public int activeMode;
 
     private string label;
-    private string trackTraceLink;
-    private string geoPostLink;
+    private List<TrackingLink> TrackingLinks = new List<TrackingLink>();
 
     MudTextField<string>? LoginField;
     MudTextField<string>? PasswordField;
@@ -270,6 +281,7 @@
     {
         _processing = true;
         waybills.Clear();
+        TrackingLinks.Clear();
         //Create new package
         var newPackage = new GeneratePackagesNumbersV9();
         newPackage.UpdateAuthData(new Profile("", LoginField.Value, PasswordField.Value, MasterFidField.Value, FidField.Value));
@@ -304,9 +316,8 @@
                 foreach (var parcel in result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel)
                 {
                     waybills.Add(parcel.Waybill);
+                    TrackingLinks.Add(new TrackingLink(parcel.Waybill));
                 }
-                //trackTraceLink = TrackingLink.getTrackTraceLink(waybill);
-                //geoPostLink = TrackingLink.getGeoPostLink(waybill);
             }
             catch (Exception e)
             {
