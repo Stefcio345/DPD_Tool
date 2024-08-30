@@ -1,15 +1,20 @@
 ﻿@inject ISnackbar Snackbar
 
-<MudTable @ref="@PackagesTable" T="Parcels" Items="@Parcels" Hover="true" LoadingProgressColor="Color.Info" FixedHeader="true" CommitEditIcon=""
-          SelectedItemChanged="OnSelectedItemChanged"
-          OnCommitEditClick="@(() => Snackbar.Add("Changes have been saved"))"
+<style>
+    .mud-table-cell:last-of-type .mud-tooltip-root:nth-of-type(1) .mud-svg-icon { fill: green; font-size: 1.5rem;}
+    .mud-table-cell:last-of-type .mud-tooltip-root:nth-of-type(2) .mud-svg-icon { fill: red; font-size: 1.5rem;}
+</style>
+
+<MudTable Items="@Parcels" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" Bordered="true" CanCancelEdit="true" 
+          EditTrigger="TableEditTrigger.EditButton"
           RowEditPreview="BackupItem"
+          OnCommitEditClick="@(() => Snackbar.Add("Changes have been saved", Severity.Success))"
           RowEditCancel="ResetItemToOriginalValues">
     <ColGroup>
         <col style="width: 5%;" />
         @if (dpdLQ)
         {
-            <col style="width: 5%;"/>
+        <col style="width: 5%;"/>
         }
         <col style="width: 4%;" />
         <col style="width: 4%;" />
@@ -18,7 +23,6 @@
         <col style="width: 20%;" />
         <col style="width: 20%;" />
         <col style="width: 20%;" />
-        <col />
     </ColGroup>
     <HeaderContent>
         <MudTh>Weight</MudTh>
@@ -47,7 +51,6 @@
         <MudTd DataLabel="Courier data 1">@context.CustomerData1</MudTd>
         <MudTd DataLabel="Courier data 2">@context.CustomerData2</MudTd>
         <MudTd DataLabel="Courier data 3">@context.CustomerData3</MudTd>
-        <MudIconButton Class="my-2 ml-3" Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" OnClick="@((b) => { RemovePackage(@context); StateHasChanged(); })"/>
     </RowTemplate>
     <RowEditingTemplate>
         <MudTd DataLabel="Weight">
@@ -55,9 +58,9 @@
         </MudTd>
         @if (dpdLQ)
         {
-            <MudTd DataLabel="Adr Weight">
-                <MudTextField @bind-Value="@context.AdrWeight"/>
-            </MudTd>
+        <MudTd DataLabel="Adr Weight">
+            <MudTextField @bind-Value="@context.AdrWeight"/>
+        </MudTd>
         }
         <MudTd DataLabel="Width">
             <MudTextField @bind-Value="@context.SizeX"/>
@@ -80,57 +83,40 @@
         <MudTd DataLabel="Courier data 3">
             <MudTextField @bind-Value="@context.CustomerData3"/>
         </MudTd>
-        <MudStack Row="true" Justify="Justify.SpaceBetween">
-            <MudIconButton Class="my-2 ml-3" Icon="@Icons.Material.Filled.Check" Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="OnCommitEditButtonClicked"/>
-            <MudIconButton Class="my-2 ml-3" Icon="@Icons.Material.Filled.Cancel" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" OnClick="OnCancelEditButtonClicked"/>
-        </MudStack>
     </RowEditingTemplate>
     <PagerContent>
+        <MudDivider Class="ma-0 pa-0"/>
         <MudStack Row="true" Justify="Justify.FlexEnd">
-            <MudIconButton Class="px-8 ma-2" Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="AddPackage"/>
+            <MudIconButton Class="px-9 ma-2" Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="AddPackage"/>
         </MudStack>
     </PagerContent>
+    <EditButtonContent Context="button">
+        <MudStack Justify="Justify.SpaceBetween" Row="true">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Info" Size="Size.Medium" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" OnClick="@((b) => { RemovePackage(button.Item); Snackbar.Add("An Item has been removed", Severity.Error); StateHasChanged(); })"/>
+        </MudStack>
+    </EditButtonContent>
 </MudTable>
-
-@code
-{
+    
+@code {
     [CascadingParameter] public List<Parcels> Parcels { get; set; }
     [CascadingParameter] public bool dpdLQ { get; set; }
-    private MudTable<Parcels> PackagesTable;
     private Parcels ParcelBeforeEdit;
+    
+    //TODO Make edit buttons nice
     
     private void AddPackage()
     {
         Parcels.Add(new Parcels());
     }
     
-    private void RemovePackage(Parcels parcel)
+    private void RemovePackage(object currentParcel)
     {
+        var parcel = (Parcels)currentParcel;
         Parcels.Remove(parcel);
     }
     
-    private void OnCommitEditButtonClicked(MouseEventArgs e)
-    {
-        PackagesTable.RowEditCommit?.Invoke(PackagesTable.SelectedItem);
-        PackagesTable.OnCommitEditClick.InvokeAsync(e);
-        PackagesTable.SetSelectedItem(null);
-        StateHasChanged();
-    }
-    
-    private void OnSelectedItemChanged(object element)
-    {
-        PackagesTable.SetEditingItem(element);
-        StateHasChanged();
-    }
-    
-    private void OnCancelEditButtonClicked(MouseEventArgs e)
-    {
-        PackagesTable.RowEditCancel?.Invoke(PackagesTable.SelectedItem);
-        PackagesTable.OnCancelEditClick.InvokeAsync(e);
-        PackagesTable.SetSelectedItem(null);
-    }
-
-    private void BackupItem(object? element)
+    private void BackupItem(object element)
     {
         ParcelBeforeEdit = new Parcels()
         {

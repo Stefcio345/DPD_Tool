@@ -1,4 +1,5 @@
-﻿@using System.ComponentModel
+﻿
+
 <MudDrawerHeader>
     <MudText Typo="Typo.h6">Settings</MudText>
 </MudDrawerHeader>
@@ -9,6 +10,13 @@
     </MudPaper>
     <MudPaper>
         <MudSwitch Class="px-4" T="bool" Value="settings.MiniDrawer" ThumbIcon="@(settings.MiniDrawer == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.MiniDrawer == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.MiniDrawer = b; settings.SaveToFile(); StateHasChanged();}">Mini Drawer</MudSwitch>
+    </MudPaper>
+    <MudPaper>
+        <MudSwitch Class="px-4" T="bool" Value="settings.SaveLabelsToFile" ThumbIcon="@(settings.SaveLabelsToFile == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.SaveLabelsToFile == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.SaveLabelsToFile = b; settings.SaveToFile(); StateHasChanged();}">Save labels to file</MudSwitch>
+        @if (settings.SaveLabelsToFile)
+        {
+            <MudTextField T="string" Label="Save Location" Value="settings.SaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => {settings.SaveLocation = b; settings.SaveToFile(); StateHasChanged();}"></MudTextField>
+        }
     </MudPaper>
 </MudStack>
 

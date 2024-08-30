@@ -9,10 +9,12 @@ using MudBlazor.Services;
 Directory.CreateDirectory(Globals.SaveLocation);
 Globals.LoadState();
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add mudBlazor services
+builder.Services.AddSingleton<AppState>();
+builder.Services.AddScoped<AppState>();
+
 builder.Services.AddMudServices();
 builder.Services.AddMudMarkdownServices();
 builder.WebHost.UseStaticWebAssets();

@@ -68,8 +68,13 @@ public class Globals
 public class AppSettings
 {
 
-    public bool LogRequests;
-    public bool MiniDrawer;
+    public bool LogRequests = false;
+    
+    public bool MiniDrawer = false;
+    
+    public bool SaveLabelsToFile = false;
+    public string SaveLocation = "Labels";
+
 
     public void LoadFromFile()
     {
@@ -78,6 +83,8 @@ public class AppSettings
             var temp = SaveKeeper.LoadFromFile<AppSettings>("Settings.xml");
             LogRequests = temp.LogRequests;
             MiniDrawer = temp.MiniDrawer;
+            SaveLabelsToFile = temp.SaveLabelsToFile;
+            SaveLocation = temp.SaveLocation;
         }
         else
         {

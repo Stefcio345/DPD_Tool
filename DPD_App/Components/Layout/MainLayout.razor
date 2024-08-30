@@ -1,6 +1,7 @@
 ﻿@using System.ComponentModel
 @inherits LayoutComponentBase
 @inject ISnackbar Snackbar
+@inject AppState AppState
 
 <MudPopoverProvider/>
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" DefaultScrollbar="false" Theme="_themeManager.Theme"/>
@@ -20,10 +21,12 @@
         </MudPaper>
         
         <MudSpacer />
+        
+        <CascadingValue Value="AppState.Settings">
+            <ProfileMenu />
+        </CascadingValue>
 
-        <MudIconButton OnClick="OpenProfilesSettings" Icon="@Icons.Material.Filled.AccountCircle" Variant="Variant.Filled" Size="Size.Large" />
-
-        <MudText Class="mx-4" Typo="Typo.h5">Current Profile: @CurrentProfile.ProfileName</MudText>
+        <MudText Class="mx-4" Typo="Typo.h5">Current Profile: @AppState.CurrentProfile.ProfileName</MudText>
         
         <MudSpacer />
 
@@ -40,17 +43,17 @@
 
     </MudAppBar>
 
-    <CascadingValue Value="settings">
+    <CascadingValue Value="AppState.Settings">
         <MudDrawer @bind-Open="@_openSettings" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary">
             <Settings/>
         </MudDrawer>
     </CascadingValue>
 
-    <MudDrawer @bind-Open="@_open" ClipMode="DrawerClipMode.Docked" Variant="settings.MiniDrawer?DrawerVariant.Mini:DrawerVariant.Responsive" Elevation="_themeManager.DrawerElevation">
+    <MudDrawer @bind-Open="@_open" ClipMode="DrawerClipMode.Docked" Variant="AppState.Settings.MiniDrawer?DrawerVariant.Mini:DrawerVariant.Responsive" Elevation="_themeManager.DrawerElevation">
         <NavMenu/>
     </MudDrawer>
     
-    <CascadingValue Value="CurrentProfile">
+    <CascadingValue Value="AppState.CurrentProfile">
         <MudMainContent Class="pt-20 px-8">
             @Body
         </MudMainContent>
@@ -63,8 +66,7 @@
     private bool _open = false;
     private bool _openSettings = false;
     private MudThemeProvider _mudThemeProvider = new MudThemeProvider();
-    public AppSettings settings { get; set; }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -72,9 +74,19 @@
             _isDarkMode = await _mudThemeProvider.GetSystemPreference();
             StateHasChanged();
         }
+
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
         //Load settings
 
+    }
+    
+    protected override Task OnInitializedAsync()
+    {
+        AppState.OnChange += StateHasChanged;
+        AppState.LoadProfile();
+        AppState.LoadSettings();
+        
+        return base.OnInitializedAsync();
     }
 
     private void ToggleDrawer()
@@ -101,225 +113,9 @@
         StateHasChanged();
     }
 
-}
-
-<!-- Profiles -->
-<MudDialog @bind-Visible="_profileMenuVisible" Options="_dialogOptions">
-    <TitleContent>
-        <MudStack Row="true" Justify="Justify.Center">
-            <MudIcon Icon="@Icons.Material.Filled.AccountBox" Size="Size.Large" Class="pt-1 mr-3"/>
-            <MudText Typo="Typo.h4">Profiles</MudText>
-        </MudStack>
-    </TitleContent>
-    <DialogContent>
-        <MudList Padding="true" T="Profile" SelectedValue="CurrentProfile" SelectionMode="SelectionMode.SingleSelection" SelectedValueChanged="OnProfileChange">
-            @foreach (Profile profile in Globals.Profiles)
-            {
-                <MudListItem Class="pa-1 my-2" Value="@profile">
-                    <MudStack Justify="Justify.SpaceBetween" Row="true">
-                        <h3>@profile.ProfileName</h3>
-                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => { EditProfile(@profile); })"/>
-                    </MudStack>
-                </MudListItem>
-            }
-        </MudList>
-        
-        <!-- Add profile -->
-        <MudStack Class="mb-3">
-            <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewProfile"></MudButton>
-        </MudStack>
-        
-    </DialogContent>
-</MudDialog>
-
-<!-- Profiles settings -->
-<MudDialog @bind-Visible="_profileSettingsVisible" Options="_dialogOptions">
-    <TitleContent>
-        <MudStack Row="true" Justify="Justify.Center">
-            <MudText Typo="Typo.h4">Profile: @profileToEdit.ProfileName</MudText>
-        </MudStack>
-    </TitleContent>
-    <DialogContent>
-        <MudPaper Class="pa-4">
-            <MudForm @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudStack Spacing="5">
-                    <MudTextField T="string" @bind-Value="profileToEdit.ProfileName" Label="Profile name" Required="true" RequiredError="Profile name is required!"/>
-                    
-                    <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" @bind-Value="profileToEdit.Login" Label="Login" Required="true" RequiredError="Login is required!"/>
-                        <MudTextField T="string" @bind-Value="profileToEdit.Password" Label="Password"
-                                      InputType="InputType.Password" Required="true"
-                                      RequiredError="Password is required!"/>
-                    </MudStack>
-                    
-                    <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" @bind-Value="profileToEdit.MasterFid" Label="MasterFid"/>
-                        <MudTextField T="string" @bind-Value="profileToEdit.FID" Label="Fid" Required="true" RequiredError="Fid is required!"/>
-                    </MudStack>
-                    
-                    <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" @bind-Value="profileToEdit.WidgetKey" Label="Widget Key"/>
-                        <MudTextField T="string" @bind-Value="profileToEdit.PudoKey" Label="PUDO Key"/>
-                    </MudStack>
-                    
-                </MudStack>
-
-                <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mt-6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteProfile">Delete</MudButton>
-                    <div>
-                        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel" OnClick="() => { _profileSettingsVisible = false; }">Cancel</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(!success)" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveChangesToProfile">Save</MudButton>
-                    </div>
-                </MudStack>
-            </MudForm>
-        </MudPaper>
-    </DialogContent>
-    <DialogActions>
-    </DialogActions>
-</MudDialog>
-
-<!-- New Profile dialog -->
-<MudDialog @bind-Visible="_newProfileVisible" Options="_dialogOptions">
-    <TitleContent>
-        <MudStack Row="true" Justify="Justify.Center">
-            <MudText Typo="Typo.h4">New Profile</MudText>
-        </MudStack>
-    </TitleContent>
-    <DialogContent>
-        <MudPaper Class="pa-4">
-            <MudForm @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudStack Spacing="5">
-                    <MudTextField T="string" @bind-Value="NewProfile.ProfileName" Label="Profile name" Required="true" RequiredError="Profile name is required!"/>
-
-                    <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" @bind-Value="NewProfile.Login" Label="Login" Required="true" RequiredError="Login is required!"/>
-                        <MudTextField T="string" @bind-Value="NewProfile.Password" Label="Password"
-                                      InputType="InputType.Password" Required="true"
-                                      RequiredError="Password is required!"/>
-                    </MudStack>
-
-                    <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" @bind-Value="NewProfile.MasterFid" Label="MasterFid"/>
-                        <MudTextField T="string" @bind-Value="NewProfile.FID" Label="Fid" Required="true" RequiredError="Fid is required!"/>
-                    </MudStack>
-
-                    <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" @bind-Value="NewProfile.WidgetKey" Label="Widget Key"/>
-                        <MudTextField T="string" @bind-Value="NewProfile.PudoKey" Label="PUDO Key"/>
-                    </MudStack>
-
-                </MudStack>
-
-                <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mt-6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel" OnClick="() => { _newProfileVisible = false; }">Cancel</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(!success)" StartIcon="@Icons.Material.Filled.Save" OnClick="CreateNewProfile">Save</MudButton>
-                </MudStack>
-            </MudForm>
-        </MudPaper>
-    </DialogContent>
-    <DialogActions>
-    </DialogActions>
-</MudDialog>
-
-
-@code
-{
-    //Profiles
-    public Profile CurrentProfile { get; set; }
-    private bool _profileSettingsVisible;
-    private bool _profileMenuVisible;
-    private bool _newProfileVisible;
-    private Profile profileToEdit;
-    private Profile CurrentylEdited;
-    private Profile NewProfile;
-    private readonly DialogOptions _dialogOptions = new() { FullWidth = true };
-    
-    bool success;
-    string[] errors = { };
-
-    protected override Task OnInitializedAsync()
+    public void Refresh()
     {
-        foreach (var profile in Globals.Profiles)
-        {
-            if(profile.IsChoosen)
-                CurrentProfile = profile;
-        }
-
-        if (CurrentProfile is null)
-        {
-            CurrentProfile = new Profile();
-        }
-        
-        settings = new AppSettings();
-        
-        settings.LoadFromFile();
-        Request.Settings = settings;
-
-        return base.OnInitializedAsync();
-    }
-
-    void OpenProfilesSettings()
-    {
-        _profileMenuVisible = true;
-    }
-
-    private void OnProfileChange(Profile obj)
-    {
-        CurrentProfile.IsChoosen = false;
-        CurrentProfile = obj;
-        CurrentProfile.IsChoosen = true;
-        //TODO save after quitting program
-        Globals.SaveState();
         StateHasChanged();
     }
 
-    private void EditProfile(Profile profile)
-    {
-        CurrentylEdited = profile;
-        profileToEdit = (Profile)profile.Clone();
-        _profileSettingsVisible = true;
-        StateHasChanged();
-    }
-
-    private void SaveChangesToProfile(MouseEventArgs obj)
-    {
-        CurrentProfile.ProfileName = profileToEdit.ProfileName;
-        CurrentProfile.Login = profileToEdit.Login;
-        CurrentProfile.Password = profileToEdit.Password;
-        CurrentProfile.MasterFid = profileToEdit.MasterFid;
-        CurrentProfile.PudoKey = profileToEdit.PudoKey;
-        CurrentProfile.WidgetKey = profileToEdit.WidgetKey;
-        CurrentProfile.FID = profileToEdit.FID;
-        Globals.SaveState();
-        Snackbar.Add("Changes saved successfully", Severity.Success);
-        StateHasChanged();
-    }
-
-    private void DeleteProfile(MouseEventArgs obj)
-    {
-        Globals.Profiles.Remove(CurrentylEdited);
-        _profileSettingsVisible = false;
-        if (CurrentProfile == CurrentylEdited)
-        {
-            CurrentProfile = new Profile();
-        }
-        Globals.SaveState();
-        Snackbar.Add("Profile deleted successfully", Severity.Info);
-        StateHasChanged();
-    }
-
-    private void AddNewProfile(MouseEventArgs obj)
-    {
-        NewProfile = new Profile("","","","","");
-        _newProfileVisible = true;
-        StateHasChanged();
-    }
-
-    private void CreateNewProfile(MouseEventArgs obj)
-    {
-        Globals.Profiles.Add(NewProfile);
-        Globals.SaveState();
-        Snackbar.Add("Profile created successfully", Severity.Success);
-        _newProfileVisible = false;
-    }
 }

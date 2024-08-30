@@ -1,8 +1,7 @@
 ﻿@page "/GenerateLabels"
 @using System.Text.RegularExpressions
-@using System.Xml
 @using System.Xml.Serialization
-@using Microsoft.AspNetCore.Connections
+@inject AppState AppState
 
 <PageTitle>GenerateLabels</PageTitle>
 
@@ -94,7 +93,7 @@
             @if (servicesOn)
             {
                 <MudPaper>
-                    <MudStack Spacing="0">
+                    <MudStack Spacing="0" Wrap="Wrap.Wrap">
                         <MudCheckBox Dense="true" T="bool" @bind-Value="@cud" Label="Cud"/>
                         <MudCheckBox Dense="true" T="bool" @bind-Value="@rod" Label="Rod"/>
                         <MudCheckBox Dense="true" T="bool" @bind-Value="@inPers" Label="inPers"/>
@@ -126,7 +125,7 @@
             <MudText Typo="Typo.h5" Class="mb-2">Parcels</MudText>
             <CascadingValue Value="dpdLQ">
                 <CascadingValue Value="Parcels">
-                    <ParcelsTable/>
+                    <ParcelsTable />
                 </CascadingValue>
             </CascadingValue>
         </MudItem>
@@ -209,11 +208,6 @@
     string ref1;
     string ref2;
     string ref3;
-
-    private void Callback(string obj)
-    {
-        Console.WriteLine(obj);
-    }
 
 }
 
@@ -309,7 +303,6 @@
             {
                 foreach (var parcel in result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel)
                 {
-                    Console.WriteLine(parcel.Waybill);
                     waybills.Add(parcel.Waybill);
                 }
                 //trackTraceLink = TrackingLink.getTrackTraceLink(waybill);
@@ -331,7 +324,8 @@
             result = (Envelope)serializer.Deserialize(reader);
             label = result.Body.GenerateSpedLabelsV4Response.Return.DocumentData;
         }
-        
+
+        if (AppState.Settings.SaveLabelsToFile) LabelManager.SaveBase64ToPDF(label);
         _processing = false;
     }
 
@@ -353,10 +347,10 @@
 
     private void UpdateCredentials(Profile profile)
     {
-        if (LoginField != null) LoginField.SetText(profile.Login);
-        PasswordField.SetText(profile.Password);
-        MasterFidField.SetText(profile.MasterFid);
-        FidField.SetText(profile.FID);
+        LoginField?.SetText(profile.Login);
+        PasswordField?.SetText(profile.Password);
+        MasterFidField?.SetText(profile.MasterFid);
+        FidField?.SetText(profile.FID);
     }
 
 }

@@ -9,6 +9,7 @@ namespace DPD_App;
 public class Request
 {
     public static AppSettings Settings { get; set; }
+    
     public static async Task<string> CallSoapWebService(string url, SoapBody body)
     {
         var client = new HttpClient();
