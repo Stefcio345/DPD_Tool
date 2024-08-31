@@ -1,127 +1,90 @@
-﻿@page "/SoapAPI"
-@using System.Xml.Linq
-@using System.Xml.Serialization
+﻿@page "/"
+@page "/SoapAPI"
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>SoapAPI</PageTitle>
+<MudText Typo="Typo.h3">Soap API</MudText>
 
-<h1>Counter</h1>
-
-<MudGrid>
-    <MudItem xs="6">
-        <MudSelect T="API_METHODS" Value="_currentMethod" Label="Select method" ValueChanged="MethodSelected">
-            @foreach (API_METHODS item in Enum.GetValues(typeof(API_METHODS)))
+<MudDynamicTabs @bind-ActivePanelIndex="@UserIndex" Position="Position.Left"
+                AddTab="@AddTabCallback" CloseTab="@CloseTabCallback"
+                AddIconToolTip="Click to add a new tab" CloseIconToolTip="Close tab. All data will be lost"
+                PanelClass="px-4 py-6" Elevation="4" Rounded ApplyEffectsToContainer
+                PrevIcon="" NextIcon="">>
+    @foreach (var tab in UserTabs)
+    {
+        <MudTabPanel ID="@tab.Id" Text="@tab.Label" ShowCloseIcon="@tab.ShowCloseIcon">
+            @if (tab.SoapData is not null)
             {
-                <MudSelectItem Value="@item">@item</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="6">
-        <MudSelect T="string" @bind-Value="_url" Label="Select enviroment">
-            <MudSelectItem Value="@(Globals.WSDL_ADDRESS)">PROD</MudSelectItem>
-            <MudSelectItem Value="@(Globals.WSDL_DEMO_ADDRESS)">DEMO</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="6">
-        <MudTextField T="string" Label="Request" Variant="Variant.Outlined" Value="_request" Lines="40" TextChanged="RequestChanged"/>
-    </MudItem>
-    <MudItem xs="6">
-        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" Value="_response" Lines="40" TextChanged="ResponseChanged"/>
-    </MudItem>
-    <MudItem xs="3">
-        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
-            @if (_processing)
-            {
-                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
-                <MudText Class="ms-2">Processing</MudText>
+                <SoapInterface SoapData="@tab.SoapData"/>
             }
             else
             {
-                <MudText>Send</MudText>
+                @tab.Content
             }
-        </MudButton>
-    </MudItem>
-    <MudItem xs="3">
-        <MudItem xs="3">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify</MudButton>
-        </MudItem>
-    </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
-    </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
-    </MudItem>
-</MudGrid>
+        </MudTabPanel>
+    }
+</MudDynamicTabs>
 
 @code {
-    [CascadingParameter] public Profile CurrentProfile { get; set; }
-    string _url = Globals.WSDL_DEMO_ADDRESS;
-    API_METHODS _currentMethod;
-    string _request = "";
-    string _response = "";
-    private bool _processing = false;
+    //Probably will replace tabs with something else
 
-    protected override async Task OnInitializedAsync()
+    public class TabView
     {
-        //Serializacja
-        UpdateRequest();
-    }
-
-    async Task SendRequest()
-    {
-        _processing = true;
-        _response = XMLDocument.Prettify(await Request.SendSoapRequest(_url, _request));
-        _processing = false;
-        StateHasChanged();
+        public string Label { get; set; }
+        public string Content { get; set; }
+        public SoapData? SoapData;
+        public Guid Id { get; set; }
+        public bool ShowCloseIcon { get; set; } = true;
     }
     
-    async Task Prettify()
+    public List<TabView> UserTabs = new();
+    public int UserIndex;
+    bool _stateHasChanged;
+    bool _showCloseIcon = false;
+    string _closeToggableTab = "Tab B";
+
+    void RestoreUserTabs()
     {
-        _request = XMLDocument.Prettify(_request);
-        _response = XMLDocument.Prettify(_response);
-        StateHasChanged();
-    }
-    
-    //TODO add tabs (Preferably on the side)
-    
-    private void MethodSelected(API_METHODS obj)
-    {
-        _currentMethod = obj;
-        UpdateRequest();
-        _response = "";
-        StateHasChanged();
+        UserTabs.Clear();
+        UserTabs.Add(new TabView { Id = Guid.NewGuid(), Label = "Home", Content = "Home", ShowCloseIcon = false});
+        UserIndex = 0; // Start on 2nd tab: "Tab B"
+        _stateHasChanged = true;
     }
 
-    private void RequestChanged(string obj)
+    protected override void OnInitialized()
     {
-        _request = XMLDocument.Prettify(obj);
-        StateHasChanged();
+        base.OnInitialized();
+        RestoreUserTabs();
     }
 
-    private void ResponseChanged(string obj)
+    protected override void OnAfterRender(bool firstRender)
     {
-        _response = XMLDocument.Prettify(obj);
-        StateHasChanged();
-    }
-
-    private void UpdateRequest()
-    {
-        switch (_currentMethod)
+        base.OnAfterRender(firstRender);
+        if (_stateHasChanged)
         {
-            case API_METHODS.GeneratePackagesNumbers:
-                var packagesNumbersV9 = new GeneratePackagesNumbersV9();
-                packagesNumbersV9.UpdateAuthData(CurrentProfile);
-                _request = packagesNumbersV9.CreateSoapEnvelope();
-                break;
-            case API_METHODS.GenerateSpedLabels:
-                var spedLabelsV4 = new GenerateSpedLabelsV4();
-                spedLabelsV4.UpdateAuthData(CurrentProfile);
-                _request = spedLabelsV4.CreateSoapEnvelope();
-                break;
-            default:
-                _request = "Method currently not implemented";
-                break;
+            _stateHasChanged = false;
+            StateHasChanged();
         }
     }
 
+    public void AddTab(Guid id)
+    {
+        var newTab = new TabView { Id = id, Label = $"Tab {UserTabs.Count}", Content = $"Tab ID: {id}", SoapData = new SoapData(StateHasChanged) };
+        //Create dynamic tab names
+        UserTabs.Add(newTab);
+        UserIndex = UserTabs.Count - 1; // Automatically switch to the new tab.
+        _stateHasChanged = true;
+    }
+
+    public void RemoveTab(Guid id)
+    {
+        var tabView = UserTabs.SingleOrDefault((t) => Equals(t.Id, id));
+        if (tabView is not null)
+        {
+            UserTabs.Remove(tabView);
+            _stateHasChanged = true;
+        }
+    }
+
+    void AddTabCallback() => AddTab(Guid.NewGuid());
+    void CloseTabCallback(MudTabPanel panel) => RemoveTab((Guid)panel.ID);
 }

@@ -1,0 +1,154 @@
+﻿<MudGrid>
+    <MudItem xs="6">
+        <MudSelect T="API_METHODS" Value="CurrentMethod" Label="Select method" ValueChanged="MethodSelected">
+            @foreach (API_METHODS item in Enum.GetValues(typeof(API_METHODS)))
+            {
+                <MudSelectItem Value="@item">@item</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="6">
+        <MudSelect T="string" @bind-Value="_url" Label="Select enviroment">
+            <MudSelectItem Value="@(Globals.WSDL_ADDRESS)">PROD</MudSelectItem>
+            <MudSelectItem Value="@(Globals.WSDL_DEMO_ADDRESS)">DEMO</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="Request" Variant="Variant.Outlined" Value="Request" Lines="40" TextChanged="RequestChanged"/>
+    </MudItem>
+    <MudItem xs="6">
+        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" Value="Response" Lines="40" TextChanged="ResponseChanged"/>
+    </MudItem>
+    <MudItem xs="3">
+        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                <MudText Class="ms-2">Processing</MudText>
+            }
+            else
+            {
+                <MudText>Send</MudText>
+            }
+        </MudButton>
+    </MudItem>
+    <MudItem xs="3">
+        <MudItem xs="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify</MudButton>
+        </MudItem>
+    </MudItem>
+    <MudItem xs="3">
+        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
+    </MudItem>
+    <MudItem xs="3">
+        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [CascadingParameter] public Profile CurrentProfile { get; set; }
+    string _url = Globals.WSDL_DEMO_ADDRESS;
+    [Parameter] public SoapData SoapData { get; set; }
+    
+    private API_METHODS _currentMethod;
+    public API_METHODS CurrentMethod 
+    {
+        get => _currentMethod;
+        set
+        {
+            _currentMethod = value;
+            SoapData.CurrentMethod = value;
+        }
+    }
+
+    private string _request;
+    public string Request 
+    {
+        get => _request;
+        set
+        {
+            _request = value;
+            SoapData.Request = value;
+        }
+    }
+
+    private string _response;
+    public string Response
+    {
+        get => _response;
+        set
+        {
+            _response = value;
+            SoapData.Response = value;
+        }
+    }
+    
+    private bool _processing = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Serializacja
+        Request = SoapData.Request;
+        Response = SoapData.Response;
+        CurrentMethod = SoapData.CurrentMethod;
+        UpdateRequest();
+    }
+
+    async Task SendRequest()
+    {
+        _processing = true;
+        Response = XMLDocument.Prettify(await DPD_App.Request.SendSoapRequest(_url, Request));
+        _processing = false;
+        StateHasChanged();
+    }
+    
+    async Task Prettify()
+    {
+        Request = XMLDocument.Prettify(Request);
+        Response = XMLDocument.Prettify(Response);
+        StateHasChanged();
+    }
+    
+    //TODO add tabs (Preferably on the side)
+    
+    private void MethodSelected(API_METHODS obj)
+    {
+        CurrentMethod = obj;
+        UpdateRequest();
+        Response = "";
+        StateHasChanged();
+    }
+
+    private void RequestChanged(string obj)
+    {
+        Request = XMLDocument.Prettify(obj);
+        StateHasChanged();
+    }
+
+    private void ResponseChanged(string obj)
+    {
+        Response = XMLDocument.Prettify(obj);
+        StateHasChanged();
+    }
+
+    private void UpdateRequest()
+    {
+        switch (CurrentMethod)
+        {
+            case API_METHODS.GeneratePackagesNumbers:
+                var packagesNumbersV9 = new GeneratePackagesNumbersV9();
+                packagesNumbersV9.UpdateAuthData(CurrentProfile);
+                Request = packagesNumbersV9.CreateSoapEnvelope();
+                break;
+            case API_METHODS.GenerateSpedLabels:
+                var spedLabelsV4 = new GenerateSpedLabelsV4();
+                spedLabelsV4.UpdateAuthData(CurrentProfile);
+                Request = spedLabelsV4.CreateSoapEnvelope();
+                break;
+            default:
+                Request = "Method currently not implemented";
+                break;
+        }
+    }
+
+}

@@ -134,19 +134,64 @@
     }
 
     <MudItem xs="3">
-        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="GenerateLabel">
-            @if (_processing)
+        <MudStack>
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="GenerateLabel">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                    <MudText Class="ms-2">Processing</MudText>
+                }
+                else
+                {
+                    <MudText>Generate Label</MudText>
+                }
+            </MudButton>
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="GenerateProtocol">
+                @if (_processing)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                    <MudText Class="ms-2">Processing</MudText>
+                }
+                else
+                {
+                    <MudText>Generate Protocol</MudText>
+                }
+            </MudButton>
+            <!-- Tracking links -->
+            @if (waybills.Count > 0)
             {
-                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
-                <MudText Class="ms-2">Processing</MudText>
+            <MudCard style="height:650px">
+                <MudCardContent>
+                    <MudTable Items="@TrackingLinks" Breakpoint="Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh>Waybill</MudTh>
+                            <MudTh>GeoPost</MudTh>
+                            <MudTh>TrackTrace</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Waybill" Style="font-size: 0.9vw">@context.waybill</MudTd>
+                            <MudTd DataLabel="GeoPost">
+                                <MudLink Style="font-size: 0.9vw" Href="@context.getGeoPostLink()">GeoPost</MudLink>
+                            </MudTd>
+                            <MudTd DataLabel="TrackTrace">
+                                <MudLink Style="font-size: 0.9vw" Href="@context.getTrackTraceLink()">TrackTrace</MudLink>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudCardContent>
+            </MudCard>
             }
             else
             {
-                <MudText>Generate Label</MudText>
+            <MudCard>
+                <MudCardContent Style="text-align: center">
+                    <h3>Tracking</h3>
+                </MudCardContent>
+            </MudCard>
             }
-        </MudButton>
+        </MudStack>
     </MudItem>
-    <MudItem xs="6">
+    <MudItem xs="4">
         @if (label is not null)
         {
             <MudCard style="height:750px">
@@ -164,37 +209,22 @@
             </MudCard>
         }
     </MudItem>
-    <MudItem xs="3">
-        @if (waybills.Count > 0)
+    <MudItem xs="5">
+        @if (protocol is not null)
         {
-            <MudCard style="height:750px">
-                <MudCardContent>
-                    <MudTable Items="@TrackingLinks" Breakpoint="Breakpoint.Sm">
-                        <HeaderContent>
-                            <MudTh>Waybill</MudTh>
-                            <MudTh>GeoPost</MudTh>
-                            <MudTh>TrackTrace</MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd DataLabel="Waybill" Style="font-size: large">@context.waybill</MudTd>
-                            <MudTd DataLabel="GeoPost">
-                                <MudLink Style="font-size: large" Href="@context.getGeoPostLink()">GeoPost</MudLink>
-                            </MudTd>
-                            <MudTd DataLabel="TrackTrace">
-                                <MudLink Style="font-size: large" Href="@context.getTrackTraceLink()">TrackTrace</MudLink>
-                            </MudTd>
-                        </RowTemplate>
-                    </MudTable>
-                </MudCardContent>
-            </MudCard>
+        <MudCard style="height:750px">
+            <MudCardContent>
+                <iframe width="100%" height="100%" src="data:application/pdf;base64,@protocol" frameborder="0"></iframe>
+            </MudCardContent>
+        </MudCard>
         }
         else
         {
-            <MudCard>
-                <MudCardContent Style="text-align: center">
-                    <h3>Tracking</h3>
-                </MudCardContent>
-            </MudCard>
+        <MudCard>
+            <MudCardContent Style="text-align: center">
+                <h3>Protocol</h3>
+            </MudCardContent>
+        </MudCard>
         }
     </MudItem>
 </MudGrid>
@@ -247,6 +277,7 @@
     public int activeMode;
 
     private string label;
+    private string protocol;
     private List<TrackingLink> TrackingLinks = new List<TrackingLink>();
 
     MudTextField<string>? LoginField;
@@ -327,6 +358,7 @@
         
         //Generate Label
         var newLabel = new GenerateSpedLabelsV4(waybills);
+        if (international) newLabel.DpdServicesParamsV1.Session.SessionType = "INTERNATIONAL";
         _response = await Request.CallSoapWebService(_url, newLabel);
         
         //Deserialize the label from response
@@ -338,6 +370,11 @@
 
         if (AppState.Settings.SaveLabelsToFile) LabelManager.SaveBase64ToPDF(label);
         _processing = false;
+    }
+    
+    private void GenerateProtocol(MouseEventArgs obj)
+    {
+        throw new NotImplementedException();
     }
 
     private void ReceiverCountryChanged(string s)
