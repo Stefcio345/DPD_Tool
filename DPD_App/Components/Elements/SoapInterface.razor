@@ -49,48 +49,46 @@
     [CascadingParameter] public Profile CurrentProfile { get; set; }
     string _url = Globals.WSDL_DEMO_ADDRESS;
     [Parameter] public SoapData SoapData { get; set; }
-    
-    private API_METHODS _currentMethod;
+
     public API_METHODS CurrentMethod 
     {
-        get => _currentMethod;
+        get => SoapData.CurrentMethod;
         set
         {
-            _currentMethod = value;
             SoapData.CurrentMethod = value;
         }
     }
-
-    private string _request;
+    
     public string Request 
     {
-        get => _request;
+        get => SoapData.Request;
         set
         {
-            _request = value;
             SoapData.Request = value;
         }
     }
-
-    private string _response;
+    
     public string Response
     {
-        get => _response;
+        get => SoapData.Response;
         set
         {
-            _response = value;
             SoapData.Response = value;
         }
     }
     
     private bool _processing = false;
 
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Request == "") UpdateRequest();
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
     protected override async Task OnInitializedAsync()
     {
         //Serializacja
-        Request = SoapData.Request;
-        Response = SoapData.Response;
-        CurrentMethod = SoapData.CurrentMethod;
+        CurrentMethod = API_METHODS.GeneratePackagesNumbers;
         UpdateRequest();
     }
 
