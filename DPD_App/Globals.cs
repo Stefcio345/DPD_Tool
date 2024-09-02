@@ -1,5 +1,7 @@
 ﻿using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Xml.Serialization;
+using MudBlazor;
 
 namespace DPD_App;
 
@@ -10,14 +12,29 @@ public class Globals
     public static string WSDL_ADDRESS = "https://dpdservices.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL";
     public static string WSDL_DEMO_ADDRESS = "https://dpdservicesdemo.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL";
     
+    public static List<Currency> Currencies = new List<Currency>()
+    {
+        new Currency("PLN", "Polish Zloty", isDeclaredAmount:true, isCod:true, isDuty:true),
+        new Currency("CHF","Swiss Franc", isDeclaredAmount:true, isCod:true),
+        new Currency("EUR","Euro", isDeclaredAmount:true, isCod:true, isDuty:true),
+        new Currency("NOK","Norwegian Krone", isDeclaredAmount:true),
+        new Currency("SEK","Swedish Krona", isDeclaredAmount:true),
+        new Currency("USD","United States Dollar", isDeclaredAmount:true, isDuty:true),
+        new Currency("GBP","Pound sterling", isDeclaredAmount:true, isDuty:true),
+        new Currency("HUF", "Hungary Forint", isDeclaredAmount:true, isCod:true),
+        new Currency("CZK","Czech Koruna", isDeclaredAmount:true, isCod:true),
+        new Currency("BGN", "Bulgarian Lev", isCod:true),
+        new Currency("RON", "Romanian Leu", isCod:true),
+        new Currency("UAH","Ukrainian hryvnia", isDuty:true),
+    };
+    
     public static List<Country> Countries = new List<Country>
     {
-        new Country("Poland", "PL", "POL"),
-        new Country("Belgium", "BE", "BEL"),
-        new Country("Croatia", "HR", "HRV"),
-        new Country("Czech Republic", "CZ", "CZE"),
-        new Country("Denmark", "DK", "DNK"),
-        new Country("Estonia", "EE", "EST"),
+        new Country("Poland", "PL", "POL", Currencies.First(c => c.IsoCodeA3 == "PLN"), "02247"),
+            new Country("Belgium", "BE", "BEL",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "1000"),
+        new Country("Croatia", "HR", "HRV",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "10000"),
+        new Country("Czech Republic", "CZ", "CZE",  Currencies.First(c => c.IsoCodeA3 == "CZK"), "10000"),
+        new Country("Estonia", "EE", "EST",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "49604"),
     };
     
     public static List<MapFilter> MapFilters = new List<MapFilter>
@@ -39,6 +56,18 @@ public class Globals
         new MapFilter("LQ", "dpd_lq"),
         new MapFilter("Ship without labels", "digital_label"),
         new MapFilter("Parcel machines", "swip_box"),
+    };
+
+    public static List<GuaranteeType> GuaranteeTypes = new List<GuaranteeType>()
+    {
+        new GuaranteeType("Delivery at 9:30", "TIME0930"),
+        new GuaranteeType("Delivery at 12:00", "TIME1200"),
+        new GuaranteeType("Delivery on saturday", "SATURDAY"),
+        new GuaranteeType("Delivery at given hour", "TIMEFIXED"),
+        new GuaranteeType("Bussiness to customer", "B2C"),
+        new GuaranteeType("Delivery next day", "DPDNEXTDAY"),
+        new GuaranteeType("Delivery Today", "DPDTODAY"),
+        new GuaranteeType("International Guarantee", "INTER"),
     };
     
     public static List<Profile> Profiles = new List<Profile>
@@ -156,15 +185,56 @@ public enum CallTypes
     LABEL
 }
 
+public enum LoggingType
+{
+    ERROR,
+    REQUEST,
+    RESPONSE
+}
+
 public class Country
 {
     public string IsoCodeA2 { get; set; }
     public string IsoCodeA3 { get; set; }
     public string Name { get; set; }
+    public Currency? Currency { get; set; }
+    public string? DefaultPostalCode { get; set; }
 
-    public Country(string name, string isoCodeA2, string isoCodeA3)
+    public Country(string name, string isoCodeA2, string isoCodeA3, Currency currency = null, string defaultPostalCode = "")
     {
         IsoCodeA2 = isoCodeA2;
+        IsoCodeA3 = isoCodeA3;
+        Name = name;
+        Currency = currency;
+        defaultPostalCode = defaultPostalCode;
+    }
+
+    public override string ToString()
+    {
+        return Name;
+    }
+}
+
+public class Currency
+{
+    public string IsoCodeA3 { get; set; }
+    public string Name { get; set; }
+
+    public bool IsCod = false;
+    public bool IsDeclaredAmount = false;
+    public bool IsDuty = false;
+
+    public Currency(string isoCodeA3, string name)
+    {
+        IsoCodeA3 = isoCodeA3;
+        Name = name;
+    }
+
+    public Currency(string isoCodeA3, string name, bool isCod = false, bool isDeclaredAmount = false, bool isDuty = false)
+    {
+        IsCod = isCod;
+        IsDeclaredAmount = isDeclaredAmount;
+        IsDuty = isDuty;
         IsoCodeA3 = isoCodeA3;
         Name = name;
     }
@@ -172,6 +242,17 @@ public class Country
     public override string ToString()
     {
         return Name;
+    }
+}
+public class GuaranteeType
+{
+    public string Name;
+    public string Value;
+
+    public GuaranteeType(string name, string value)
+    {
+        Name = name;
+        Value = value;
     }
 }
 

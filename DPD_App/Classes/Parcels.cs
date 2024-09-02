@@ -79,4 +79,7 @@ public class Parcel {
 
     [XmlElement(ElementName="Waybill")] 
     public string? Waybill { get; set; } 
+
+    [XmlElement(ElementName="Reference", Namespace="")] 
+    public object? Reference { get; set; } 
 }

@@ -50,6 +50,7 @@ public class GenerateSpedLabelsV4: SoapBody, IAuthData
         DpdServicesParamsV1 = new DpdServicesParamsV1();
         if (DpdServicesParamsV1.Session.Packages.Parcels != null)
         {
+            DpdServicesParamsV1.Session.Packages.Parcels = new List<Parcels>();
             for (var i = 0; i < waybills.Count; i++)
             {
                 DpdServicesParamsV1.Session.Packages.Parcels.Add(new Parcels()

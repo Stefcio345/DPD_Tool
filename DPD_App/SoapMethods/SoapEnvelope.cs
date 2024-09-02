@@ -16,6 +16,9 @@ public class Body
     
     [XmlElement(ElementName="generateSpedLabelsV4", Namespace="http://dpdservices.dpd.com.pl/")] 
     public GenerateSpedLabelsV4? GenerateSpedLabelsV4 { get; set; } 
+    
+    [XmlElement(ElementName="Fault")] 
+    public Fault? Fault { get; set; } 
 }
 
 [XmlRoot(ElementName="Envelope", Namespace="http://schemas.xmlsoap.org/soap/envelope/")]

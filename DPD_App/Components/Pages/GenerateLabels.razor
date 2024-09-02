@@ -90,23 +90,104 @@
                 <MudToggleIconButton Size="Size.Small" @bind-Toggled="servicesOn"
                                      Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
             </MudStack>
+            <!-- Services -->
             @if (servicesOn)
             {
-                <MudPaper>
-                    <MudStack Spacing="0" Wrap="Wrap.Wrap">
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@cud" Label="Cud"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@rod" Label="Rod"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@inPers" Label="inPers"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@privPers" Label="privPers"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdExpress" Label="dpdExpress" Disabled="!international"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@pallet" Label="pallet" Disabled="!international"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@dox" Label="dox"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdLQ" Label="dpdLQ"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@tires" Label="tires"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@tiresExport" Label="tiresExport" Disabled="!international"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@digitalLabel" Label="digitalLabel"/>
-                        <MudCheckBox Dense="true" T="bool" @bind-Value="@pudoToSend" Label="pudoToSend"/>
-                    </MudStack>
+                <MudPaper Class="pa-2">
+                    <MudGrid Class="pa-0">
+                        <MudItem xs="6">
+                            <MudStack Spacing="0">
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@cud" Label="Cud"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@rod" Label="Rod"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@inPers" Label="inPers"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@privPers" Label="privPers"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdExpress" Label="dpdExpress" Disabled="!international"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@pallet" Label="pallet" Disabled="!international"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dox" Label="dox"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdLQ" Label="dpdLQ"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@tires" Label="tires"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@tiresExport" Label="tiresExport" Disabled="!international"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@digitalLabel" Label="digitalLabel"/>
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@pudoToSend" Label="pudoToSend"/>
+                            </MudStack>
+                        </MudItem>
+                        
+                        <MudItem xs="6">
+                            <MudStack Spacing="0">
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@declaredValue" Label="declaredValue"/>
+                                @if (declaredValue)
+                                {
+                                    <MudSelect T="Currency" @bind-Value="declaredValueCurrency" Label="Currency" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                        @foreach (var currency in Globals.Currencies.Where(c => c.IsDeclaredAmount))
+                                        {
+                                            <MudSelectItem Value="@currency">@currency.Name</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                    <MudTextField Label="Amount" @bind-Value="declaredValueAmount" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+                                }
+
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@cod" Label="Cod"/>
+                                @if (cod)
+                                {
+                                    <MudSelect T="Currency" @bind-Value="codCurrency" Label="Currency" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                        @foreach (var currency in Globals.Currencies.Where(c => c.IsCod))
+                                        {
+                                            <MudSelectItem Value="@currency">@currency.Name</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                    <MudTextField Label="Cash amount" @bind-Value="codAmount" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+                                }
+
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdPickup" Label="dpdPickup"/>
+                                @if (dpdPickup)
+                                {
+                                    <MudTextField Label="Point ID" @bind-Value="pointID" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+                                }
+
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@duty" Label="Duty"/>
+                                @if (duty)
+                                {
+                                    <MudSelect T="Currency" @bind-Value="dutyCurrency" Label="Currency" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                        @foreach (var currency in Globals.Currencies.Where(c => c.IsDuty))
+                                        {
+                                            <MudSelectItem Value="@currency">@currency.Name</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                    <MudTextField Label="Cash amount" @bind-Value="dutyAmount" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+                                }
+
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@selfCol" Label="SelfCol"/>
+                                @if (selfCol)
+                                {
+                                    <MudSelect T="string" @bind-Value="selfColReceiver" Label="Receiver" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                        <MudSelectItem T="string" Value="@("PRIV")">Private</MudSelectItem>
+                                        <MudSelectItem T="string" Value="@("COMP")">Company</MudSelectItem>
+                                    </MudSelect>
+                                }
+
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdFood" Label="DPD Food"/>
+                                @if (dpdFood)
+                                {
+                                    <MudTextField @bind-Value="limitDate" T="DateTime" Format="yyyy-MM-dd" Margin="Margin.Dense" Variant="Variant.Outlined" Label="Limit Date" InputType="InputType.Date"/>
+                                }
+
+                                <MudCheckBox Dense="true" T="bool" @bind-Value="@guarentee" Label="Guarantee"/>
+                                @if (guarentee)
+                                {
+                                    <MudSelect T="string" @bind-Value="guaranteeType" Label="Type" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                        @foreach (var type in Globals.GuaranteeTypes)
+                                        {
+                                            <MudSelectItem Value="@type.Value">@type.Name</MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                    @if (guaranteeType is not null && (guaranteeType == "B2C" || guaranteeType == "TIMEFIXED"))
+                                    {
+                                        <MudTextField @bind-Value="guaranteeValue" T="string" Margin="Margin.Dense" Variant="Variant.Outlined" Label="Time of delivery"/>
+                                    }
+                                }
+                            </MudStack>
+                        </MudItem>
+                    </MudGrid>
                 </MudPaper>
             }
         </MudItem>
@@ -160,73 +241,91 @@
             <!-- Tracking links -->
             @if (waybills.Count > 0)
             {
-            <MudCard style="height:650px">
-                <MudCardContent>
-                    <MudTable Items="@TrackingLinks" Breakpoint="Breakpoint.Sm">
-                        <HeaderContent>
-                            <MudTh>Waybill</MudTh>
-                            <MudTh>GeoPost</MudTh>
-                            <MudTh>TrackTrace</MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd DataLabel="Waybill" Style="font-size: 0.9vw">@context.waybill</MudTd>
-                            <MudTd DataLabel="GeoPost">
-                                <MudLink Style="font-size: 0.9vw" Href="@context.getGeoPostLink()">GeoPost</MudLink>
-                            </MudTd>
-                            <MudTd DataLabel="TrackTrace">
-                                <MudLink Style="font-size: 0.9vw" Href="@context.getTrackTraceLink()">TrackTrace</MudLink>
-                            </MudTd>
-                        </RowTemplate>
-                    </MudTable>
-                </MudCardContent>
-            </MudCard>
+                <MudCard style="height:650px">
+                    <MudCardContent>
+                        <MudTable Items="@TrackingLinks" Breakpoint="Breakpoint.Sm">
+                            <HeaderContent>
+                                <MudTh>Waybill</MudTh>
+                                <MudTh>GeoPost</MudTh>
+                                <MudTh>TrackTrace</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Waybill" Style="font-size: 0.9vw">@context.waybill</MudTd>
+                                <MudTd DataLabel="GeoPost">
+                                    <MudLink Style="font-size: 0.9vw" Href="@context.getGeoPostLink()">GeoPost</MudLink>
+                                </MudTd>
+                                <MudTd DataLabel="TrackTrace">
+                                    <MudLink Style="font-size: 0.9vw" Href="@context.getTrackTraceLink()">TrackTrace</MudLink>
+                                </MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudCardContent>
+                </MudCard>
             }
             else
             {
-            <MudCard>
-                <MudCardContent Style="text-align: center">
-                    <h3>Tracking</h3>
-                </MudCardContent>
-            </MudCard>
+                <MudCard>
+                    <MudCardContent Style="text-align: center">
+                        <h3>Tracking</h3>
+                    </MudCardContent>
+                </MudCard>
             }
         </MudStack>
     </MudItem>
-    <MudItem xs="4">
-        @if (label is not null)
-        {
-            <MudCard style="height:750px">
-                <MudCardContent>
-                    <iframe width="100%" height="100%" src="data:application/pdf;base64,@label" frameborder="0"></iframe>
-                </MudCardContent>
-            </MudCard>
-        }
-        else
-        {
-            <MudCard>
+    
+    @if (Errors.Count == 0)
+    {
+        <MudItem xs="4">
+            @if (label is not null)
+            {
+                <MudCard style="height:750px">
+                    <MudCardContent>
+                        <iframe width="100%" height="100%" src="data:application/pdf;base64,@label" frameborder="0"></iframe>
+                    </MudCardContent>
+                </MudCard>
+            }
+            else
+            {
+                <MudCard>
+                    <MudCardContent Style="text-align: center">
+                        <h3>Label</h3>
+                    </MudCardContent>
+                </MudCard>
+            }
+        </MudItem>
+        <MudItem xs="5">
+            @if (protocol is not null)
+            {
+                <MudCard style="height:750px">
+                    <MudCardContent>
+                        <iframe width="100%" height="100%" src="data:application/pdf;base64,@protocol" frameborder="0"></iframe>
+                    </MudCardContent>
+                </MudCard>
+            }
+            else
+            {
+                <MudCard>
+                    <MudCardContent Style="text-align: center">
+                        <h3>Protocol</h3>
+                    </MudCardContent>
+                </MudCard>
+            }
+        </MudItem>
+    }
+    else
+    {
+        <MudItem xs="9">
+            <MudCard Style="white-space: pre-wrap">
                 <MudCardContent Style="text-align: center">
-                    <h3>Label</h3>
+                    <h3>Error</h3>
                 </MudCardContent>
+                @foreach (var error in Errors)
+                {
+                    <ErrorPaper Error="error" />
+                }
             </MudCard>
-        }
-    </MudItem>
-    <MudItem xs="5">
-        @if (protocol is not null)
-        {
-        <MudCard style="height:750px">
-            <MudCardContent>
-                <iframe width="100%" height="100%" src="data:application/pdf;base64,@protocol" frameborder="0"></iframe>
-            </MudCardContent>
-        </MudCard>
-        }
-        else
-        {
-        <MudCard>
-            <MudCardContent Style="text-align: center">
-                <h3>Protocol</h3>
-            </MudCardContent>
-        </MudCard>
-        }
-    </MudItem>
+        </MudItem>
+    }
 </MudGrid>
 
 @code{
@@ -244,6 +343,34 @@
     bool tiresExport;
     bool digitalLabel;
     bool pudoToSend;
+    
+    //TODO Sprawdzić czy wszystkie services działają
+
+    bool declaredValue;
+    decimal declaredValueAmount;
+    Currency declaredValueCurrency;
+    
+    bool cod;
+    decimal codAmount;
+    Currency codCurrency;
+    
+    bool dpdPickup;
+    string pointID;
+    
+    bool duty;
+    decimal dutyAmount;
+    Currency dutyCurrency;
+    
+    bool selfCol;
+    string selfColReceiver;
+    
+    bool dpdFood;
+    DateTime limitDate = DateTime.Now;
+
+    bool guarentee;
+    string guaranteeType;
+    string? guaranteeValue;
+    
     Receiver _receiver;
     Sender _sender;
     bool international;
@@ -255,6 +382,7 @@
 
 @code {
     Profile _currentProfile;
+    List<SoapError> Errors = new List<SoapError>();
 
     [CascadingParameter]
     public Profile CurrentProfile
@@ -266,6 +394,7 @@
             UpdateCredentials(_currentProfile);
         }
     }
+
     string _url = Globals.WSDL_DEMO_ADDRESS;
     string _request = "";
     string _response = "";
@@ -284,7 +413,7 @@
     MudTextField<string>? PasswordField;
     MudTextField<string>? MasterFidField;
     MudTextField<string>? FidField;
-    
+
     //Deserialziacja
     //var request = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header/><soapenv:Body><dpd:generatePackagesNumbersV9 xmlns:dpd=\"http://dpdservices.dpd.com.pl/\"><openUMLFeV11><packages><parcels><weight>32</weight><weightAdr>20</weightAdr><sizeX>10</sizeX><sizeY>20</sizeY><sizeZ>30</sizeZ><content>Puszka pandory 1</content><customerData1>klienta dane 11</customerData1><customerData2>klienta dane 22</customerData2><customerData3>klienta dane 33</customerData3></parcels><parcels><weight>33.5</weight><weightAdr>33.5</weightAdr><sizeX>10</sizeX><sizeY>20</sizeY><sizeZ>30</sizeZ><content>Puszka pandory 2</content><customerData1>klienta dane 12</customerData1><customerData2>klienta dane 22</customerData2><customerData3>klienta dane 33</customerData3></parcels><payerType>THIRD_PARTY</payerType><thirdPartyFID>1495</thirdPartyFID><receiver><company/><name>3434</name><city>Warszawa</city><address>34</address><countryCode>PL</countryCode><postalCode>99418</postalCode><phone>123123123</phone><email>pan@chcepaczke.pl</email></receiver><sender><company>qw</company><name>wq</name><address>Gajdy 39</address><city>Radom</city><countryCode>PL</countryCode><postalCode>02274</postalCode><phone>543332222</phone><email>ktos@pocztowy.pl</email></sender><ref1>cos tam 1</ref1><ref2>cos tam 2</ref2><ref3>cos tam 3</ref3><services><rod/><declaredValue><amount>12</amount><currency>PLN</currency></declaredValue></services></packages></openUMLFeV11><pkgNumsGenerationPolicyV1>ALL_OR_NOTHING</pkgNumsGenerationPolicyV1><langCode>PL</langCode><authDataV1><login>test</login><masterFid>1495</masterFid><password>thetu4Ee</password></authDataV1></dpd:generatePackagesNumbersV9></soapenv:Body></soapenv:Envelope>";
     //Envelope result;
@@ -304,19 +433,21 @@
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender) UpdateCredentials(CurrentProfile);
+        if (firstRender) UpdateCredentials(CurrentProfile);
         return base.OnAfterRenderAsync(firstRender);
     }
 
     async Task GenerateLabel()
     {
         _processing = true;
+        Errors.Clear();
         waybills.Clear();
         TrackingLinks.Clear();
         //Create new package
         var newPackage = new GeneratePackagesNumbersV9();
         newPackage.UpdateAuthData(new Profile("", LoginField.Value, PasswordField.Value, MasterFidField.Value, FidField.Value));
-        
+        newPackage.OpenUMLFeV11.Packages.ThirdPartyFID = FidField.Value;
+
         if (cud) newPackage.OpenUMLFeV11.Packages.Services.cud = new object();
         if (rod) newPackage.OpenUMLFeV11.Packages.Services.rod = new object();
         if (inPers) newPackage.OpenUMLFeV11.Packages.Services.inPers = new object();
@@ -329,19 +460,36 @@
         if (tiresExport) newPackage.OpenUMLFeV11.Packages.Services.tiresExport = new object();
         if (digitalLabel) newPackage.OpenUMLFeV11.Packages.Services.digitalLabel = new object();
         if (pudoToSend) newPackage.OpenUMLFeV11.Packages.Services.pudoToSend = new object();
+        
+        //Advanced services
+        if (declaredValue) newPackage.OpenUMLFeV11.Packages.Services.declaredValue = new DeclaredValue(declaredValueAmount, declaredValueCurrency.IsoCodeA3);
+        if (cod) newPackage.OpenUMLFeV11.Packages.Services.cod = new Cod(codAmount, codCurrency.IsoCodeA3);
+        if (dpdPickup) newPackage.OpenUMLFeV11.Packages.Services.dpdPickup = new DpdPickup(pointID);
+        if (duty) newPackage.OpenUMLFeV11.Packages.Services.duty = new Duty(dutyAmount, dutyCurrency.IsoCodeA3);
+        if (selfCol) newPackage.OpenUMLFeV11.Packages.Services.selfCol = new SelfCol(selfColReceiver);
+        if (dpdFood) newPackage.OpenUMLFeV11.Packages.Services.dpdFood = new DpdFood(limitDate);
+        if (guarentee) newPackage.OpenUMLFeV11.Packages.Services.guarantee = new Guarantee(guaranteeType, guaranteeValue);
+
 
         newPackage.OpenUMLFeV11.Packages.Receiver = _receiver;
         newPackage.OpenUMLFeV11.Packages.Sender = _sender;
         newPackage.OpenUMLFeV11.Packages.Parcels = Parcels;
 
         _response = await Request.CallSoapWebService(_url, newPackage);
-        
+
         //Deserialize response and get the waybill
         Envelope result;
         var serializer = new XmlSerializer(typeof(Envelope));
         using (var reader = new StringReader(_response))
-        {                
+        {
             result = (Envelope)serializer.Deserialize(reader);
+
+            if (!IsValid(result))
+            {
+                _processing = false;
+                return;
+            }
+            
             try
             {
                 foreach (var parcel in result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel)
@@ -350,20 +498,21 @@
                     TrackingLinks.Add(new TrackingLink(parcel.Waybill));
                 }
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 Console.WriteLine(e);
             }
         }
-        
+
         //Generate Label
         var newLabel = new GenerateSpedLabelsV4(waybills);
         if (international) newLabel.DpdServicesParamsV1.Session.SessionType = "INTERNATIONAL";
         _response = await Request.CallSoapWebService(_url, newLabel);
         
+        
         //Deserialize the label from response
         using (var reader = new StringReader(_response))
-        {                
+        {
             result = (Envelope)serializer.Deserialize(reader);
             label = result.Body.GenerateSpedLabelsV4Response.Return.DocumentData;
         }
@@ -371,7 +520,7 @@
         if (AppState.Settings.SaveLabelsToFile) LabelManager.SaveBase64ToPDF(label);
         _processing = false;
     }
-    
+
     private void GenerateProtocol(MouseEventArgs obj)
     {
         throw new NotImplementedException();
@@ -382,7 +531,7 @@
         _receiver.CountryCode = s;
         international = (s != "PL");
     }
-    
+
     private void LoginChanged(string login)
     {
         if (Regex.IsMatch(login, "01$"))
@@ -401,4 +550,30 @@
         FidField?.SetText(profile.FID);
     }
 
+    private bool IsValid(Envelope result)
+    {
+        //Verify Soap Structure error
+        if (result.Body.Fault is not null)
+        {
+            Errors.Add(new SoapError(result.Body.Fault.Faultstring, result.Body.Fault.Detail.Exception.StackTrace));
+            return false;
+        }
+
+        //Process PackagesV9 repsonse
+        if (result.Body.GeneratePackagesNumbersV9Response is not null)
+        {
+            if (result.Body.GeneratePackagesNumbersV9Response.Return.Status == "OK") return true;
+            Errors.AddRange(result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.ValidationDetails.GetErrors());
+        }
+        //Process GenerateSpedLabels repsonse
+        else if (result.Body.GenerateSpedLabelsV4Response is not null)
+        {
+            if (result.Body.GenerateSpedLabelsV4Response.Return.Status == "OK") return true;
+            Errors.AddRange(result.Body.GenerateSpedLabelsV4Response.Return.Packages.Package.ValidationDetails.GetErrors());
+        }
+
+        return false;
+    }
+
+    //TODO Make error message prettier
 }

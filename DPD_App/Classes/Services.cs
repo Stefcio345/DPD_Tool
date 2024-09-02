@@ -3,15 +3,12 @@
 public class Services
 {
     public DeclaredValue? declaredValue { get; set; }
-    
     public Cod? cod { get; set; }
     public Duty? duty { get; set; }
-
     public DpdPickup? dpdPickup { get; set; }
-    
+    public SelfCol? selfCol { get; set; }
     public DpdFood? dpdFood { get; set; }
-    
-    public Guarantee? guarentee { get; set; }
+    public Guarantee? guarantee { get; set; }
 
     public object? cud { get; set; }
     public object? rod { get; set; }
@@ -28,82 +25,113 @@ public class Services
     
 }
 
-public class DeclaredValue: GenerateXML
+public class DeclaredValue
 {
-    public double amount { get; set; }
-    public string? currency { get; set; }
+    public decimal amount { get; set; }
+    public string currency { get; set; }
 
-    public string generateXML()
+    public DeclaredValue()
     {
-        return $"<declaredValue>" +
-               $"<{nameof(amount)}> + {amount} + </{nameof(amount)}>" +
-               $"<{nameof(currency)}> + {currency} + </{nameof(currency)}>" +
-               $"</declaredValue>";
+        this.amount = 0;
+        this.currency = "PLN";
+    }
+    public DeclaredValue(decimal amount, string currency)
+    {
+        this.amount = amount;
+        this.currency = currency;
     }
 }
 
-public class Cod: GenerateXML
+public class Cod
 {
-    public double amount { get; set; }
-    public string? currency { get; set; }
-
-    public string generateXML()
-    {
-        return $"<cod>" +
-               $"<{nameof(amount)}> + {amount} + </{nameof(amount)}>" +
-               $"<{nameof(currency)}> + {currency} + </{nameof(currency)}>" +
-               $"</cod>";
-    }
-}
-
-public class DpdPickup: GenerateXML
-{
-    public string? pudo { get; set; }
-
-    public string generateXML()
-    {
-        return $"<dpdPickup>" +
-               $"<{nameof(pudo)}> + {pudo} + </{nameof(pudo)}>" +
-               $"</dpdPickup>";
-    }
-}
-
-public class DpdFood: GenerateXML
-{
-    public DateTime limitDate { get; set; }
-
-    public string generateXML()
-    {
-        return $"<dpdPickup>" +
-               $"<{nameof(limitDate)}> + {limitDate:yyyy-mm-dd} + </{nameof(limitDate)}>" +
-               $"</dpdPickup>";
-    }
-}
-
-public class Guarantee: GenerateXML
-{
-    public bool time0930 { get; set; } = false;
-    public bool time1200 { get; set; } = false;
-    public bool saturday { get; set; } = false;
-    public bool timefixed { get; set; } = false;
-    public bool b2c { get; set; } = false;
-    public bool nextday { get; set; } = false;
-    public bool today { get; set; } = false;
+    public decimal amount { get; set; }
+    public string currency { get; set; }
     
+    public Cod()
+    {
+        this.amount = 0;
+        this.currency = "PLN";
+    }
+    public Cod(decimal amount, string currency)
+    {
+        this.amount = amount;
+        this.currency = currency;
+    }
+}
+
+public class DpdPickup
+{
+    public string pudo { get; set; }
+
+    public DpdPickup()
+    {
+        this.pudo = "PL16738";
+    }
+    public DpdPickup(string pudo)
+    {
+        this.pudo = pudo;
+    }
+}
+
+public class DpdFood
+{
+    //TODO Datetime ord strink
+    public string limitDate { get; set; }
+
+    public DpdFood()
+    {
+        this.limitDate = DateTime.Now.ToString("yyyy-MM-dd");
+    }
+    public DpdFood(DateTime limitDate)
+    {
+        this.limitDate = limitDate.ToString("yyyy-MM-dd");
+    }
+}
+
+public class Guarantee
+{
     public string? type { get; set; }
     public string? value { get; set; }
 
-    public string generateXML()
+    public Guarantee()
     {
-        return $"<guarantee>" +
-               $"<{nameof(type)}> + {type} + </{nameof(type)}>" +
-               $"<{nameof(value)}> + {value} + </{value}>" +
-               $"</guarantee>";
+        this.type = null;
+        this.value = null;
+    }
+    public Guarantee(string type, string? value)
+    {
+        this.type = type;
+        this.value = value;
     }
 }
 
 public class Duty
 {
-    public string amount;
+    public decimal amount;
     public string currency;
+    
+    public Duty()
+    {
+        this.amount = 0;
+        this.currency = "PLN";
+    }
+    public Duty(decimal amount, string? currency)
+    {
+        this.amount = amount;
+        this.currency = currency;
+    }
+}
+
+public class SelfCol
+{
+    public string receiver;
+
+    public SelfCol()
+    {
+        this.receiver = "PRIV";
+    }
+    public SelfCol(string receiver)
+    {
+        this.receiver = receiver;
+    }
 }

@@ -44,7 +44,7 @@ public class AppState
     {
         Settings = new AppSettings();
         Settings.LoadFromFile();
-        Request.Settings = Settings;
+        Logger.Settings = Settings;
         LabelManager.Settings = Settings;
     }
 }

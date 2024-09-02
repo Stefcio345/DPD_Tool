@@ -6,11 +6,11 @@ namespace DPD_App;
 public class GenerateSpedLabelsV4Response { 
 
     [XmlElement(ElementName="return", Namespace="")] 
-    public Return? Return { get; set; } 
+    public Return Return { get; set; } 
 
     [XmlAttribute(AttributeName="ns2", Namespace="http://www.w3.org/2000/xmlns/")] 
-    public string? Ns2 { get; set; } 
+    public string Ns2 { get; set; } 
 
     [XmlText] 
-    public string? Text { get; set; } 
+    public string Text { get; set; } 
 }
