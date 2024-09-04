@@ -17,6 +17,21 @@ public class Body
     [XmlElement(ElementName="generateSpedLabelsV4", Namespace="http://dpdservices.dpd.com.pl/")] 
     public GenerateSpedLabelsV4? GenerateSpedLabelsV4 { get; set; } 
     
+    [XmlElement(ElementName="generateProtocolV2", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public GenerateProtocolV2? GenerateProtocolV2 { get; set; } 
+    
+    [XmlElement(ElementName="generateProtocolV2Response", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public GenerateProtocolV2Response? GenerateProtocolV2Response { get; set; } 
+    
+    [XmlElement(ElementName="generateInternationalPackageNumbersV1", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public GenerateInternationalPackageNumbersV1? GenerateInternationalPackageNumbersV1 { get; set; } 
+    
+    [XmlElement(ElementName="findPostalCodeV1", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public FindPostalCodeV1? FindPostalCodeV1 { get; set; } 
+    
+    [XmlElement(ElementName="getCourierOrderAvailabilityV1", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public GetCourierOrderAvailabilityV1 GetCourierOrderAvailabilityV1 { get; set; } 
+    
     [XmlElement(ElementName="Fault")] 
     public Fault? Fault { get; set; } 
 }

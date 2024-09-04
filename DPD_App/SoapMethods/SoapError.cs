@@ -12,7 +12,7 @@ public class SoapError
     {
         Title = title;
         Content = content;
-        Logger.Log(LoggingType.ERROR, title + "\nMessage: " + content);
+        LoggingService.Log(LoggingType.ERROR, title + "\nMessage: " + content);
     }
 }
 

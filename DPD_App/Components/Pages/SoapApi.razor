@@ -79,6 +79,9 @@
     private void OnTabChange(TabView tab)
     {
         //TODO Create more dynamic naming system
+        //TODO add censoring of credentials
+        //TODO add saving session ID and waybills
+        //TODO maybe add downloading label
         if (CurrentTab.SoapData is not null) CurrentTab.Label = CurrentTab.SoapData.CurrentMethod.ToString();
         CurrentTab = tab;
         StateHasChanged();

@@ -3,13 +3,13 @@ using System.Xml.Serialization;
 using DPD_App;
 
 [XmlRoot(ElementName="packages", Namespace="")]
-public class Packages { 
+public class PackagesXml { 
     
     [XmlElement(ElementName="Package")] 
-    public Package? Package { get; set; }
+    public PackageXml? Package { get; set; }
     
     [XmlElement("parcels")]
-    public List<Parcels>? Parcels { get; set; }
+    public List<ParcelsXml>? Parcels { get; set; }
 
     [XmlElement(ElementName = "payerType", Namespace = "")]
     public string? PayerType { get; set; }
@@ -18,10 +18,10 @@ public class Packages {
     public string? ThirdPartyFID { get; set; }
 
     [XmlElement(ElementName = "receiver", Namespace = "")]
-    public Receiver? Receiver { get; set; }
+    public ReceiverXml? Receiver { get; set; }
 
     [XmlElement(ElementName = "sender", Namespace = "")]
-    public Sender? Sender { get; set; }
+    public SenderXml? Sender { get; set; }
 
     [XmlElement(ElementName = "ref1", Namespace = "")]
     public string? Ref1 { get; set; }
@@ -35,7 +35,7 @@ public class Packages {
     [XmlElement(ElementName = "services", Namespace = "")]
     public Services? Services { get; set; }
     
-    public Packages()
+    public PackagesXml()
     {
         Package = null;
         PayerType = "THIRD_PARTY";
@@ -43,13 +43,13 @@ public class Packages {
         Ref1 = "ref1_abc";
         Ref2 = "ref2_def";
         Ref3 = "ref3_ghi";
-        Sender = new Sender();
-        Receiver = new Receiver();
+        Sender = new SenderXml();
+        Receiver = new ReceiverXml();
         Services = new Services();
-        Parcels = [new Parcels()];
+        Parcels = [new ParcelsXml()];
     }
 
-    public Packages(CallTypes type)
+    public PackagesXml(CallTypes type)
     {
         switch (type)
         {
@@ -63,7 +63,7 @@ public class Packages {
                 Sender = null;
                 Receiver = null;
                 Services = null;
-                Parcels = [new Parcels(CallTypes.LABEL)];
+                Parcels = [new ParcelsXml(CallTypes.LABEL)];
                 break;
             default:
                 break;

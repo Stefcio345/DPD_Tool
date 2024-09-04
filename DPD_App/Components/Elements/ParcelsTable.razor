@@ -99,47 +99,47 @@
 </MudTable>
     
 @code {
-    [CascadingParameter] public List<Parcels> Parcels { get; set; }
+    [CascadingParameter] public List<ParcelsXml> Parcels { get; set; }
     [CascadingParameter] public bool dpdLQ { get; set; }
-    private Parcels ParcelBeforeEdit;
+    private ParcelsXml ParcelBeforeEdit;
     
     //TODO Make edit buttons nice
     
     private void AddPackage()
     {
-        Parcels.Add(new Parcels());
+        Parcels.Add(new ParcelsXml());
     }
     
     private void RemovePackage(object currentParcel)
     {
-        var parcel = (Parcels)currentParcel;
+        var parcel = (ParcelsXml)currentParcel;
         Parcels.Remove(parcel);
     }
     
     private void BackupItem(object element)
     {
-        ParcelBeforeEdit = new Parcels()
+        ParcelBeforeEdit = new ParcelsXml()
         {
-            Weight = ((Parcels)element).Weight,
-            SizeX = ((Parcels)element).SizeX,
-            SizeY = ((Parcels)element).SizeY,
-            SizeZ = ((Parcels)element).SizeZ,
-            Content = ((Parcels)element).Content,
-            CustomerData1 = ((Parcels)element).CustomerData1,
-            CustomerData2 = ((Parcels)element).CustomerData2,
-            CustomerData3 = ((Parcels)element).CustomerData3,
+            Weight = ((ParcelsXml)element).Weight,
+            SizeX = ((ParcelsXml)element).SizeX,
+            SizeY = ((ParcelsXml)element).SizeY,
+            SizeZ = ((ParcelsXml)element).SizeZ,
+            Content = ((ParcelsXml)element).Content,
+            CustomerData1 = ((ParcelsXml)element).CustomerData1,
+            CustomerData2 = ((ParcelsXml)element).CustomerData2,
+            CustomerData3 = ((ParcelsXml)element).CustomerData3,
         };
     }
     
     private void ResetItemToOriginalValues(object element)
     {
-        ((Parcels)element).Weight = ParcelBeforeEdit.Weight;
-        ((Parcels)element).SizeX = ParcelBeforeEdit.SizeX;
-        ((Parcels)element).SizeY = ParcelBeforeEdit.SizeY;
-        ((Parcels)element).SizeZ = ParcelBeforeEdit.SizeZ;
-        ((Parcels)element).Content = ParcelBeforeEdit.Content;
-        ((Parcels)element).CustomerData1 = ParcelBeforeEdit.CustomerData1;
-        ((Parcels)element).CustomerData2 = ParcelBeforeEdit.CustomerData2;
-        ((Parcels)element).CustomerData3 = ParcelBeforeEdit.CustomerData3;
+        ((ParcelsXml)element).Weight = ParcelBeforeEdit.Weight;
+        ((ParcelsXml)element).SizeX = ParcelBeforeEdit.SizeX;
+        ((ParcelsXml)element).SizeY = ParcelBeforeEdit.SizeY;
+        ((ParcelsXml)element).SizeZ = ParcelBeforeEdit.SizeZ;
+        ((ParcelsXml)element).Content = ParcelBeforeEdit.Content;
+        ((ParcelsXml)element).CustomerData1 = ParcelBeforeEdit.CustomerData1;
+        ((ParcelsXml)element).CustomerData2 = ParcelBeforeEdit.CustomerData2;
+        ((ParcelsXml)element).CustomerData3 = ParcelBeforeEdit.CustomerData3;
     }
 }

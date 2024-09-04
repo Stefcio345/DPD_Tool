@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace DPD_App;
 
-public class XMLDocument
+public class XMLService
 {
     public static string Prettify(string str)
     {

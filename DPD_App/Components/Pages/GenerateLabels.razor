@@ -20,9 +20,11 @@
             <MudTextField @ref="PasswordField" T="string" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             <MudTextField @ref="MasterFidField" T="string" Label="MasterFid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             <MudTextField @ref="FidField" T="string" Label="Fid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            <MudSelect T="string" @bind-Value="_url" Label="Select enviroment">
-                <MudSelectItem Value="@(Globals.WSDL_ADDRESS)">PROD</MudSelectItem>
-                <MudSelectItem Value="@(Globals.WSDL_DEMO_ADDRESS)">DEMO</MudSelectItem>
+            <MudSelect @ref="EnviromentField" Value="CurrentProfile.WsdlAddress" T="WsdlAddress" Label="Select enviroment">
+                @foreach (var wsdlAddres in Globals.WsdlAddresses)
+                {
+                <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
+                }
             </MudSelect>
         </MudStack>
     </MudItem>
@@ -71,10 +73,10 @@
                     <MudTextField @bind-Value="_receiver.Name" Label="Name" Variant="Variant.Outlined"/>
                     <MudTextField @bind-Value="_receiver.Address" Label="Address" Variant="Variant.Outlined"/>
                     <MudTextField @bind-Value="_receiver.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
-                    <MudSelect T="string" Value="_receiver.CountryCode" Label="CountryCode" Variant="Variant.Outlined" ValueChanged="ReceiverCountryChanged">
+                    <MudSelect T="Country" Value="_receiverCountry" Label="CountryCode" Variant="Variant.Outlined" ValueChanged="ReceiverCountryChanged">
                         @foreach (var country in Globals.Countries)
                         {
-                            <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
+                            <MudSelectItem Value="@country">@country.Name</MudSelectItem>
                         }
                     </MudSelect>
                     <MudTextField @bind-Value="_receiver.City" Label="City" Variant="Variant.Outlined"/>
@@ -97,24 +99,54 @@
                     <MudGrid Class="pa-0">
                         <MudItem xs="6">
                             <MudStack Spacing="0">
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@cud" Label="Cud"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@rod" Label="Rod"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@inPers" Label="inPers"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@privPers" Label="privPers"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdExpress" Label="dpdExpress" Disabled="!international"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@pallet" Label="pallet" Disabled="!international"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dox" Label="dox"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdLQ" Label="dpdLQ"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@tires" Label="tires"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@tiresExport" Label="tiresExport" Disabled="!international"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@digitalLabel" Label="digitalLabel"/>
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@pudoToSend" Label="pudoToSend"/>
+                                <!-- Krajowa = international -->
+                                <MudTooltip Arrow="true" Text="<cud/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@cud" Label="Return shipment" Disabled="international"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<rod/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@rod" Label="Return documents" Disabled="international"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<inPers/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@inPers" Label="Delivery to a dedicated person" Disabled="international || dpdPickup"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<privPers/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@privPers" Label="B2C consignment" Disabled="dpdPickup"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<dpdExpress/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdExpress" Label="Air delivery" Disabled="!international || pallet"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<pallet/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@pallet" Label="International pallet" Disabled="!international || dpdExpress || tiresExport"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<dox/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@dox" Label="Letter shipment" Disabled="international || dpdLQ || tires || dpdFood || carryIn"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<dpdLQ/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" Value="@dpdLQ" Label="Shipment of dangerous goods" ValueChanged="DpdLQ" Disabled="dox || tires || dpdFood"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<tires/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@tires" Label="Domestic tires" Disabled="@(international || dpdLQ || dox || dpdPickup || dpdFood || guaranteeType == "TIME0930" || guaranteeType == "TIME1200" || guaranteeType == "TIMEFIXED" || guaranteeType == "B2C" || guaranteeType == "DPDNEXTDAY" || guaranteeType == "DPDTODAY")" />
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<tiresExport/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@tiresExport" Label="Foreign tyres" Disabled="!international || dpdExpress"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<digitalLabel/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@digitalLabel" Label="Send Parcel without a label" Disabled="international || carryIn"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<pudoToSend/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@pudoToSend" Label="Sending a parcel at Pickup point" Disabled="international || carryIn"/>
+                                </MudTooltip>
+                                <MudTooltip Arrow="true" Text="<carryIn/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@carryIn" Label="Carry-in" Disabled="international || dox || pudoToSend || digitalLabel || selfCol"/>
+                                </MudTooltip>
                             </MudStack>
                         </MudItem>
                         
                         <MudItem xs="6">
                             <MudStack Spacing="0">
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@declaredValue" Label="declaredValue"/>
+                                <MudTooltip Arrow="true" Text="<pudoToSend/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@declaredValue" Label="Declared value"/>
+                                </MudTooltip>
                                 @if (declaredValue)
                                 {
                                     <MudSelect T="Currency" @bind-Value="declaredValueCurrency" Label="Currency" Variant="Variant.Outlined" Margin="Margin.Dense">
@@ -126,7 +158,9 @@
                                     <MudTextField Label="Amount" @bind-Value="declaredValueAmount" Variant="Variant.Outlined" Margin="Margin.Dense"/>
                                 }
 
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@cod" Label="Cod"/>
+                                <MudTooltip Arrow="true" Text="<cod/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@cod" Label="Cash on delivery (COD)"/>
+                                </MudTooltip>
                                 @if (cod)
                                 {
                                     <MudSelect T="Currency" @bind-Value="codCurrency" Label="Currency" Variant="Variant.Outlined" Margin="Margin.Dense">
@@ -138,13 +172,17 @@
                                     <MudTextField Label="Cash amount" @bind-Value="codAmount" Variant="Variant.Outlined" Margin="Margin.Dense"/>
                                 }
 
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdPickup" Label="dpdPickup"/>
+                                <MudTooltip Arrow="true" Text="<dpdPickup/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdPickup" Label="Delivery to the Pickup Point" Disabled="tires || privPers || inPers"/>
+                                </MudTooltip>
                                 @if (dpdPickup)
                                 {
                                     <MudTextField Label="Point ID" @bind-Value="pointID" Variant="Variant.Outlined" Margin="Margin.Dense"/>
                                 }
 
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@duty" Label="Duty"/>
+                                <MudTooltip Arrow="true" Text="<duty/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@duty" Label="Customs clearance service" Disabled="!international"/>
+                                </MudTooltip>
                                 @if (duty)
                                 {
                                     <MudSelect T="Currency" @bind-Value="dutyCurrency" Label="Currency" Variant="Variant.Outlined" Margin="Margin.Dense">
@@ -156,29 +194,39 @@
                                     <MudTextField Label="Cash amount" @bind-Value="dutyAmount" Variant="Variant.Outlined" Margin="Margin.Dense"/>
                                 }
 
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@selfCol" Label="SelfCol"/>
+                                <MudTooltip Arrow="true" Text="<selfCol/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@selfCol" Label="Personal collection" Disabled="international || carryIn"/>
+                                </MudTooltip>
                                 @if (selfCol)
                                 {
-                                    <MudSelect T="string" @bind-Value="selfColReceiver" Label="Receiver" Variant="Variant.Outlined" Margin="Margin.Dense">
+                                    <MudSelect T="string" @bind-Value="selfColReceiver" Label="Receiver" Variant="Variant.Outlined" Margin="Margin.Dense" Required="true">
                                         <MudSelectItem T="string" Value="@("PRIV")">Private</MudSelectItem>
                                         <MudSelectItem T="string" Value="@("COMP")">Company</MudSelectItem>
                                     </MudSelect>
                                 }
 
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdFood" Label="DPD Food"/>
+                                <MudTooltip Arrow="true" Text="<dpdFood/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@dpdFood" Label="Food delivery" Disabled="international || tires || dox || dpdLQ"/>
+                                </MudTooltip>
                                 @if (dpdFood)
                                 {
                                     <MudTextField @bind-Value="limitDate" T="DateTime" Format="yyyy-MM-dd" Margin="Margin.Dense" Variant="Variant.Outlined" Label="Limit Date" InputType="InputType.Date"/>
                                 }
 
-                                <MudCheckBox Dense="true" T="bool" @bind-Value="@guarentee" Label="Guarantee"/>
+                                <MudTooltip Arrow="true" Text="<guarentee/>" Placement="Placement.Top" Color="Color.Info">
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@guarentee" Label="Guarantee"/>
+                                </MudTooltip>
                                 @if (guarentee)
                                 {
                                     <MudSelect T="string" @bind-Value="guaranteeType" Label="Type" Variant="Variant.Outlined" Margin="Margin.Dense">
-                                        @foreach (var type in Globals.GuaranteeTypes)
-                                        {
-                                            <MudSelectItem Value="@type.Value">@type.Name</MudSelectItem>
-                                        }
+                                        <MudSelectItem Value="@("TIME0930")" Disabled="international || tires">Delivery at 9:30</MudSelectItem>
+                                        <MudSelectItem Value="@("TIME1200")" Disabled="international || tires">Delivery at 12:00</MudSelectItem>
+                                        <MudSelectItem Value="@("SATURDAY")" Disabled="international">Delivery on saturday</MudSelectItem>
+                                        <MudSelectItem Value="@("TIMEFIXED")" Disabled="international || tires">Delivery at given hour</MudSelectItem>
+                                        <MudSelectItem Value="@("B2C")" Disabled="international || tires">Bussiness to customer</MudSelectItem>
+                                        <MudSelectItem Value="@("DPDNEXTDAY")" Disabled="international || tires">Delivery next day</MudSelectItem>
+                                        <MudSelectItem Value="@("DPDTODAY")" Disabled="international || tires || carryIn">Delivery Today</MudSelectItem>
+                                        <MudSelectItem Value="@("INTER")" Disabled="!international">International Guarantee</MudSelectItem>
                                     </MudSelect>
                                     @if (guaranteeType is not null && (guaranteeType == "B2C" || guaranteeType == "TIMEFIXED"))
                                     {
@@ -217,7 +265,7 @@
     <MudItem xs="3">
         <MudStack>
             <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="GenerateLabel">
-                @if (_processing)
+                @if (_processingLabel)
                 {
                     <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
                     <MudText Class="ms-2">Processing</MudText>
@@ -227,8 +275,8 @@
                     <MudText>Generate Label</MudText>
                 }
             </MudButton>
-            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="GenerateProtocol">
-                @if (_processing)
+            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="GenerateProtocol" Disabled="@(_label is null)">
+                @if (_processingProtocol)
                 {
                     <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
                     <MudText Class="ms-2">Processing</MudText>
@@ -276,11 +324,11 @@
     @if (Errors.Count == 0)
     {
         <MudItem xs="4">
-            @if (label is not null)
+            @if (_label is not null)
             {
                 <MudCard style="height:750px">
                     <MudCardContent>
-                        <iframe width="100%" height="100%" src="data:application/pdf;base64,@label" frameborder="0"></iframe>
+                        <iframe width="100%" height="100%" src="data:application/pdf;base64,@_label" frameborder="0"></iframe>
                     </MudCardContent>
                 </MudCard>
             }
@@ -294,11 +342,11 @@
             }
         </MudItem>
         <MudItem xs="5">
-            @if (protocol is not null)
+            @if (_protocol is not null)
             {
                 <MudCard style="height:750px">
                     <MudCardContent>
-                        <iframe width="100%" height="100%" src="data:application/pdf;base64,@protocol" frameborder="0"></iframe>
+                        <iframe width="100%" height="100%" src="data:application/pdf;base64,@_protocol" frameborder="0"></iframe>
                     </MudCardContent>
                 </MudCard>
             }
@@ -330,7 +378,7 @@
 
 @code{
     //Package data
-    List<Parcels> Parcels = [new Parcels()];
+    List<ParcelsXml> Parcels = [new ParcelsXml()];
     bool cud;
     bool rod;
     bool inPers;
@@ -343,6 +391,7 @@
     bool tiresExport;
     bool digitalLabel;
     bool pudoToSend;
+    bool carryIn;
     
     //TODO Sprawdzić czy wszystkie services działają
 
@@ -355,7 +404,7 @@
     Currency codCurrency;
     
     bool dpdPickup;
-    string pointID;
+    string pointID = "PL16738";
     
     bool duty;
     decimal dutyAmount;
@@ -371,8 +420,9 @@
     string guaranteeType;
     string? guaranteeValue;
     
-    Receiver _receiver;
-    Sender _sender;
+    ReceiverXml _receiver;
+    Country _receiverCountry;
+    SenderXml _sender;
     bool international;
     string ref1;
     string ref2;
@@ -383,6 +433,7 @@
 @code {
     Profile _currentProfile;
     List<SoapError> Errors = new List<SoapError>();
+    private XmlSerializer _envelopeSerializer = new XmlSerializer(typeof(Envelope));
 
     [CascadingParameter]
     public Profile CurrentProfile
@@ -395,24 +446,27 @@
         }
     }
 
-    string _url = Globals.WSDL_DEMO_ADDRESS;
+    WsdlAddress wsdlAddres;
     string _request = "";
     string _response = "";
     private List<string> waybills = new List<string>();
-    private bool _processing = false;
+    private bool _processingLabel = false;
+    private bool _processingProtocol = false;
     public bool recieverOn = true;
     public bool senderOn = true;
     public bool servicesOn = true;
     public int activeMode;
 
-    private string label;
-    private string protocol;
-    private List<TrackingLink> TrackingLinks = new List<TrackingLink>();
+    private string? _label;
+    private string? _protocol;
+    private List<TrackingLinkService> TrackingLinks = new List<TrackingLinkService>();
 
     MudTextField<string>? LoginField;
     MudTextField<string>? PasswordField;
     MudTextField<string>? MasterFidField;
     MudTextField<string>? FidField;
+    MudTextField<string>? _receiverPostalCodeField;
+    MudSelect<WsdlAddress>? EnviromentField;
 
     //Deserialziacja
     //var request = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header/><soapenv:Body><dpd:generatePackagesNumbersV9 xmlns:dpd=\"http://dpdservices.dpd.com.pl/\"><openUMLFeV11><packages><parcels><weight>32</weight><weightAdr>20</weightAdr><sizeX>10</sizeX><sizeY>20</sizeY><sizeZ>30</sizeZ><content>Puszka pandory 1</content><customerData1>klienta dane 11</customerData1><customerData2>klienta dane 22</customerData2><customerData3>klienta dane 33</customerData3></parcels><parcels><weight>33.5</weight><weightAdr>33.5</weightAdr><sizeX>10</sizeX><sizeY>20</sizeY><sizeZ>30</sizeZ><content>Puszka pandory 2</content><customerData1>klienta dane 12</customerData1><customerData2>klienta dane 22</customerData2><customerData3>klienta dane 33</customerData3></parcels><payerType>THIRD_PARTY</payerType><thirdPartyFID>1495</thirdPartyFID><receiver><company/><name>3434</name><city>Warszawa</city><address>34</address><countryCode>PL</countryCode><postalCode>99418</postalCode><phone>123123123</phone><email>pan@chcepaczke.pl</email></receiver><sender><company>qw</company><name>wq</name><address>Gajdy 39</address><city>Radom</city><countryCode>PL</countryCode><postalCode>02274</postalCode><phone>543332222</phone><email>ktos@pocztowy.pl</email></sender><ref1>cos tam 1</ref1><ref2>cos tam 2</ref2><ref3>cos tam 3</ref3><services><rod/><declaredValue><amount>12</amount><currency>PLN</currency></declaredValue></services></packages></openUMLFeV11><pkgNumsGenerationPolicyV1>ALL_OR_NOTHING</pkgNumsGenerationPolicyV1><langCode>PL</langCode><authDataV1><login>test</login><masterFid>1495</masterFid><password>thetu4Ee</password></authDataV1></dpd:generatePackagesNumbersV9></soapenv:Body></soapenv:Envelope>";
@@ -426,20 +480,25 @@
 
     protected override Task OnInitializedAsync()
     {
-        _receiver = new Receiver();
-        _sender = new Sender();
+        _receiver = new ReceiverXml();
+        _sender = new SenderXml();
         return base.OnInitializedAsync();
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) UpdateCredentials(CurrentProfile);
+        if (firstRender)
+        {
+            UpdateCredentials(CurrentProfile);
+            ReceiverCountryChanged(Globals.Countries.Single(c => c.IsoCodeA2 == "PL"));
+        }
         return base.OnAfterRenderAsync(firstRender);
     }
 
     async Task GenerateLabel()
     {
-        _processing = true;
+        _processingLabel = true;
+        _label = null;
         Errors.Clear();
         waybills.Clear();
         TrackingLinks.Clear();
@@ -460,6 +519,7 @@
         if (tiresExport) newPackage.OpenUMLFeV11.Packages.Services.tiresExport = new object();
         if (digitalLabel) newPackage.OpenUMLFeV11.Packages.Services.digitalLabel = new object();
         if (pudoToSend) newPackage.OpenUMLFeV11.Packages.Services.pudoToSend = new object();
+        if (carryIn) newPackage.OpenUMLFeV11.Packages.Services.carryIn = new object();
         
         //Advanced services
         if (declaredValue) newPackage.OpenUMLFeV11.Packages.Services.declaredValue = new DeclaredValue(declaredValueAmount, declaredValueCurrency.IsoCodeA3);
@@ -475,18 +535,18 @@
         newPackage.OpenUMLFeV11.Packages.Sender = _sender;
         newPackage.OpenUMLFeV11.Packages.Parcels = Parcels;
 
-        _response = await Request.CallSoapWebService(_url, newPackage);
+        _response = await NetworkService.CallSoapWebService(EnviromentField.Value.Address, newPackage);
 
         //Deserialize response and get the waybill
         Envelope result;
-        var serializer = new XmlSerializer(typeof(Envelope));
+        
         using (var reader = new StringReader(_response))
         {
-            result = (Envelope)serializer.Deserialize(reader);
+            result = (Envelope)_envelopeSerializer.Deserialize(reader);
 
             if (!IsValid(result))
             {
-                _processing = false;
+                _processingLabel = false;
                 return;
             }
             
@@ -495,7 +555,7 @@
                 foreach (var parcel in result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel)
                 {
                     waybills.Add(parcel.Waybill);
-                    TrackingLinks.Add(new TrackingLink(parcel.Waybill));
+                    TrackingLinks.Add(new TrackingLinkService(parcel.Waybill));
                 }
             }
             catch (System.Exception e)
@@ -507,29 +567,53 @@
         //Generate Label
         var newLabel = new GenerateSpedLabelsV4(waybills);
         if (international) newLabel.DpdServicesParamsV1.Session.SessionType = "INTERNATIONAL";
-        _response = await Request.CallSoapWebService(_url, newLabel);
+        _response = await NetworkService.CallSoapWebService(EnviromentField.Value.Address, newLabel);
         
         
         //Deserialize the label from response
         using (var reader = new StringReader(_response))
         {
-            result = (Envelope)serializer.Deserialize(reader);
-            label = result.Body.GenerateSpedLabelsV4Response.Return.DocumentData;
+            result = (Envelope)_envelopeSerializer.Deserialize(reader);
+            _label = result.Body.GenerateSpedLabelsV4Response.Return.DocumentData;
         }
 
-        if (AppState.Settings.SaveLabelsToFile) LabelManager.SaveBase64ToPDF(label);
-        _processing = false;
+        if (AppState.Settings.SaveLabelsToFile) PdfService.SaveBase64ToPDF(_label, PrintType.Label);
+        _processingLabel = false;
     }
 
-    private void GenerateProtocol(MouseEventArgs obj)
+    private async Task GenerateProtocol(MouseEventArgs obj)
     {
-        throw new NotImplementedException();
+        _processingProtocol = true;
+        var newProtocol = new GenerateProtocolV2(waybills);
+        if (international) newProtocol.DpdServicesParamsV1.Session.SessionType = "INTERNATIONAL";
+        _response = await NetworkService.CallSoapWebService(EnviromentField.Value.Address, newProtocol);
+        
+        Envelope result;
+        //Deserialize the label from response
+        using (var reader = new StringReader(_response))
+        {
+            result = (Envelope)_envelopeSerializer.Deserialize(reader);
+            _protocol = result.Body.GenerateProtocolV2Response.Return.DocumentData;
+        }
+
+        if (AppState.Settings.SaveLabelsToFile) PdfService.SaveBase64ToPDF(_label, PrintType.Protocol);
+        _processingProtocol = false;
     }
 
-    private void ReceiverCountryChanged(string s)
+    private void ReceiverCountryChanged(Country country)
     {
-        _receiver.CountryCode = s;
-        international = (s != "PL");
+        _receiverCountry = country;
+        _receiver.CountryCode = country.IsoCodeA2;
+        if (country.DefaultPostalCode != null) _receiver.PostalCode = country.DefaultPostalCode;
+        if (country.Currency != null)
+        {
+            if(country.Currency.IsCod) codCurrency = country.Currency;
+            if(country.Currency.IsDuty) dutyCurrency = country.Currency;
+            if(country.Currency.IsDeclaredAmount) declaredValueCurrency = country.Currency;
+        }
+        
+        international = (country.IsoCodeA2 != "PL");
+        StateHasChanged();
     }
 
     private void LoginChanged(string login)
@@ -548,6 +632,8 @@
         PasswordField?.SetText(profile.Password);
         MasterFidField?.SetText(profile.MasterFid);
         FidField?.SetText(profile.FID);
+        if (EnviromentField != null) EnviromentField.Value = profile.WsdlAddress;
+        StateHasChanged();
     }
 
     private bool IsValid(Envelope result)
@@ -563,7 +649,16 @@
         if (result.Body.GeneratePackagesNumbersV9Response is not null)
         {
             if (result.Body.GeneratePackagesNumbersV9Response.Return.Status == "OK") return true;
-            Errors.AddRange(result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.ValidationDetails.GetErrors());
+            if (result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package!.ValidationDetails is not null)
+                Errors.AddRange(result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.ValidationDetails.GetErrors());
+
+            foreach (var parcel in result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package!.Parcels.Parcel)
+            {
+                if (parcel.ValidationDetails is not null)
+                {
+                    Errors.AddRange(parcel.ValidationDetails.GetErrors());
+                }
+            }
         }
         //Process GenerateSpedLabels repsonse
         else if (result.Body.GenerateSpedLabelsV4Response is not null)
@@ -576,4 +671,18 @@
     }
 
     //TODO Make error message prettier
+    
+    private void DpdLQ(bool obj)
+    {
+        if (!obj)
+        {
+            foreach (var parcel in Parcels)
+            {
+                parcel.AdrWeight = null;
+            }   
+        }
+        dpdLQ = obj;
+        StateHasChanged();
+    }
+
 }

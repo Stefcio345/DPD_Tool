@@ -2,7 +2,7 @@
 
 namespace DPD_App;
 
-public class Logger
+public class LoggingService
 {
     public static AppSettings Settings { get; set; }
     public static void Log(LoggingType type, string content)

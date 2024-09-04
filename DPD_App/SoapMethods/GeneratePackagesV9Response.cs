@@ -12,7 +12,7 @@ public class Return {
     public int SessionId { get; set; } 
 
     [XmlElement(ElementName="Packages", Namespace="")] 
-    public Packages? Packages { get; set; } 
+    public PackagesXml Packages { get; set; } 
     
     [XmlElement(ElementName="documentData", Namespace="")] 
     public string? DocumentData { get; set; } 

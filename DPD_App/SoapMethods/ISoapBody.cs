@@ -1,6 +1,6 @@
 ﻿namespace DPD_App;
 
-public interface SoapBody
+public interface ISoapBody
 {
     public string CreateSoapEnvelope();
 }

@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
 
 [XmlRoot(ElementName="sender", Namespace="")]
-public class Sender { 
+public class SenderXml { 
 
     [XmlElement(ElementName="company", Namespace="")] 
     public string Company { get; set; } = "firma nadawcy";

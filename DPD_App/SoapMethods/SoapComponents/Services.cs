@@ -22,7 +22,9 @@ public class Services
     public object? tiresExport { get; set; }
     public object? digitalLabel { get; set; }
     public object? pudoToSend { get; set; }
-    
+    public object? carryIn { get; set; }
+    public object? pudoReturn { get; set; }
+
 }
 
 public class DeclaredValue

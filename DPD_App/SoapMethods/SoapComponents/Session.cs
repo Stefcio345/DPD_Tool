@@ -7,7 +7,7 @@ public class Session
 {
 
     [XmlElement(ElementName = "packages", Namespace="")]
-    public Packages Packages { get; set; } = new Packages(CallTypes.LABEL);
+    public PackagesXml Packages { get; set; } = new PackagesXml(CallTypes.LABEL);
 
     [XmlElement(ElementName = "sessionType", Namespace="")]
     public string SessionType { get; set; } = "DOMESTIC";

@@ -1,10 +1,10 @@
 ﻿namespace DPD_App;
 
-public class TrackingLink
+public class TrackingLinkService
 {
     public string waybill;
 
-    public TrackingLink(string waybill)
+    public TrackingLinkService(string waybill)
     {
         this.waybill = waybill;
     }

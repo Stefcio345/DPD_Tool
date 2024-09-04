@@ -2,7 +2,7 @@
 using DPD_App;
 
 [XmlRoot(ElementName="Package")]
-public class Package { 
+public class PackageXml { 
 
     [XmlElement(ElementName="Status")] 
     public string? Status { get; set; } 
@@ -14,5 +14,5 @@ public class Package {
     public int PackageId { get; set; } 
 
     [XmlElement(ElementName="Parcels")] 
-    public Parcels? Parcels { get; set; } 
+    public ParcelsXml? Parcels { get; set; } 
 }

@@ -35,6 +35,18 @@ public class SoapData
             NotifyStateChanged();
         }
     }
+    
+    private WsdlAddress _wsdlAddress;
+
+    public WsdlAddress WsdlAddress
+    {
+        get => _wsdlAddress;
+        set
+        {
+            _wsdlAddress = value;
+            NotifyStateChanged();
+        }
+    }
 
     public SoapData(Action onChange)
     {

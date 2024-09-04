@@ -8,9 +8,12 @@ namespace DPD_App;
 public class Globals
 {
     public static string SaveLocation = "./Data/";
-    
-    public static string WSDL_ADDRESS = "https://dpdservices.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL";
-    public static string WSDL_DEMO_ADDRESS = "https://dpdservicesdemo.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL";
+
+    public static List<WsdlAddress> WsdlAddresses = new List<WsdlAddress>
+    {
+        new WsdlAddress("https://dpdservices.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL","PROD"),
+        new WsdlAddress("https://dpdservicesdemo.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL", "DEMO"),
+    };
     
     public static List<Currency> Currencies = new List<Currency>()
     {
@@ -30,8 +33,8 @@ public class Globals
     
     public static List<Country> Countries = new List<Country>
     {
-        new Country("Poland", "PL", "POL", Currencies.First(c => c.IsoCodeA3 == "PLN"), "02247"),
-            new Country("Belgium", "BE", "BEL",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "1000"),
+        new Country("Poland", "PL", "POL", Currencies.First(c => c.IsoCodeA3 == "PLN"), "02274"),
+        new Country("Belgium", "BE", "BEL",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "1000"),
         new Country("Croatia", "HR", "HRV",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "10000"),
         new Country("Czech Republic", "CZ", "CZE",  Currencies.First(c => c.IsoCodeA3 == "CZK"), "10000"),
         new Country("Estonia", "EE", "EST",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "49604"),
@@ -56,18 +59,6 @@ public class Globals
         new MapFilter("LQ", "dpd_lq"),
         new MapFilter("Ship without labels", "digital_label"),
         new MapFilter("Parcel machines", "swip_box"),
-    };
-
-    public static List<GuaranteeType> GuaranteeTypes = new List<GuaranteeType>()
-    {
-        new GuaranteeType("Delivery at 9:30", "TIME0930"),
-        new GuaranteeType("Delivery at 12:00", "TIME1200"),
-        new GuaranteeType("Delivery on saturday", "SATURDAY"),
-        new GuaranteeType("Delivery at given hour", "TIMEFIXED"),
-        new GuaranteeType("Bussiness to customer", "B2C"),
-        new GuaranteeType("Delivery next day", "DPDNEXTDAY"),
-        new GuaranteeType("Delivery Today", "DPDTODAY"),
-        new GuaranteeType("International Guarantee", "INTER"),
     };
     
     public static List<Profile> Profiles = new List<Profile>
@@ -102,7 +93,10 @@ public class AppSettings
     public bool MiniDrawer = false;
     
     public bool SaveLabelsToFile = false;
-    public string SaveLocation = "Labels";
+    public string LabelSaveLocation = "Labels";
+    
+    public bool SaveProtocolsToFile = false;
+    public string ProtocolSaveLocation = "Protocols";
 
 
     public void LoadFromFile()
@@ -113,7 +107,9 @@ public class AppSettings
             LogRequests = temp.LogRequests;
             MiniDrawer = temp.MiniDrawer;
             SaveLabelsToFile = temp.SaveLabelsToFile;
-            SaveLocation = temp.SaveLocation;
+            LabelSaveLocation = temp.LabelSaveLocation;
+            SaveProtocolsToFile = temp.SaveProtocolsToFile;
+            ProtocolSaveLocation = temp.ProtocolSaveLocation;
         }
         else
         {
@@ -169,13 +165,11 @@ public enum API_METHODS
     GenerateSpedLabels,
     GenerateProtocol,
     FindPostalCode,
-    GenerateReturnPackages,
     GenerateDomesticReturnLabel,
     GenerateReturnLabel,
-    GenerateShipment,
     AppendParcelsToPackage,
-    GetCourierOderAvailability,
-    GenerateProtocolsWithDestinations,
+    GetCourierOrderAvailability,
+    GenerateProtocolWithDestinations,
     PackagesPickupCall,
     ImportDeliveryBusinessEvent
 }
@@ -191,6 +185,12 @@ public enum LoggingType
     REQUEST,
     RESPONSE
 }
+public enum PrintType
+{
+    Label,
+    Protocol,
+}
+
 
 public class Country
 {
@@ -206,7 +206,7 @@ public class Country
         IsoCodeA3 = isoCodeA3;
         Name = name;
         Currency = currency;
-        defaultPostalCode = defaultPostalCode;
+        DefaultPostalCode = defaultPostalCode;
     }
 
     public override string ToString()
@@ -244,17 +244,6 @@ public class Currency
         return Name;
     }
 }
-public class GuaranteeType
-{
-    public string Name;
-    public string Value;
-
-    public GuaranteeType(string name, string value)
-    {
-        Name = name;
-        Value = value;
-    }
-}
 
 public class MapFilter
 {
@@ -275,6 +264,29 @@ public class MapFilter
     }
 }
 
+public class WsdlAddress
+{
+    public string Address { get; set; }
+    public string Name { get; set; }
+
+    public WsdlAddress()
+    {
+        Address = "";
+        Name = "";
+    }
+
+    public WsdlAddress(string address, string name)
+    {
+        Address = address;
+        Name = name;
+    }
+
+    public override string ToString()
+    {
+        return Name;
+    }
+}
+
 public class Profile: ICloneable
 {
     public string Login { get; set; }
@@ -285,6 +297,7 @@ public class Profile: ICloneable
     public string PudoKey { get; set; }
     public string ProfileName { get; set; }
     public bool IsChoosen { get; set; }
+    public WsdlAddress? WsdlAddress { get; set; }
 
     public Profile()
     {
@@ -295,9 +308,10 @@ public class Profile: ICloneable
         FID = "";
         WidgetKey = "";
         PudoKey = "";
+        WsdlAddress = null;
     }
 
-    public Profile(string profileName, string login, string password, string masterFid, string fid, string widgetKey = "", string pudoKey ="", bool isChoosen=false)
+    public Profile(string profileName, string login, string password, string masterFid, string fid, string widgetKey = "", string pudoKey ="", bool isChoosen=false, WsdlAddress wsdlAddress=null)
     {
         ProfileName = profileName;
         Login = login;
@@ -307,6 +321,7 @@ public class Profile: ICloneable
         WidgetKey = widgetKey;
         PudoKey = pudoKey;
         IsChoosen = isChoosen;
+        WsdlAddress = wsdlAddress;
     }
 
     public override string ToString()

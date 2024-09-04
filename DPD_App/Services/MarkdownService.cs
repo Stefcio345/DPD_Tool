@@ -7,7 +7,7 @@ using MudBlazor.Components.Highlighter;
 
 namespace DPD_App;
 
-public class MarkdownConverter
+public class MarkdownService
 {
     static readonly Regex HeaderChecker = new Regex(@"^[#]+$");
     public static string ToHtml(string text)

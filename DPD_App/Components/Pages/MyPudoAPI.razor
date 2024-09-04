@@ -323,7 +323,7 @@
     private async void SendRequest()
     {
         _processing = true;
-        response = await Request.SendHttpRequest(PudoLink);
+        response = await NetworkService.SendHttpRequest(PudoLink);
         // Convert JSON string to a pretty-printed format
         var options = new JsonSerializerOptions
         {

@@ -2,10 +2,10 @@
 using DPD_App;
 
 [XmlRoot(ElementName="parcels", Namespace="")]
-public class Parcels { 
+public class ParcelsXml { 
     
     [XmlElement(ElementName="Parcel")] 
-    public List<Parcel>? Parcel { get; set; } 
+    public List<ParcelXml>? Parcel { get; set; } 
     
     [XmlElement(ElementName="statusInfo", Namespace="")] 
     public StatusInfo? StatusInfo { get; set; } 
@@ -16,7 +16,7 @@ public class Parcels {
     [XmlElement("weight", Namespace = "")]
     public string? Weight {get;set;}
     
-    [XmlElement(ElementName="adrWeight", Namespace = "")]
+    [XmlElement(ElementName="weightAdr", Namespace = "")]
     public string? AdrWeight {get;set;}
 
     [XmlElement(ElementName="sizeX", Namespace="")] 
@@ -40,7 +40,7 @@ public class Parcels {
     [XmlElement(ElementName="customerData3", Namespace="")] 
     public string? CustomerData3 { get; set; }
 
-    public Parcels()
+    public ParcelsXml()
     {
         Weight = "12.5";
         AdrWeight = null;
@@ -54,7 +54,7 @@ public class Parcels {
         CustomerData3 = "Uwagi dla kuriera 3";
     }
     
-    public Parcels(CallTypes type)
+    public ParcelsXml(CallTypes type)
     {
         switch (type)
         {
@@ -69,7 +69,7 @@ public class Parcels {
 }
 
 [XmlRoot(ElementName="Parcel")]
-public class Parcel { 
+public class ParcelXml { 
 
     [XmlElement(ElementName="Status")] 
     public string? Status { get; set; } 
@@ -82,4 +82,7 @@ public class Parcel {
 
     [XmlElement(ElementName="Reference", Namespace="")] 
     public object? Reference { get; set; } 
+    
+    [XmlElement(ElementName="ValidationDetails", Namespace="")] 
+    public ValidationDetails? ValidationDetails { get; set; }
 }

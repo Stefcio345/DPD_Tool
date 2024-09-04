@@ -80,7 +80,7 @@
         // Get current caret position
         caretPosition = await JS.InvokeAsync<int>("getCaretPosition", editableDiv);
     
-        string htmlContent = MarkdownConverter.ToHtml(RawContent);
+        string htmlContent = MarkdownService.ToHtml(RawContent);
     
         // Update the HTML content while preserving the caret position
         await JS.InvokeVoidAsync("setContentAndRestoreCaret", editableDiv, htmlContent, caretPosition);

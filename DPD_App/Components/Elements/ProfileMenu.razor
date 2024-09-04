@@ -63,6 +63,15 @@
                         <MudTextField T="string" @bind-Value="profileToEdit.PudoKey" Label="PUDO Key"/>
                     </MudStack>
 
+                    <MudStack Row="true" Spacing="8">
+                        <MudSelect T="WsdlAddress" @bind-Value="profileToEdit.WsdlAddress" Label="Environment">
+                            @foreach (var wsdlAddres in Globals.WsdlAddresses)
+                            {
+                                <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudStack>
+
                 </MudStack>
 
                 <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mt-6">
@@ -107,6 +116,15 @@
                     <MudStack Row="true" Spacing="8">
                         <MudTextField T="string" @bind-Value="NewProfile.WidgetKey" Label="Widget Key"/>
                         <MudTextField T="string" @bind-Value="NewProfile.PudoKey" Label="PUDO Key"/>
+                    </MudStack>
+
+                    <MudStack Row="true" Spacing="8">
+                        <MudSelect T="WsdlAddress" @bind-Value="NewProfile.WsdlAddress" Label="Environment">
+                            @foreach (var wsdlAddres in Globals.WsdlAddresses)
+                            {
+                            <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
+                            }
+                        </MudSelect>
                     </MudStack>
 
                 </MudStack>
@@ -162,18 +180,18 @@
 
     private void SaveChangesToProfile(MouseEventArgs obj)
     {
-        AppState.CurrentProfile = new Profile()
-        {
-            ProfileName = profileToEdit.ProfileName,
-            Login = profileToEdit.Login,
-            Password = profileToEdit.Password,
-            MasterFid = profileToEdit.MasterFid,
-            PudoKey = profileToEdit.PudoKey,
-            WidgetKey = profileToEdit.WidgetKey,
-            FID = profileToEdit.FID,
-        };
+        AppState.CurrentProfile.ProfileName = profileToEdit.ProfileName;
+        AppState.CurrentProfile.Login = profileToEdit.Login;
+        AppState.CurrentProfile.Password = profileToEdit.Password;
+        AppState.CurrentProfile.MasterFid = profileToEdit.MasterFid;
+        AppState.CurrentProfile.PudoKey = profileToEdit.PudoKey;
+        AppState.CurrentProfile.WidgetKey = profileToEdit.WidgetKey;
+        AppState.CurrentProfile.FID = profileToEdit.FID;
+        AppState.CurrentProfile.WsdlAddress = profileToEdit.WsdlAddress;
+        
         Globals.SaveState();
         Snackbar.Add("Changes saved successfully", Severity.Success);
+        _profileSettingsVisible = false;
         StateHasChanged();
     }
 

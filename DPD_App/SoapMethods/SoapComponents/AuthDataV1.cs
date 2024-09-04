@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
 using DPD_App;
 
-[XmlRoot(ElementName = "authDataV1", Namespace = "")]
+[XmlRoot(ElementName = "authDataV1")]
 public class AuthDataV1
 {
 
