@@ -1,8 +1,9 @@
 ﻿using System.Xml.Serialization;
 using DPD_App;
+using DPD_App.Models;
 
 [XmlRoot(ElementName="parcels", Namespace="")]
-public class ParcelsXml { 
+public class ParcelsXml{ 
     
     [XmlElement(ElementName="Parcel")] 
     public List<ParcelXml>? Parcel { get; set; } 
@@ -52,6 +53,21 @@ public class ParcelsXml {
         CustomerData1 = "Uwagi dla kuriera 1";
         CustomerData2 = "Uwagi dla kuriera 2";
         CustomerData3 = "Uwagi dla kuriera 3";
+    }
+    
+    public ParcelsXml MapParcel(Parcel parcel)
+    {
+        Weight = parcel.Weight;
+        AdrWeight = parcel.AdrWeight;
+        Waybill = parcel.Waybill;
+        SizeX = parcel.SizeX;
+        SizeY = parcel.SizeY;
+        SizeZ = parcel.SizeZ;
+        Content = parcel.Content;
+        CustomerData1 = parcel.CustomerData1;
+        CustomerData2 = parcel.CustomerData2;
+        CustomerData3 = parcel.CustomerData3;
+        return this;
     }
     
     public ParcelsXml(CallTypes type)

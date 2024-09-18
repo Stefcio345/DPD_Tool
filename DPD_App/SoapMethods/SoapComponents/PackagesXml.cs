@@ -33,7 +33,7 @@ public class PackagesXml {
     public string? Ref3 { get; set; }
 
     [XmlElement(ElementName = "services", Namespace = "")]
-    public Services? Services { get; set; }
+    public ServicesXml? Services { get; set; }
     
     public PackagesXml()
     {
@@ -45,7 +45,7 @@ public class PackagesXml {
         Ref3 = "ref3_ghi";
         Sender = new SenderXml();
         Receiver = new ReceiverXml();
-        Services = new Services();
+        Services = new ServicesXml();
         Parcels = [new ParcelsXml()];
     }
 

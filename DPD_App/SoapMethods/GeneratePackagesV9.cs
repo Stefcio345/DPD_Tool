@@ -43,6 +43,12 @@ public class GeneratePackagesNumbersV9: ISoapBody, IAuthData
 		}
 	}
 
+	public void UpdateAuthData(string login, string password, string masterFid)
+	{
+		this.AuthDataV1.Login = login;
+		this.AuthDataV1.Password = password;
+		this.AuthDataV1.MasterFid = masterFid;
+	}
 	public void UpdateAuthData(Profile profile)
 	{
 		this.AuthDataV1.Login = profile.Login;

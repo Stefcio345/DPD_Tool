@@ -1,7 +1,8 @@
 ﻿using System.Xml.Serialization;
+using DPD_App.Models;
 
 [XmlRoot(ElementName="sender", Namespace="")]
-public class SenderXml { 
+public class SenderXml{ 
 
     [XmlElement(ElementName="company", Namespace="")] 
     public string Company { get; set; } = "firma nadawcy";
@@ -26,4 +27,17 @@ public class SenderXml {
 
     [XmlElement(ElementName="email", Namespace="")] 
     public string Email { get; set; } = "nazwa@domena-nadawcy.pl";
+    
+    public SenderXml MapAddressData(AddressData addressData)
+    {
+        Company = addressData.Company;
+        Name = addressData.Name;
+        Address = addressData.Address;
+        City = addressData.City;
+        CountryCode = addressData.CountryCode;
+        PostalCode = addressData.PostalCode;
+        Phone = addressData.Phone;
+        Email = addressData.Email;
+        return this;
+    }
 }

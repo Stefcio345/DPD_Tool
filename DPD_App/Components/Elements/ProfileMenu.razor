@@ -64,7 +64,7 @@
                     </MudStack>
 
                     <MudStack Row="true" Spacing="8">
-                        <MudSelect T="WsdlAddress" @bind-Value="profileToEdit.WsdlAddress" Label="Environment">
+                        <MudSelect T="WsdlAddress" @bind-Value="profileToEdit.WsdlAddress" Label="Environment" Required="true">
                             @foreach (var wsdlAddres in Globals.WsdlAddresses)
                             {
                                 <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
@@ -119,7 +119,7 @@
                     </MudStack>
 
                     <MudStack Row="true" Spacing="8">
-                        <MudSelect T="WsdlAddress" @bind-Value="NewProfile.WsdlAddress" Label="Environment">
+                        <MudSelect T="WsdlAddress" @bind-Value="NewProfile.WsdlAddress" Label="Environment" Required="true">
                             @foreach (var wsdlAddres in Globals.WsdlAddresses)
                             {
                             <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
@@ -211,7 +211,7 @@
 
     private void AddNewProfile(MouseEventArgs obj)
     {
-        NewProfile = new Profile("", "", "", "", "");
+        NewProfile = new Profile("", "", "", "", "", Globals.WsdlAddresses.Single(a => a.Name == "DEMO"));
         _newProfileVisible = true;
         StateHasChanged();
     }

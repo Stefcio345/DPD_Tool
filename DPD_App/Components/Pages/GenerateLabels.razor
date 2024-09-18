@@ -504,7 +504,7 @@
         TrackingLinks.Clear();
         //Create new package
         var newPackage = new GeneratePackagesNumbersV9();
-        newPackage.UpdateAuthData(new Profile("", LoginField.Value, PasswordField.Value, MasterFidField.Value, FidField.Value));
+        newPackage.UpdateAuthData(LoginField.Value, PasswordField.Value, MasterFidField.Value);
         newPackage.OpenUMLFeV11.Packages.ThirdPartyFID = FidField.Value;
 
         if (cud) newPackage.OpenUMLFeV11.Packages.Services.cud = new object();

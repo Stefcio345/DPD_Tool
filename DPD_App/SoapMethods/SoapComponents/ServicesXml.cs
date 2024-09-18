@@ -1,6 +1,8 @@
-﻿namespace DPD_App;
+﻿using DPD_App.Models;
 
-public class Services
+namespace DPD_App;
+
+public class ServicesXml
 {
     public DeclaredValue? declaredValue { get; set; }
     public Cod? cod { get; set; }
@@ -24,6 +26,36 @@ public class Services
     public object? pudoToSend { get; set; }
     public object? carryIn { get; set; }
     public object? pudoReturn { get; set; }
+    
+    public ServicesXml MapServices(Services services)
+    {
+        //Bool services
+        if (services.cud) cud = new object();
+        if (services.rod) rod = new object();
+        if (services.inPers) inPers = new object();
+        if (services.privPers) privPers = new object();
+        if (services.dpdExpress) dpdExpress = new object();
+        if (services.pallet) pallet = new object();
+        if (services.dox) dox = new object();
+        if (services.dpdLQ) dpdLQ = new object();
+        if (services.tires) tires = new object();
+        if (services.tiresExport) tiresExport = new object();
+        if (services.digitalLabel) digitalLabel = new object();
+        if (services.pudoToSend) pudoToSend = new object();
+        if (services.carryIn) carryIn = new object();
+        if (services.pudoReturn) pudoReturn = new object();
+        
+        //Advanced services
+        if (services.declaredValue) declaredValue = services.DeclaredValue;
+        if (services.cod) cod = services.Cod;
+        if (services.dpdPickup) dpdPickup = services.DpdPickup;
+        if (services.duty) duty = services.Duty;
+        if (services.selfCol) selfCol = services.SelfCol;
+        if (services.dpdFood) dpdFood = services.DpdFood;
+        if (services.guarantee) guarantee = services.Guarantee;
+        
+        return this;
+    }
 
 }
 

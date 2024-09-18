@@ -7,5 +7,6 @@ public interface ISoapBody
 
 public interface IAuthData
 {
+    public void UpdateAuthData(string login, string password, string masterFid);
     public void UpdateAuthData(Profile profile);
 }

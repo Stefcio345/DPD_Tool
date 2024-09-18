@@ -134,32 +134,32 @@
         {
             case API_METHODS.GeneratePackagesNumbers:
                 var packagesNumbersV9 = new GeneratePackagesNumbersV9();
-                packagesNumbersV9.UpdateAuthData(CurrentProfile);
+                packagesNumbersV9.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = packagesNumbersV9.CreateSoapEnvelope();
                 break;
             case API_METHODS.GenerateSpedLabels:
                 var spedLabelsV4 = new GenerateSpedLabelsV4();
-                spedLabelsV4.UpdateAuthData(CurrentProfile);
+                spedLabelsV4.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = spedLabelsV4.CreateSoapEnvelope();
                 break;
             case API_METHODS.GenerateProtocol:
                 var generateProtocolV2 = new GenerateProtocolV2();
-                generateProtocolV2.UpdateAuthData(CurrentProfile);
+                generateProtocolV2.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = generateProtocolV2.CreateSoapEnvelope();
                 break;
             case API_METHODS.GenerateInternationalPackageNumbers:
                 var generateInternationalPackageNumbers = new GenerateInternationalPackageNumbersV1();
-                generateInternationalPackageNumbers.UpdateAuthData(CurrentProfile);
+                generateInternationalPackageNumbers.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = generateInternationalPackageNumbers.CreateSoapEnvelope();
                 break;
             case API_METHODS.FindPostalCode:
                 var findPostalCodeV1 = new FindPostalCodeV1();
-                findPostalCodeV1.UpdateAuthData(CurrentProfile);
+                findPostalCodeV1.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = findPostalCodeV1.CreateSoapEnvelope();
                 break;
             case API_METHODS.GetCourierOrderAvailability:
                 var getCourierOrderAvailabilityV1 = new GetCourierOrderAvailabilityV1();
-                getCourierOrderAvailabilityV1.UpdateAuthData(CurrentProfile);
+                getCourierOrderAvailabilityV1.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = getCourierOrderAvailabilityV1.CreateSoapEnvelope();
                 break;
             default:

@@ -12,13 +12,18 @@ public class GetCourierOrderAvailabilityV1: ISoapBody, IAuthData
     [XmlElement(ElementName = "authDataV1", Namespace="")]
     public AuthDataV1 AuthDataV1 { get; set; } = new AuthDataV1();
     
+    public void UpdateAuthData(string login, string password, string masterFid)
+    {
+        this.AuthDataV1.Login = login;
+        this.AuthDataV1.Password = password;
+        this.AuthDataV1.MasterFid = masterFid;
+    }
     public void UpdateAuthData(Profile profile)
     {
         this.AuthDataV1.Login = profile.Login;
         this.AuthDataV1.Password = profile.Password;
         this.AuthDataV1.MasterFid = profile.MasterFid;
     }
-
     public string CreateSoapEnvelope()
     {
         var SoapEnvelope = new Envelope();

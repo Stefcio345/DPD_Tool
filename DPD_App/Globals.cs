@@ -38,6 +38,7 @@ public class Globals
         new Country("Croatia", "HR", "HRV",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "10000"),
         new Country("Czech Republic", "CZ", "CZE",  Currencies.First(c => c.IsoCodeA3 == "CZK"), "10000"),
         new Country("Estonia", "EE", "EST",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "49604"),
+        new Country("France", "FR", "FRA",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "78000"),
     };
     
     public static List<MapFilter> MapFilters = new List<MapFilter>
@@ -63,7 +64,7 @@ public class Globals
     
     public static List<Profile> Profiles = new List<Profile>
     {
-        new Profile("Default Test", "test", "thetu4Ee", "1495","1495", "","", true),
+        new Profile("Default Test", "test", "thetu4Ee", "1495","1495", WsdlAddresses.Single(a => a.Name == "DEMO"),"", "", true),
     };
 
     public static void SaveState()
@@ -297,7 +298,7 @@ public class Profile: ICloneable
     public string PudoKey { get; set; }
     public string ProfileName { get; set; }
     public bool IsChoosen { get; set; }
-    public WsdlAddress? WsdlAddress { get; set; }
+    public WsdlAddress WsdlAddress { get; set; }
 
     public Profile()
     {
@@ -311,7 +312,7 @@ public class Profile: ICloneable
         WsdlAddress = null;
     }
 
-    public Profile(string profileName, string login, string password, string masterFid, string fid, string widgetKey = "", string pudoKey ="", bool isChoosen=false, WsdlAddress wsdlAddress=null)
+    public Profile(string profileName, string login, string password, string masterFid, string fid, WsdlAddress wsdlAddress, string widgetKey = "", string pudoKey ="", bool isChoosen=false)
     {
         ProfileName = profileName;
         Login = login;
