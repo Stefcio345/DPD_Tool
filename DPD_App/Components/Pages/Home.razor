@@ -15,7 +15,16 @@
         private async void Test(MouseEventArgs obj)
         {
                 var package = new Package();
-                await package.GenerateWaybills(AppState.CurrentProfile);
+                package.Services.dpdLQ = true;
+                try
+                {
+                        await package.GenerateWaybills(AppState.CurrentProfile);
+                }
+                catch (SoapException e)
+                {
+                        Console.WriteLine(e);
+                }
+
                 foreach (var parcel in package.Parcels)
                 {
                         Console.WriteLine(parcel.ParcelId);

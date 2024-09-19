@@ -22,7 +22,7 @@ public class Package
     
     public Package()
     {
-        Parcels = [new Parcel(),new Parcel(),new Parcel()];
+        Parcels = [new Parcel()];
         PayerType = "THIRD_PARTY";
         ThirdPartyFID = "1495";
         Receiver = new AddressData();
