@@ -20,5 +20,9 @@ public class Session
 public class StatusInfo { 
 
     [XmlElement(ElementName="status", Namespace="")] 
-    public string? Status { get; set; } 
+    public string Status { get; set; } 
+    
+    [XmlElement(ElementName="description", Namespace="")] 
+    public string? Description { get; set; } 
+    
 }

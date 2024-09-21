@@ -4,6 +4,8 @@ public class Package
 {
     public List<Parcel> Parcels { get; set; }
     
+    public string? Base64Label { get; set; }
+    public string? Base64Protocol { get; set; }
     public string PayerType { get; set; }
     
     public string? ThirdPartyFID { get; set; }
@@ -19,7 +21,9 @@ public class Package
     public string? Ref3 { get; set; }
     
     public Services Services { get; set; }
-    
+
+    public bool International => Sender.CountryCode != Receiver.CountryCode;
+
     public Package()
     {
         Parcels = [new Parcel()];
@@ -49,5 +53,20 @@ public class Package
     public async Task GenerateWaybills(Profile profile)
     {
        await PackageService.GenerateWaybills(this, profile);
+    }
+    
+    public async Task GenerateWaybills(string login, string password, string masterFid, WsdlAddress address)
+    {
+        await PackageService.GenerateWaybills(this, new Profile("", login, password, masterFid, "", address));
+    }
+    
+    public async Task GenerateProtocol(Profile profile)
+    {
+        await PackageService.GenerateProtocol(this, profile);
+    }
+    
+    public async Task GenerateProtocol(string login, string password, string masterFid, WsdlAddress address)
+    {
+        await PackageService.GenerateProtocol(this, new Profile("", login, password, masterFid, "", address));
     }
 }

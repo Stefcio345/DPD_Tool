@@ -15,7 +15,6 @@
         private async void Test(MouseEventArgs obj)
         {
                 var package = new Package();
-                package.Services.dpdLQ = true;
                 try
                 {
                         await package.GenerateWaybills(AppState.CurrentProfile);
@@ -31,5 +30,6 @@
                         Console.WriteLine(parcel.Waybill);
                         Console.WriteLine(parcel.Status);
                 }
+                Console.WriteLine(package.Base64Label);
         }
 }

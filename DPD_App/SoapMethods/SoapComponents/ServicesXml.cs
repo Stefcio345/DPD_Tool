@@ -46,13 +46,13 @@ public class ServicesXml
         if (services.pudoReturn) pudoReturn = new object();
         
         //Advanced services
-        if (services.declaredValue) declaredValue = services.DeclaredValue;
-        if (services.cod) cod = services.Cod;
-        if (services.dpdPickup) dpdPickup = services.DpdPickup;
-        if (services.duty) duty = services.Duty;
-        if (services.selfCol) selfCol = services.SelfCol;
-        if (services.dpdFood) dpdFood = services.DpdFood;
-        if (services.guarantee) guarantee = services.Guarantee;
+        if (services.declaredValue) declaredValue = new DeclaredValue(services.DeclaredValue.amount, services.DeclaredValue.currency.IsoCodeA3);
+        if (services.cod) cod = new Cod(services.Cod.amount, services.Cod.currency.IsoCodeA3);
+        if (services.dpdPickup) dpdPickup = new DpdPickup(services.DpdPickup.pudo);
+        if (services.duty) duty = new Duty(services.Duty.amount, services.Duty.currency.IsoCodeA3);
+        if (services.selfCol) selfCol = new SelfCol(services.SelfCol.receiver);
+        if (services.dpdFood) dpdFood = new DpdFood(services.DpdFood.limitDate);
+        if (services.guarantee) guarantee = new Guarantee(services.Guarantee.type, services.Guarantee.value);
         
         return this;
     }

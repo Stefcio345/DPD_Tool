@@ -6,8 +6,8 @@ public class Parcel
     
     public int? ParcelId { get; set; } 
     
-    public string? Waybill { get; set; } 
-    
+    public string? Waybill { get; set; }
+
     public object? Reference { get; set; } 
     
     public string Weight { get; set; }
