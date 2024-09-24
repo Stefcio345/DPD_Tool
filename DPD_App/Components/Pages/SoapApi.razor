@@ -1,18 +1,19 @@
 ﻿@page "/SoapAPI"
+@using MudBlazor.Extensions
 
 <PageTitle>SoapAPI</PageTitle>
 <MudText Typo="Typo.h3">Soap API</MudText>
 
 <MudPaper Class="my-8 pa-0" Elevation="0" Square="true" Height="100%">
-    <MudGrid Class="pa-0">
-        <MudItem xs="2" Class="py-0">
+    <MudStack Row="true" Class="pa-0">
+        <MudPaper Class="py-0" Width="@(size + "%")">
             <MudPaper Class="pa-4" Elevation="10" Square="true" Height="100%">
-                <MudList Padding="true" T="TabView" SelectionMode="SelectionMode.SingleSelection" SelectedValue="CurrentTab" SelectedValueChanged="OnTabChange">
-                    @foreach (var tab in UserTabs)
+                <MudList Padding="true" T="Tab" SelectionMode="SelectionMode.SingleSelection" SelectedValue="CurrentTab" SelectedValueChanged="OnTabChange">
+                    @foreach (var tab in Tabs)
                     {
                         <MudListItem Class="pa-1 my-2" Value="@tab">
                             <MudStack Justify="Justify.SpaceBetween" Row="true">
-                                <MudText Typo="Typo.h5" Style="overflow: hidden" >@tab.Label</MudText>
+                                <MudText Typo="Typo.h5" Style="overflow: hidden">@tab.SoapData.Title</MudText>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => { RemoveTab(@tab); })"/>
                             </MudStack>
                         </MudListItem>
@@ -22,8 +23,8 @@
                     <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Small" OnClick="@(() => { AddTab(); })"/>
                 </MudStack>
             </MudPaper>
-        </MudItem>
-        <MudItem xs="10" Class="pa-6">
+        </MudPaper>
+        <MudPaper Class="pa-6" Width="@(100-size + "%")">
             @if (CurrentTab.SoapData is not null)
             {
                 <SoapInterface SoapData="@CurrentTab.SoapData"/>
@@ -32,57 +33,53 @@
             {
                 <MudText Typo="Typo.h3">Home</MudText>
             }
-        </MudItem>
-    </MudGrid>
+        </MudPaper>
+    </MudStack>
+    <MudSlider @bind-Value="size" Min="0" Max="100" Step="0.1" />
 </MudPaper>
 
 @code {
-    public class TabView
+    public class Tab
     {
-        public string Label { get; set; }
+        public string Title { get; set; }
+        public bool IsActive = false;
         public SoapData? SoapData;
-        public bool ShowCloseIcon { get; set; } = true;
     }
     
-    public List<TabView> UserTabs = new();
-    public TabView CurrentTab;
-
-    void RestoreUserTabs()
-    {
-        UserTabs.Clear();
-        UserTabs.Add(new TabView { Label = "Home", ShowCloseIcon = false});
-        CurrentTab = UserTabs[0];
-    }
+    public List<Tab> Tabs = new();
+    public Tab CurrentTab;
+    public double size = 20;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        RestoreUserTabs();
+        Tabs.Add(new Tab { Title = "Home", IsActive = true, SoapData = new SoapData(StateHasChanged)});
+        CurrentTab = Tabs.FirstOrDefault(t => t.IsActive);
     }
     
 
     public void AddTab()
     {
         //Create dynamic tab names
-        var tab = new TabView { Label = $"Tab {UserTabs.Count}", SoapData = new SoapData(this.StateHasChanged) };
-        UserTabs.Add(tab);
+        var tab = new Tab { Title = $"Tab {Tabs.Count}", SoapData = new SoapData(this.StateHasChanged) };
+        tab.Title = tab.SoapData.Title;
+        Tabs.Add(tab);
         StateHasChanged();
     }
 
-    public void RemoveTab(TabView tab)
+    public void RemoveTab(Tab tab)
     {
-        UserTabs.Remove(tab);
+        Tabs.Remove(tab);
         StateHasChanged();
     }
     
 
-    private void OnTabChange(TabView tab)
+    private void OnTabChange(Tab tab)
     {
         //TODO Create more dynamic naming system
         //TODO add censoring of credentials
         //TODO add saving session ID and waybills
         //TODO maybe add downloading label
-        if (CurrentTab.SoapData is not null) CurrentTab.Label = CurrentTab.SoapData.CurrentMethod.ToString();
         CurrentTab = tab;
         StateHasChanged();
     }

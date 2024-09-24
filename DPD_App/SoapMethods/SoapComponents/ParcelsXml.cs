@@ -70,12 +70,22 @@ public class ParcelsXml{
         return this;
     }
     
-    public ParcelsXml(CallTypes type)
+    public ParcelsXml(CallTypes type, string waybill)
     {
         switch (type)
         {
             case CallTypes.LABEL:
-                Waybill = "XXXXXXXXXXXXXU";
+                Weight = null;
+                AdrWeight = null;
+                Waybill = null;
+                SizeX = null;
+                SizeY = null;
+                SizeZ = null;
+                Content = null;
+                CustomerData1 = null;
+                CustomerData2 = null;
+                CustomerData3 = null;
+                Waybill = waybill;
                 break;
             default:
                 break;

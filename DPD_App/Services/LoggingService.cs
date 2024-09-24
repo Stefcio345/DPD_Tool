@@ -17,7 +17,7 @@ public class LoggingService
             newstring = content.Replace(Environment.NewLine, "").Replace("\n", "");
         else newstring = content;
         //Remove multiple spaces
-        newstring = Regex.Replace(newstring, "[ ]+", " ");
+        newstring = Regex.Replace(newstring, "\\s+", " ");
         Console.WriteLine($"[{DateTime.Now}] {type}: {newstring}");
     }
 }

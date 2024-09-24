@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using DPD_App.Models;
 
 namespace DPD_App;
 
@@ -20,14 +21,16 @@ public class GenerateProtocolV2: ISoapBody, IAuthData {
     public GenerateProtocolV2()
     {
         DpdServicesParamsV1 = new DpdServicesParamsV1();
+        DpdServicesParamsV1.PickupAddress = new PickupAddress();
         OutputDocFormatV1 = "PDF";
         OutputDocPageFormatV1 = "LBL_PRINTER";
         AuthDataV1 = new AuthDataV1();
     }
     
-    public GenerateProtocolV2(List<string> waybills)
+    public GenerateProtocolV2(List<string> waybills, Package package)
     {
         DpdServicesParamsV1 = new DpdServicesParamsV1();
+        DpdServicesParamsV1.PickupAddress = new PickupAddress().MapAddressData(package.Sender);
         if (DpdServicesParamsV1.Session.Packages.Parcels != null)
         {
             DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
@@ -78,5 +81,50 @@ public class GenerateProtocolV2: ISoapBody, IAuthData {
             serializer.Serialize(textWriter, SoapEnvelope);
             return textWriter.ToString();
         }
+    }
+}
+
+[XmlRoot(ElementName="pickupAddress", Namespace="")]
+public class PickupAddress
+{
+
+    [XmlElement(ElementName = "fid", Namespace = "")]
+    public string? Fid { get; set; } = "1495";
+    
+    [XmlElement(ElementName="company", Namespace="")] 
+    public string Company { get; set; } = "firma nadawcy";
+
+    [XmlElement(ElementName="name", Namespace="")] 
+    public string Name { get; set; } = "imie i nazwisko nadawcy";
+
+    [XmlElement(ElementName="address", Namespace="")] 
+    public string Address { get; set; } = "adres nadawcy";
+
+    [XmlElement(ElementName="city", Namespace="")] 
+    public string City { get; set; } = "miasto nadawcy";
+
+    [XmlElement(ElementName="countryCode", Namespace="")] 
+    public string CountryCode { get; set; } = "PL"; 
+
+    [XmlElement(ElementName="postalCode", Namespace="")] 
+    public string PostalCode { get; set; } = "02274";
+
+    [XmlElement(ElementName="phone", Namespace="")] 
+    public string Phone { get; set; } = "123 123 123";
+
+    [XmlElement(ElementName="email", Namespace="")] 
+    public string Email { get; set; } = "nazwa@domena-nadawcy.pl";
+    
+    public PickupAddress MapAddressData(AddressData addressData)
+    {
+        Company = addressData.Company;
+        Name = addressData.Name;
+        Address = addressData.Address;
+        City = addressData.City;
+        CountryCode = addressData.CountryCode;
+        PostalCode = addressData.PostalCode;
+        Phone = addressData.Phone;
+        Email = addressData.Email;
+        return this;
     }
 }

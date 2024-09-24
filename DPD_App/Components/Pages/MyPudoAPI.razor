@@ -1,5 +1,6 @@
 ﻿@page "/MyPudoAPI"
 @using System.Text.Json
+@using DPD_App.Json
 
 <PageTitle>MyPudoAPI</PageTitle>
 
@@ -11,7 +12,7 @@
         <MudTextField Immediate="true" Value="CurrentProfile.PudoKey" T="string" Label="MyPudoAPI Key" Variant="Variant.Outlined" TextChanged="OnKeyChanged" ValueChanged="s => Console.WriteLine(s)"/>
         <!-- Filtering select -->
         <MudForm>
-            <MudRadioGroup T="string" ValueChanged="ChangedFilter">
+            <MudRadioGroup Value="SelectedFiltering" T="string" ValueChanged="ChangedFilter">
                 <MudRadio Value="@("Country")" Color="Color.Primary">Country</MudRadio>
                 <MudRadio Value="@("Point ID")" Color="Color.Primary">Point ID</MudRadio>
                 <MudRadio Value="@("Address")" Color="Color.Primary">Address</MudRadio>
@@ -159,11 +160,104 @@
     </MudItem>
     
     <MudItem xs="12">
-        <MudPaper Height="900px" Width="100%" Class="overflow-auto">
-                <MudText Typo="Typo.h6">Response</MudText>
-                <pre style="font-family: monospace;">
-                    @response
-                </pre>
+        <MudPaper Height="700px" Width="100%" Class="mb-20">
+            <MudText Typo="Typo.h4" Class="pa-2">Response</MudText>
+            <MudTable Items="@PudoItems" Virtualize="true" Hover="true" Breakpoint="Breakpoint.Sm" Height="700px">
+                <HeaderContent>
+                    <MudTh>active</MudTh>
+                    <MudTh>overloaded</MudTh>
+                    <MudTh>pudoId</MudTh>
+                    <MudTh>pudoTypeInfo</MudTh>
+                    <MudTh>name</MudTh>
+                    <MudTh>language</MudTh>
+                    <MudTh>address1</MudTh>
+                    <MudTh>locationHint</MudTh>
+                    <MudTh>zipCode</MudTh>
+                    <MudTh>city</MudTh>
+                    <MudTh>country</MudTh>
+                    <MudTh>longitude</MudTh>
+                    <MudTh>latitude</MudTh>
+                    <MudTh>parking</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Nr">@context.active</MudTd>
+                    <MudTd DataLabel="Nr">@context.overloaded</MudTd>
+                    <MudTd DataLabel="Nr">@context.pudoId</MudTd>
+                    <MudTd DataLabel="Nr">@context.pudoTypeInfo</MudTd>
+                    <MudTd DataLabel="Nr">@context.name</MudTd>
+                    <MudTd DataLabel="Nr">@context.language</MudTd>
+                    <MudTd DataLabel="Nr">@context.address1</MudTd>
+                    <MudTd DataLabel="Nr">@context.locationHint</MudTd>
+                    <MudTd DataLabel="Nr">@context.zipCode</MudTd>
+                    <MudTd DataLabel="Nr">@context.city</MudTd>
+                    <MudTd DataLabel="Nr">@context.country</MudTd>
+                    <MudTd DataLabel="Nr">@context.longitude</MudTd>
+                    <MudTd DataLabel="Nr">@context.latitude</MudTd>
+                    <MudTd DataLabel="Nr">@context.parking</MudTd>
+                    <MudTd><MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ShowBtnPress(context.pudoId))">@((context.ShowDetails == true) ? "Hide" : "Show") Details</MudButton></MudTd>
+                </RowTemplate>
+                <ChildRowContent>
+                    @if (context.ShowDetails)
+                        {
+                            <MudTr>
+                                <td colspan="5">
+                                    <MudStack Row="true">
+                                    <MudCard Elevation="0">
+                                        <MudCardHeader>
+                                            <CardHeaderContent>
+                                                <MudText Typo="Typo.body1">Opening hours for <strong>@context.pudoId</strong></MudText>
+                                            </CardHeaderContent>
+                                        </MudCardHeader>
+                                        <MudCardContent Class="pa-0">
+                                            <MudTable Items="@context.openingHoursItems" Context="OpeningHours" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                                                <ColGroup>
+                                                    <col/>
+                                                    <col/>
+                                                    <col style="width:200px;"/>
+                                                </ColGroup>
+                                                <HeaderContent>
+                                                    <MudTh>Day</MudTh>
+                                                    <MudTh>Opening hour</MudTh>
+                                                    <MudTh>Closing hour</MudTh>
+                                                </HeaderContent>
+                                                <RowTemplate>
+                                                    <MudTd DataLabel="Day">@OpeningHours.dayId</MudTd>
+                                                    <MudTd DataLabel="Opening hour">@OpeningHours.startTm</MudTd>
+                                                    <MudTd DataLabel="Closing hour">@OpeningHours.endTm</MudTd>
+                                                </RowTemplate>
+                                            </MudTable>
+                                        </MudCardContent>
+                                    </MudCard>
+                                    <MudCard Elevation="0">
+                                        <MudCardHeader>
+                                            <CardHeaderContent>
+                                                <MudText Typo="Typo.body1">Holidays</MudText>
+                                            </CardHeaderContent>
+                                        </MudCardHeader>
+                                        <MudCardContent Class="pa-0">
+                                            <MudTable Items="@context.holidayItems" Context="OpeningHours" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
+                                                <ColGroup>
+                                                    <col/>
+                                                    <col/>
+                                                </ColGroup>
+                                                <HeaderContent>
+                                                    <MudTh>Start time</MudTh>
+                                                    <MudTh>End time</MudTh>
+                                                </HeaderContent>
+                                                <RowTemplate>
+                                                    <MudTd DataLabel="Start time">@OpeningHours.startTm</MudTd>
+                                                    <MudTd DataLabel="End time">@OpeningHours.endTm</MudTd>
+                                                </RowTemplate>
+                                            </MudTable>
+                                        </MudCardContent>
+                                    </MudCard>
+                                    </MudStack>
+                                </td>
+                            </MudTr>
+                        }
+                </ChildRowContent>
+            </MudTable>
         </MudPaper>
     </MudItem>
 </MudGrid>
@@ -172,6 +266,7 @@
 @code {
     [CascadingParameter]
     public Profile CurrentProfile { get; set; }
+    public List<PudoItem> PudoItems = new List<PudoItem>();
     
     private MudTextField<string>? Query;
     bool _processing;
@@ -180,7 +275,7 @@
     private Country? SelectedCountry;
     private string? PointID;
     private string? response;
-    private string? SelectedFiltering;
+    private string? SelectedFiltering = "Country";
 
     private string? City;
     private string? ZipCode;
@@ -331,7 +426,11 @@
         };
 
         response = JsonSerializer.Serialize(JsonSerializer.Deserialize<object>(response), options);
+        
         //repsonseShow = new MarkupString(response);
+        Root myDeserializedClass = JsonSerializer.Deserialize<Root>(response);
+        PudoItems = myDeserializedClass.pudoItems;
+
         _processing = false;
         StateHasChanged();
     }
@@ -391,6 +490,12 @@
 
         PudoLink = str;
         StateHasChanged();
+    }
+    
+    private void ShowBtnPress(string nr)
+    {
+        var PudoPoint = PudoItems.First(f => f.pudoId == nr);
+        PudoPoint.ShowDetails = !PudoPoint.ShowDetails;
     }
     
 }

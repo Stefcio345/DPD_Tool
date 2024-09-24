@@ -60,4 +60,10 @@ public class InternationalOpenUMLFeV1 {
 
     [XmlElement(ElementName="packages", Namespace="")] 
     public PackagesXml Packages { get; set; } = new PackagesXml();
+
+    public InternationalOpenUMLFeV1()
+    {
+        Packages = new PackagesXml();
+        Packages.Sender.CountryCode = "DE";
+    }
 }

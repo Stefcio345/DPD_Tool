@@ -17,11 +17,11 @@
 <MudGrid>
     <MudItem xs="12">
         <MudStack Row="true">
-            <MudTextField @ref="LoginField" T="string" Label="Login" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged" Immediate="true"></MudTextField>
-            <MudTextField @ref="PasswordField" T="string" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            <MudTextField @ref="MasterFidField" T="string" Label="MasterFid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            <MudTextField T="string" Value="profileFromTextBoxes.Login" Label="Login" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged" Immediate="true"></MudTextField>
+            <MudTextField @bind-Value="profileFromTextBoxes.Password" T="string" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            <MudTextField @bind-Value="profileFromTextBoxes.MasterFid" T="string" Label="MasterFid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             <MudTextField @bind-Value="package.ThirdPartyFID" T="string" Label="Fid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            <MudSelect @ref="EnviromentField" Value="CurrentProfile.WsdlAddress" T="WsdlAddress" Label="Select enviroment">
+            <MudSelect @ref="EnviromentField" @bind-Value="profileFromTextBoxes.WsdlAddress" T="WsdlAddress" Label="Select enviroment">
                 @foreach (var wsdlAddres in Globals.WsdlAddresses)
                 {
                 <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
@@ -378,9 +378,11 @@
 </MudGrid>
 
 @code {
-    Profile _currentProfile;
+    WsdlAddress wsdlAddres = Globals.WsdlAddresses.Single(a => a.Name == "DEMO");
     List<SoapError> Errors = new List<SoapError>();
 
+    Profile profileFromTextBoxes = new Profile();
+    Profile _currentProfile;
     [CascadingParameter]
     public Profile CurrentProfile
     {
@@ -391,8 +393,7 @@
             UpdateCredentials(_currentProfile);
         }
     }
-
-    WsdlAddress wsdlAddres = Globals.WsdlAddresses.Single(a => a.Name == "DEMO");
+    
     string _request = "";
     string _response = "";
     private bool _processingLabel = false;
@@ -406,11 +407,7 @@
     Country _receiverCountry;
     
     private List<TrackingLinkService> TrackingLinks = new List<TrackingLinkService>();
-
-    MudTextField<string>? LoginField;
-    MudTextField<string>? PasswordField;
-    MudTextField<string>? MasterFidField;
-    MudTextField<string>? FidField;
+    
     MudTextField<string>? ReceiverPostalCodeField;
     MudSelect<WsdlAddress>? EnviromentField;
 
@@ -440,7 +437,7 @@
 
         try
         {
-            await package.GenerateWaybills(LoginField.Value, PasswordField.Value, MasterFidField.Value, wsdlAddres);
+            await package.GenerateWaybills(profileFromTextBoxes);
         }
         catch (SoapException e)
         {
@@ -467,7 +464,7 @@
         _processingProtocol = true;
         try
         {
-            await package.GenerateProtocol(LoginField.Value, PasswordField.Value, MasterFidField.Value, wsdlAddres);
+            await package.GenerateProtocol(profileFromTextBoxes);
         }
         catch (SoapException e)
         {
@@ -503,18 +500,20 @@
         if (Regex.IsMatch(login, "01$"))
         {
             var fid = login[..^2];
-            FidField.SetText(fid);
-            MasterFidField.SetText(fid);
+            profileFromTextBoxes.MasterFid = fid;
+            package.ThirdPartyFID = fid;
         }
+        profileFromTextBoxes.Login = login;
+        StateHasChanged();
     }
 
     private void UpdateCredentials(Profile profile)
     {
-        LoginField?.SetText(profile.Login);
-        PasswordField?.SetText(profile.Password);
-        MasterFidField?.SetText(profile.MasterFid);
-        FidField?.SetText(profile.FID);
-        if (EnviromentField != null) EnviromentField.Value = profile.WsdlAddress;
+        profileFromTextBoxes.Login = profile.Login;
+        profileFromTextBoxes.Password = profile.Password;
+        profileFromTextBoxes.MasterFid = profile.MasterFid;
+        profileFromTextBoxes.WsdlAddress = profile.WsdlAddress;
+        if (EnviromentField != null) EnviromentField.Value = profileFromTextBoxes.WsdlAddress;
         StateHasChanged();
     }
     

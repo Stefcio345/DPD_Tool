@@ -28,7 +28,7 @@ public class NetworkService
         client.DefaultRequestHeaders.Add("SOAPAction", url);
         
         var content = new StringContent(requestBody, Encoding.UTF8, "text/xml");
-        LoggingService.Log(LoggingType.REQUEST, content.ToString());
+        LoggingService.Log(LoggingType.REQUEST, await content.ReadAsStringAsync());
 
         var response = await client.PostAsync(url, content);
         var responseString = await response.Content.ReadAsStringAsync();

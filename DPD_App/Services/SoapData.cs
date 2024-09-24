@@ -1,7 +1,22 @@
-﻿namespace DPD_App;
+﻿using System.Reflection.Metadata.Ecma335;
+
+namespace DPD_App;
 
 public class SoapData
 {
+    static int TabIndex = 0;
+
+    private string _title = SoapData.TabIndex.ToString();
+    public string Title 
+    {
+        get => _title;
+        set
+        {
+            _title = value;
+            NotifyStateChanged();
+        }
+    }
+    
     private API_METHODS _currentMethod;
     public API_METHODS CurrentMethod 
     {
@@ -52,8 +67,10 @@ public class SoapData
     {
         OnChange += onChange;
         _currentMethod = API_METHODS.GeneratePackagesNumbers;
+        Title = _currentMethod.ToString();
         _request = "";
         _response = "";
+        TabIndex += 1;
     }
     
 

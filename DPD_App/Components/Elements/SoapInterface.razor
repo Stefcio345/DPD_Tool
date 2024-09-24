@@ -16,10 +16,10 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" Label="Request" Variant="Variant.Outlined" Value="Request" Lines="40" TextChanged="RequestChanged"/>
+        <MudTextField T="string" wrap="off" Style="overflow: auto" Label="Request" Variant="Variant.Outlined" Value="Request" Lines="40" TextChanged="RequestChanged"/>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" Label="Response" Variant="Variant.Outlined" Value="Response" Lines="40" TextChanged="ResponseChanged"/>
+        <MudTextField T="string" wrap="off" Style="overflow: auto" Label="Response" Variant="Variant.Outlined" Value="Response" Lines="40" TextChanged="ResponseChanged"/>
     </MudItem>
     <MudItem xs="3">
         <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
@@ -87,6 +87,7 @@
     protected override async Task OnInitializedAsync()
     {
         //Serializacja
+        Console.Write("Dupsko");
         CurrentMethod = API_METHODS.GeneratePackagesNumbers;
         UpdateRequest();
     }
@@ -106,11 +107,10 @@
         StateHasChanged();
     }
     
-    //TODO add tabs (Preferably on the side)
-    
     private void MethodSelected(API_METHODS obj)
     {
         CurrentMethod = obj;
+        SoapData.Title = obj.ToString();
         UpdateRequest();
         Response = "";
         StateHasChanged();

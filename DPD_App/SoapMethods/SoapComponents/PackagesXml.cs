@@ -63,7 +63,7 @@ public class PackagesXml {
                 Sender = null;
                 Receiver = null;
                 Services = null;
-                Parcels = [new ParcelsXml(CallTypes.LABEL)];
+                Parcels = [new ParcelsXml(CallTypes.LABEL, "XXXXXXXXXXXXXU")];
                 break;
             default:
                 break;

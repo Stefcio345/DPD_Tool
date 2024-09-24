@@ -11,6 +11,9 @@ public class DpdServicesParamsV1
 
     [XmlElement(ElementName = "session", Namespace="")]
     public Session Session { get; set; } = new Session();
+    
+    [XmlElement(ElementName="pickupAddress", Namespace="")] 
+    public PickupAddress? PickupAddress { get; set; } 
 }
 
 [XmlRoot(ElementName="generateSpedLabelsV4", Namespace="http://dpdservices.dpd.com.pl/")]
@@ -53,10 +56,7 @@ public class GenerateSpedLabelsV4: ISoapBody, IAuthData
             DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
             for (var i = 0; i < waybills.Count; i++)
             {
-                DpdServicesParamsV1.Session.Packages.Parcels.Add(new ParcelsXml()
-                {
-                    Waybill = waybills[i]
-                });
+                DpdServicesParamsV1.Session.Packages.Parcels.Add(new ParcelsXml(CallTypes.LABEL, waybills[i]));
             }
         }
         

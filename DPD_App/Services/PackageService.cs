@@ -32,7 +32,7 @@ public class PackageService
         }
         
         //Generate Labels
-        var newLabel = CreateGenLabelRequest(package);
+        var newLabel = CreateGenLabelRequest(package, profile);
         //Call WebServices
         webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.Address, newLabel);
         var generateLabelsResponse = DeserializeGenerateLabelsResponse(webServiceResponse);
@@ -47,9 +47,8 @@ public class PackageService
     public static async Task GenerateProtocol(Package package, Profile profile)
     {
         //Create Protocol request
-        //TODO Hasło i login do API
         //TODO address porotkołu
-        var newProtocol = CreateGenProtocolRequest(package);
+        var newProtocol = CreateGenProtocolRequest(package, profile);
         //Call webservices
         var webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.Address, newProtocol);
         //Deserialize response
@@ -73,8 +72,8 @@ public class PackageService
         {
             newPackage.OpenUMLFeV11.Packages.Parcels.Add(new ParcelsXml().MapParcel(parcel));
         }
-        newPackage.OpenUMLFeV11.Packages.Receiver = new ReceiverXml().MapAddressData(package.Sender);
-        newPackage.OpenUMLFeV11.Packages.Sender = new SenderXml().MapAddressData(package.Receiver);
+        newPackage.OpenUMLFeV11.Packages.Receiver = new ReceiverXml().MapAddressData(package.Receiver);
+        newPackage.OpenUMLFeV11.Packages.Sender = new SenderXml().MapAddressData(package.Sender);
         //Map services
         newPackage.OpenUMLFeV11.Packages.Services = new ServicesXml().MapServices(package.Services);
         
@@ -87,24 +86,26 @@ public class PackageService
         return newPackage;
     }
     
-    private static GenerateSpedLabelsV4 CreateGenLabelRequest(Package package)
+    private static GenerateSpedLabelsV4 CreateGenLabelRequest(Package package, Profile profile)
     {
         var waybills = package.Parcels.Select(parcel => parcel.Waybill).ToList();
         if (waybills.Count == 0) throw new SoapException("GenerateSpedLabelsV4 Error" , new SoapError("No parcels to generate labels", "Package does not have any parcels"));
         var newLabel = new GenerateSpedLabelsV4(waybills!);
+        newLabel.UpdateAuthData(profile);
         //Set session type
         if (package.Receiver.CountryCode != package.Sender.CountryCode) newLabel.DpdServicesParamsV1.Session.SessionType = "INTERNATIONAL";
         return newLabel;
     }
     
-    private static GenerateProtocolV2 CreateGenProtocolRequest(Package package)
+    private static GenerateProtocolV2 CreateGenProtocolRequest(Package package, Profile profile)
     {
         var waybills = package.Parcels.Select(parcel => parcel.Waybill).ToList();
         if (waybills.Count == 0) throw new SoapException("GenerateProtocolV2 Error" , new SoapError("No parcels to generate protocol", "Package does not have any parcels"));
-        var newLabel = new GenerateProtocolV2(waybills!);
+        var newProtocol = new GenerateProtocolV2(waybills!, package);
+        newProtocol.UpdateAuthData(profile);
         //Set session type
-        if (package.Receiver.CountryCode != package.Sender.CountryCode) newLabel.DpdServicesParamsV1.Session.SessionType = "INTERNATIONAL";
-        return newLabel;
+        if (package.Receiver.CountryCode != package.Sender.CountryCode) newProtocol.DpdServicesParamsV1.Session.SessionType = "INTERNATIONAL";
+        return newProtocol;
     }
 
     private static GeneratePackagesNumbersV9Response DeserializeGeneratePackagesResponse(string response)
@@ -115,7 +116,7 @@ public class PackageService
         using var reader = new StringReader(response);
         result = (Envelope)envelopeSerializer.Deserialize(reader)!;
         //If soapError
-        if (result.Body.Fault is not null) throw new SoapException("Soap Error - GeneratePackagesNumbersV9", new SoapError(result.Body.Fault.Faultstring, result.Body.Fault.Detail.Exception.StackTrace));
+        if (result.Body.Fault is not null) throw new SoapException("Soap Error - GeneratePackagesNumbersV9", new SoapError("Soap Exception", result.Body.Fault.Faultstring));
         if (result.Body.GeneratePackagesNumbersV9Response is null) throw new SoapException("Missing Packages Error" , new SoapError("Missing GeneratePackagesNumbersV9Response response", ""));
         return result.Body.GeneratePackagesNumbersV9Response;
     }
@@ -125,7 +126,7 @@ public class PackageService
         //Deserialize the label from response
         using var reader = new StringReader(response);
         result = (Envelope)envelopeSerializer.Deserialize(reader)!;
-        if (result.Body.Fault is not null) throw new SoapException("Soap Error - GenerateSpedLabelsV4", new SoapError(result.Body.Fault.Faultstring, result.Body.Fault.Detail.Exception.StackTrace));
+        if (result.Body.Fault is not null) throw new SoapException("Soap Error - GenerateSpedLabelsV4", new SoapError("Soap Exception", result.Body.Fault.Faultstring));
         if (result.Body.GenerateSpedLabelsV4Response is null) throw new SoapException("Missing Packages Error" , new SoapError("Missing GenerateSpedLabelsV4 response", ""));
         return result.Body.GenerateSpedLabelsV4Response;
     }
@@ -135,7 +136,8 @@ public class PackageService
         //Deserialize the label from response
         using var reader = new StringReader(response);
         result = (Envelope)envelopeSerializer.Deserialize(reader)!;
-        if (result.Body.Fault is not null) throw new SoapException("Soap Error - GenerateProtocolV2", new SoapError(result.Body.Fault.Faultstring, result.Body.Fault.Detail.Exception.StackTrace));
+        //if (result.Body.Fault is not null) throw new SoapException("Soap Error - GenerateProtocolV2", new SoapError(result.Body.Fault.Faultstring, result.Body.Fault.Detail.Exception.StackTrace));
+        if (result.Body.Fault is not null) throw new SoapException("Soap Error - GenerateProtocolV2", new SoapError("Soap Exception", result.Body.Fault.Faultstring));
         if (result.Body.GenerateProtocolV2Response is null) throw new SoapException("Missing Packages Error" , new SoapError("Missing GenerateProtocolV2 response", ""));
         return result.Body.GenerateProtocolV2Response;
     }
@@ -146,6 +148,7 @@ public class PackageService
         if (response.Return.Status == "OK") return true;
     
         //Check packages Errors
+        if (response.Return.Status == "UNSPECIFIED_ERROR") throw new SoapException("GeneratePackagesNumbersV9 - Error", new SoapError(response.Return.Status, "Unspecified error occured"));
         if (response.Return.Packages.Package!.ValidationDetails is not null)
             throw new SoapException("Package Error", response.Return.Packages.Package.ValidationDetails.GetErrors());
         
