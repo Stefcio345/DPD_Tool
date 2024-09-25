@@ -38,6 +38,9 @@
         <MudTh>Courier data 1</MudTh>
         <MudTh>Courier data 2</MudTh>
         <MudTh>Courier data 3</MudTh>
+        <MudTh>
+            <MudIconButton Class="px-9" Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="AddPackage"/>
+        </MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Weight">@context.Weight</MudTd>
@@ -85,12 +88,6 @@
             <MudTextField @bind-Value="@context.CustomerData3"/>
         </MudTd>
     </RowEditingTemplate>
-    <PagerContent>
-        <MudDivider Class="ma-0 pa-0"/>
-        <MudStack Row="true" Justify="Justify.FlexEnd">
-            <MudIconButton Class="px-9 ma-2" Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="AddPackage"/>
-        </MudStack>
-    </PagerContent>
     <EditButtonContent Context="button">
         <MudStack Justify="Justify.SpaceBetween" Row="true">
             <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Info" Size="Size.Medium" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled"/>

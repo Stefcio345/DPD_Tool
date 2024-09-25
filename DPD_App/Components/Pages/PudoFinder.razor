@@ -3,7 +3,7 @@
 
 <PageTitle>PudoFinder</PageTitle>
 
-<h1>PudoFinder</h1>
+<h1 class="pa-1">PudoFinder</h1>
 
 <MudGrid Style="align-items: center;">
     
@@ -63,7 +63,7 @@
 @code {
     [CascadingParameter] public Profile CurrentProfile { get; set; }
     private MudTextField<string>? QueryBox;
-    public Country? SelectedCountry { get; set; }
+    public Country? SelectedCountry { get; set; } = Globals.Countries.First(c => c.IsoCodeA2 == "PL");
     public string? Query { get; set; }
     
     private string? key;

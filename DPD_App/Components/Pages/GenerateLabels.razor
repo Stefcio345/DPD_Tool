@@ -7,7 +7,7 @@
 <PageTitle>GenerateLabels</PageTitle>
 
 <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mb-4">
-    <MudText Typo="Typo.h3">Generate Labels</MudText>
+    <h1 class="pa-1">Generate Labels</h1>
     <MudTabs Elevation="2" Rounded="true" @bind-ActivePanelIndex="activeMode">
         <MudTabPanel Text="Simple" />
         <MudTabPanel Text="Extended" />
@@ -290,7 +290,7 @@
             <!-- Tracking links -->
             @if (package.Parcels.Count > 0)
             {
-                <MudCard style="height:650px">
+                <MudCard>
                     <MudCardContent>
                         <MudTable Items="@TrackingLinks" Breakpoint="Breakpoint.Sm">
                             <HeaderContent>
