@@ -45,6 +45,6 @@ public class AppState
         Settings = new AppSettings();
         Settings.LoadFromFile();
         LoggingService.Settings = Settings;
-        PdfService.Settings = Settings;
+        FileService.Settings = Settings;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace DPD_App;
 
-public class PdfService
+public class FileService
 {
     public static AppSettings Settings { get; set; }
     public static string SaveBase64ToPDF(string base64Label, PrintType type)
@@ -25,6 +25,24 @@ public class PdfService
         {
             Byte[] byteArray = Convert.FromBase64String(base64Label);
             stream.Write(byteArray, 0, byteArray.Length);
+        }
+        
+        return filename;
+    }
+    
+    public static string SaveTextToFile(string text, string saveLocation)
+    {
+        string docPath = "./";
+        
+        docPath = Globals.SaveLocation + "/" + saveLocation;
+        
+        Directory.CreateDirectory(docPath);
+        
+        var filename = $"{DateTime.Now:dd-MM-yyyy}_Logs.txt";
+
+        using (StreamWriter w = File.AppendText(Path.Combine(docPath, filename)))
+        {
+            w.WriteLine(text);
         }
         
         return filename;

@@ -2,9 +2,33 @@
 @using MudBlazor.Extensions
 
 <PageTitle>SoapAPI</PageTitle>
-<h1 class="pa-1">Soap API</h1>
+<MudGrid>
+    <MudItem xs="2">
+        <h1 class="pa-1 pb-3">Soap API</h1>
+    </MudItem>
+    <MudItem xs="10">
+        <MudPaper Class="pa-2 mr-20">
+            <MudStack Row="true">
+                <MudPaper Class="pa-2">
+                    <MudText>SessionId: @latestSoapData.SessionId</MudText>
+                </MudPaper>
+                <MudPaper Class="pa-2">
+                    <MudStack Row="true">
+                    <MudText>Waybills:</MudText>
+                    @foreach (var waybill in latestSoapData.Waybills)
+                    {
+                        <MudText>@waybill</MudText>
+                    }
+                    </MudStack>
+                </MudPaper>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
-<MudPaper Class="my-8 pa-0" Elevation="0" Square="true" Height="100%">
+
+
+<MudPaper Class="pa-0" Elevation="0" Square="true" Height="100%">
     <MudStack Row="true" Class="pa-0">
         <MudPaper Class="py-0" Width="@(size + "%")">
             <MudPaper Class="pa-4" Elevation="10" Square="true" Height="100%">
@@ -27,7 +51,7 @@
         <MudPaper Class="pa-6" Width="@(100-size + "%")">
             @if (CurrentTab.SoapData is not null)
             {
-                <SoapInterface SoapData="@CurrentTab.SoapData"/>
+                <SoapInterface SoapData="@CurrentTab.SoapData" SharedSoapData="latestSoapData"/>
             }
             else
             {
@@ -43,12 +67,20 @@
     {
         public string Title { get; set; }
         public bool IsActive = false;
-        public SoapData? SoapData;
+        public SoapData SoapData;
     }
     
     public List<Tab> Tabs = new();
     public Tab CurrentTab;
     public double size = 20;
+
+    sharedSoapData latestSoapData = new sharedSoapData();
+
+    public class sharedSoapData
+    {
+        public string? SessionId;
+        public List<string> Waybills = new List<string>();
+    }
 
     protected override void OnInitialized()
     {
@@ -76,10 +108,6 @@
 
     private void OnTabChange(Tab tab)
     {
-        //TODO Create more dynamic naming system
-        //TODO add censoring of credentials
-        //TODO add saving session ID and waybills
-        //TODO maybe add downloading label
         CurrentTab = tab;
         StateHasChanged();
     }

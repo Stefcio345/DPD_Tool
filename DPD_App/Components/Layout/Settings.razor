@@ -7,6 +7,20 @@
 <MudStack Class="mx-4">
     <MudPaper>
         <MudSwitch Class="px-4" T="bool" Value="settings.LogRequests" ThumbIcon="@(settings.LogRequests == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.LogRequests == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.LogRequests = b; settings.SaveToFile(); StateHasChanged();}">Log requests</MudSwitch>
+        @if (settings.LogRequests)
+        {
+            <MudSwitch Class="px-4" T="bool" Value="settings.ShortenLogs" ThumbIcon="@(settings.ShortenLogs == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.ShortenLogs == true ? Color.Success : Color.Error)" ValueChanged="(b) => { settings.ShortenLogs = b; settings.SaveToFile(); StateHasChanged(); }">Shorten Logs</MudSwitch>
+            @if (settings.ShortenLogs)
+            {
+                <MudTextField T="int" Label="Max log length" Value="settings.MaxLogSize" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => { settings.MaxLogSize = b; settings.SaveToFile(); StateHasChanged(); }"></MudTextField>
+            }
+            <MudSwitch Class="px-4" T="bool" Value="settings.LogToConsole" ThumbIcon="@(settings.LogToConsole == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.LogToConsole == true ? Color.Success : Color.Error)" ValueChanged="(b) => { settings.LogToConsole = b; settings.SaveToFile(); StateHasChanged(); }">Log to console</MudSwitch>
+            <MudSwitch Class="px-4" T="bool" Value="settings.LogToFile" ThumbIcon="@(settings.LogToFile == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.LogToFile == true ? Color.Success : Color.Error)" ValueChanged="(b) => { settings.LogToFile = b; settings.SaveToFile(); StateHasChanged(); }">Log to file</MudSwitch>
+            @if (settings.LogToFile)
+            {
+                <MudTextField T="string" Label="Log Save location" Value="settings.LogSaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => { settings.LogSaveLocation = b; settings.SaveToFile(); StateHasChanged(); }"></MudTextField>
+            }
+        }
     </MudPaper>
     <MudPaper>
         <MudSwitch Class="px-4" T="bool" Value="settings.MiniDrawer" ThumbIcon="@(settings.MiniDrawer == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.MiniDrawer == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.MiniDrawer = b; settings.SaveToFile(); StateHasChanged();}">Mini Drawer</MudSwitch>
@@ -15,14 +29,14 @@
         <MudSwitch Class="px-4" T="bool" Value="settings.SaveLabelsToFile" ThumbIcon="@(settings.SaveLabelsToFile == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.SaveLabelsToFile == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.SaveLabelsToFile = b; settings.SaveToFile(); StateHasChanged();}">Save labels to file</MudSwitch>
         @if (settings.SaveLabelsToFile)
         {
-            <MudTextField T="string" Label="Save Location" Value="settings.LabelSaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => {settings.LabelSaveLocation = b; settings.SaveToFile(); StateHasChanged();}"></MudTextField>
+            <MudTextField T="string" Label="Labels Save Location" Value="settings.LabelSaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => {settings.LabelSaveLocation = b; settings.SaveToFile(); StateHasChanged();}"></MudTextField>
         }
     </MudPaper>
     <MudPaper>
         <MudSwitch Class="px-4" T="bool" Value="settings.SaveProtocolsToFile" ThumbIcon="@(settings.SaveProtocolsToFile == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.SaveProtocolsToFile == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.SaveProtocolsToFile = b; settings.SaveToFile(); StateHasChanged();}">Save Protocols to file</MudSwitch>
         @if (settings.SaveProtocolsToFile)
         {
-        <MudTextField T="string" Label="Save Location" Value="settings.ProtocolSaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => {settings.ProtocolSaveLocation = b; settings.SaveToFile(); StateHasChanged();}"></MudTextField>
+            <MudTextField T="string" Label="Protocols Save Location" Value="settings.ProtocolSaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => {settings.ProtocolSaveLocation = b; settings.SaveToFile(); StateHasChanged();}"></MudTextField>
         }
     </MudPaper>
 </MudStack>

@@ -18,6 +18,19 @@ public class LoggingService
         else newstring = content;
         //Remove multiple spaces
         newstring = Regex.Replace(newstring, "\\s+", " ");
-        Console.WriteLine($"[{DateTime.Now}] {type}: {newstring}");
+        
+        if(Settings.ShortenLogs)
+            newstring = ShortenString(newstring);
+
+        var logMessage = $"[{DateTime.Now}] {type}: {newstring}";
+        if (Settings.LogToFile) FileService.SaveTextToFile(logMessage, Settings.LogSaveLocation); 
+        if (Settings.LogToConsole) Console.WriteLine(logMessage);
+    }
+
+    private static string ShortenString(string str)
+    {
+        var maxLogLength = Settings.MaxLogSize;
+        if (str.Length > maxLogLength) return str[..((maxLogLength/2)-3)] + "[***]" + str[^((maxLogLength/2)-2)..str.Length];
+        return str;
     }
 }

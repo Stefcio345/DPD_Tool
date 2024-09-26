@@ -4,7 +4,7 @@
 
 <PageTitle>MyPudoAPI</PageTitle>
 
-<h1 class="pa-1">My Pudo API</h1>
+<h1 class="pa-1 pb-3">My Pudo API</h1>
 <MudGrid>
 
     <!-- My Pudo API Key -->
@@ -154,7 +154,7 @@
     <MudItem xs="12">
         <MudDataGrid @ref="DataGrid" T="PudoItem" VirtualizeServerData="ServerDataFunc" 
                      ShowFilterIcons="false" Virtualize="true" Dense="true" Filterable ReadOnly="true"
-                     FixedHeader Height="700px" Class="mb-10" Hover="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
+                     FixedHeader Height="500px" Class="mb-10" Hover="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
             <Columns>
                 <HierarchyColumn T="PudoItem" />
                 <PropertyColumn Property="x => x.active"/>
@@ -221,6 +221,9 @@
                     </MudCardContent>
                 </MudCard>
             </ChildRowContent>
+            <PagerContent>
+                <MudText Typo="Typo.h6" Class="pa-1 pl-3">Number of points: @PudoItems.Count</MudText>
+            </PagerContent>
         </MudDataGrid>
     </MudItem>
     

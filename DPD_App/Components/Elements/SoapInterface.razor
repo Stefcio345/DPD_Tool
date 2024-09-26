@@ -1,4 +1,7 @@
-﻿<MudGrid>
+﻿@using System.Xml.Serialization
+@using DPD_App.Components.Pages
+@using DPD_App.Models
+<MudGrid>
     <MudItem xs="6">
         <MudSelect T="API_METHODS" Value="CurrentMethod" Label="Select method" ValueChanged="MethodSelected">
             @foreach (API_METHODS item in Enum.GetValues(typeof(API_METHODS)))
@@ -16,10 +19,10 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" wrap="off" Style="overflow: auto" Label="Request" Variant="Variant.Outlined" Value="Request" Lines="40" TextChanged="RequestChanged"/>
+        <MudTextField T="string" wrap="off" Style="overflow: auto" @bind-Value="Request" Label="Request" Variant="Variant.Outlined" Lines="40" />
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" wrap="off" Style="overflow: auto" Label="Response" Variant="Variant.Outlined" Value="Response" Lines="40" TextChanged="ResponseChanged"/>
+        <MudTextField T="string" wrap="off" Style="overflow: auto" @bind-Value="Response" Label="Response" Variant="Variant.Outlined" Lines="40" />
     </MudItem>
     <MudItem xs="3">
         <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
@@ -40,16 +43,23 @@
         </MudItem>
     </MudItem>
     <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
+        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+        </MudPaper>
     </MudItem>
     <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
+        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+            <MudButton Variant="Variant.Filled" Class="pa-2 px-4" Color="Color.Success" StartIcon="@Icons.Material.Filled.Download" Disabled="@(DocumentData is null)" OnClick="DownloadData">Download Data</MudButton> 
+        </MudPaper>
     </MudItem>
 </MudGrid>
 
 @code {
+    //TODO add censoring of credentials
+    //TODO add saving session ID and waybills
+    //TODO maybe add downloading label
     [CascadingParameter] public Profile CurrentProfile { get; set; }
     [Parameter] public SoapData SoapData { get; set; }
+    [Parameter] public SoapApi.sharedSoapData SharedSoapData { get; set; }
 
     public API_METHODS CurrentMethod 
     {
@@ -75,6 +85,8 @@
         set => SoapData.WsdlAddress = value;
     }
     
+    public string? DocumentData { get; set; }
+    
     private bool _processing = false;
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -86,8 +98,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //Serializacja
-        Console.Write("Dupsko");
         CurrentMethod = API_METHODS.GeneratePackagesNumbers;
         UpdateRequest();
     }
@@ -95,7 +105,37 @@
     async Task SendRequest()
     {
         _processing = true;
-        Response = XMLService.Prettify(await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.Address, Request));
+        var response = await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.Address, Request);
+        
+        //Deserialize repsonse
+        Envelope result;
+        var envelopeSerializer = new XmlSerializer(typeof(Envelope));
+
+        using var reader = new StringReader(response);
+        result = (Envelope)envelopeSerializer.Deserialize(reader)!;
+
+        if (result.Body.GeneratePackagesNumbersV9Response is not null)
+        {
+            SharedSoapData.SessionId = result.Body.GeneratePackagesNumbersV9Response.Return.SessionId.ToString();
+            if(result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels is not null)
+                SharedSoapData.Waybills.Clear();
+                foreach (var parcel in result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel)
+                {
+                    SharedSoapData.Waybills.Add(parcel.Waybill);
+                }
+        }
+
+        if (result.Body.GenerateSpedLabelsV4Response is not null)
+        {
+            DocumentData = result.Body.GenerateSpedLabelsV4Response.Return.DocumentData;
+        }
+
+        if (result.Body.GenerateProtocolV2Response is not null)
+        {
+            DocumentData = result.Body.GenerateProtocolV2Response.Return.DocumentData;
+        }
+
+        Response = XMLService.Prettify(response);
         _processing = false;
         StateHasChanged();
     }
@@ -116,18 +156,6 @@
         StateHasChanged();
     }
 
-    private void RequestChanged(string obj)
-    {
-        Request = XMLService.Prettify(obj);
-        StateHasChanged();
-    }
-
-    private void ResponseChanged(string obj)
-    {
-        Response = XMLService.Prettify(obj);
-        StateHasChanged();
-    }
-
     private void UpdateRequest()
     {
         switch (CurrentMethod)
@@ -139,11 +167,21 @@
                 break;
             case API_METHODS.GenerateSpedLabels:
                 var spedLabelsV4 = new GenerateSpedLabelsV4();
+                if (SharedSoapData.SessionId is not null)
+                {
+                    spedLabelsV4.DpdServicesParamsV1.Session.SessionId = SharedSoapData.SessionId;
+                    spedLabelsV4.DpdServicesParamsV1.Session.Packages = null;
+                }
                 spedLabelsV4.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = spedLabelsV4.CreateSoapEnvelope();
                 break;
             case API_METHODS.GenerateProtocol:
                 var generateProtocolV2 = new GenerateProtocolV2();
+                if (SharedSoapData.SessionId is not null)
+                {
+                    generateProtocolV2.DpdServicesParamsV1.Session.SessionId = SharedSoapData.SessionId;
+                    generateProtocolV2.DpdServicesParamsV1.Session.Packages = null;
+                }
                 generateProtocolV2.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = generateProtocolV2.CreateSoapEnvelope();
                 break;
@@ -164,8 +202,14 @@
                 break;
             default:
                 Request = "Method currently not implemented";
-                break;
+                break; 
         }
+        Request = XMLService.Prettify(Request);
+    }
+
+    private void DownloadData()
+    {
+        Console.WriteLine(DocumentData);
     }
 
 }

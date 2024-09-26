@@ -90,6 +90,11 @@ public class AppSettings
 {
 
     public bool LogRequests = false;
+    public bool ShortenLogs = true;
+    public int MaxLogSize = 1000;
+    public bool LogToConsole = false;
+    public bool LogToFile = false;
+    public string LogSaveLocation = "Logs";
     
     public bool MiniDrawer = false;
     
@@ -106,6 +111,11 @@ public class AppSettings
         {
             var temp = SaveKeeper.LoadFromFile<AppSettings>("Settings.xml");
             LogRequests = temp.LogRequests;
+            ShortenLogs = temp.ShortenLogs;
+            MaxLogSize = temp.MaxLogSize;
+            LogSaveLocation = temp.LogSaveLocation;
+            LogToConsole = temp.LogToConsole;
+            LogToFile = temp.LogToFile;
             MiniDrawer = temp.MiniDrawer;
             SaveLabelsToFile = temp.SaveLabelsToFile;
             LabelSaveLocation = temp.LabelSaveLocation;

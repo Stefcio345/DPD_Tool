@@ -30,20 +30,24 @@ public class PackageService
             package.Parcels[i].ParcelId = generatePackagesResponse.Return.Packages.Package.Parcels.Parcel[i].ParcelId;
             package.Parcels[i].Status = generatePackagesResponse.Return.Packages.Package.Parcels.Parcel[i].Status;
         }
-        
+
+        await GenerateLabel(package, profile);
+    }
+
+    public static async Task GenerateLabel(Package package, Profile profile)
+    {
         //Generate Labels
         var newLabel = CreateGenLabelRequest(package, profile);
         //Call WebServices
-        webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.Address, newLabel);
+        var webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.Address, newLabel);
         var generateLabelsResponse = DeserializeGenerateLabelsResponse(webServiceResponse);
 
         //Check for errors
         if (!LabelResponseIsValid(generateLabelsResponse)) return;
         //Set labels to packages
         package.Base64Label = generateLabelsResponse.Return.DocumentData;
-        
     }
-    
+
     public static async Task GenerateProtocol(Package package, Profile profile)
     {
         //Create Protocol request

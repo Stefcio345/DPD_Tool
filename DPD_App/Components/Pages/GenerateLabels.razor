@@ -7,7 +7,7 @@
 <PageTitle>GenerateLabels</PageTitle>
 
 <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mb-4">
-    <h1 class="pa-1">Generate Labels</h1>
+    <h1 class="pa-1 pb-3">Generate Labels</h1>
     <MudTabs Elevation="2" Rounded="true" @bind-ActivePanelIndex="activeMode">
         <MudTabPanel Text="Simple" />
         <MudTabPanel Text="Extended" />
@@ -454,7 +454,7 @@
             TrackingLinks.Add(new TrackingLinkService(parcel.Waybill));
         }
         
-        if (AppState.Settings.SaveLabelsToFile) PdfService.SaveBase64ToPDF(package.Base64Label, PrintType.Label);
+        if (AppState.Settings.SaveLabelsToFile) FileService.SaveBase64ToPDF(package.Base64Label, PrintType.Label);
         
         _processingLabel = false;
     }
@@ -476,7 +476,7 @@
             return;
         }
 
-        if (AppState.Settings.SaveProtocolsToFile) PdfService.SaveBase64ToPDF(package.Base64Protocol, PrintType.Protocol);
+        if (AppState.Settings.SaveProtocolsToFile) FileService.SaveBase64ToPDF(package.Base64Protocol, PrintType.Protocol);
         _processingProtocol = false;
     }
 
