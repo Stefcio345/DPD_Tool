@@ -103,6 +103,8 @@ public class AppSettings
     
     public bool SaveProtocolsToFile = false;
     public string ProtocolSaveLocation = "Protocols";
+    
+    public bool AddressDetailsVertical = false;
 
 
     public void LoadFromFile()
@@ -121,6 +123,7 @@ public class AppSettings
             LabelSaveLocation = temp.LabelSaveLocation;
             SaveProtocolsToFile = temp.SaveProtocolsToFile;
             ProtocolSaveLocation = temp.ProtocolSaveLocation;
+            AddressDetailsVertical = temp.AddressDetailsVertical;
         }
         else
         {

@@ -32,12 +32,12 @@
     <MudStack Row="true" Class="pa-0">
         <MudPaper Class="py-0" Width="@(size + "%")">
             <MudPaper Class="pa-4" Elevation="10" Square="true" Height="100%">
-                <MudList Padding="true" T="Tab" SelectionMode="SelectionMode.SingleSelection" SelectedValue="CurrentTab" SelectedValueChanged="OnTabChange">
+                <MudList Padding="true" T="SoapInterface" SelectionMode="SelectionMode.SingleSelection" SelectedValue="CurrentTab" SelectedValueChanged="OnTabChange">
                     @foreach (var tab in Tabs)
                     {
                         <MudListItem Class="pa-1 my-2" Value="@tab">
                             <MudStack Justify="Justify.SpaceBetween" Row="true">
-                                <MudText Typo="Typo.h5" Style="overflow: hidden">@tab.SoapData.Title</MudText>
+                                <MudText Typo="Typo.h5" Style="overflow: hidden">@tab.CurrentMethod</MudText>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => { RemoveTab(@tab); })"/>
                             </MudStack>
                         </MudListItem>
@@ -49,9 +49,9 @@
             </MudPaper>
         </MudPaper>
         <MudPaper Class="pa-6" Width="@(100-size + "%")">
-            @if (CurrentTab.SoapData is not null)
+            @if (CurrentTab is not null)
             {
-                <SoapInterface SoapData="@CurrentTab.SoapData" SharedSoapData="latestSoapData"/>
+                <SoapInterface @ref="CurrentTab" SharedSoapData="latestSoapData"/>
             }
             else
             {
@@ -63,15 +63,9 @@
 </MudPaper>
 
 @code {
-    public class Tab
-    {
-        public string Title { get; set; }
-        public bool IsActive = false;
-        public SoapData SoapData;
-    }
     
-    public List<Tab> Tabs = new();
-    public Tab CurrentTab;
+    public List<SoapInterface> Tabs = new();
+    public SoapInterface CurrentTab;
     public double size = 20;
 
     sharedSoapData latestSoapData = new sharedSoapData();
@@ -85,30 +79,30 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Tabs.Add(new Tab { Title = "Home", IsActive = true, SoapData = new SoapData(StateHasChanged)});
-        CurrentTab = Tabs.FirstOrDefault(t => t.IsActive);
+        Tabs.Add(new SoapInterface());
+        CurrentTab = Tabs[0];
     }
     
 
     public void AddTab()
     {
-        //Create dynamic tab names
-        var tab = new Tab { Title = $"Tab {Tabs.Count}", SoapData = new SoapData(this.StateHasChanged) };
-        tab.Title = tab.SoapData.Title;
+        var tab = new SoapInterface();
         Tabs.Add(tab);
         StateHasChanged();
     }
 
-    public void RemoveTab(Tab tab)
+    public void RemoveTab(SoapInterface tab)
     {
         Tabs.Remove(tab);
         StateHasChanged();
     }
     
 
-    private void OnTabChange(Tab tab)
+    private void OnTabChange(SoapInterface tab)
     {
+        Console.WriteLine(tab.id);
         CurrentTab = tab;
+        Console.WriteLine(CurrentTab.CurrentMethod);
         StateHasChanged();
     }
 

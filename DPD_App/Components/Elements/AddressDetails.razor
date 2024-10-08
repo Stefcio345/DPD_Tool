@@ -1,0 +1,143 @@
+﻿@using DPD_App.Components.Pages
+@using DPD_App.Models
+@inject AppState AppState
+
+@if (AppState.Settings.AddressDetailsVertical)
+{
+    <MudGrid>
+        <MudItem xs="6">
+            <MudStack Row="true" Class="mb-4" Spacing="2">
+                <MudText Typo="Typo.h5">Sender details</MudText>
+                <MudToggleIconButton Size="Size.Small" @bind-Toggled="senderOn"
+                                     Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
+            </MudStack>
+
+            @if (senderOn)
+            {
+                <MudStack Row="false" Wrap="Wrap.Wrap" Spacing="1">
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Sender.Company" Label="Company" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Sender.Name" Label="Name" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Sender.Address" Label="Address" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Sender.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
+                    <MudSelect Margin="Margin.Dense" T="string" @bind-Value="package.Sender.CountryCode" Label="CountryCode" Variant="Variant.Outlined">
+                        @foreach (var country in Globals.Countries)
+                        {
+                            <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Sender.City" Label="City" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Sender.Phone" Label="Phone" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Sender.Email" Label="Email" Variant="Variant.Outlined"/>
+                </MudStack>
+            }
+        </MudItem>
+        <MudItem xs="6">
+            <MudStack Row="true" Class="mb-4" Spacing="2">
+                <MudText Typo="Typo.h5">Receiver details</MudText>
+                <MudToggleIconButton Size="Size.Small" @bind-Toggled="recieverOn"
+                                     Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
+            </MudStack>
+            @if (recieverOn)
+            {
+                <MudStack Row="false" Wrap="Wrap.Wrap" Spacing="1">
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Receiver.Company" Label="Company" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Receiver.Name" Label="Name" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Receiver.Address" Label="Address" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Receiver.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
+                    <MudSelect Margin="Margin.Dense" T="Country" Value="_receiverCountry" Label="CountryCode" Variant="Variant.Outlined" ValueChanged="ReceiverCountryChanged">
+                        @foreach (var country in Globals.Countries)
+                        {
+                            <MudSelectItem Value="@country">@country.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Receiver.City" Label="City" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Receiver.Phone" Label="Phone" Variant="Variant.Outlined"/>
+                    <MudTextField Margin="Margin.Dense" @bind-Value="package.Receiver.Email" Label="Email" Variant="Variant.Outlined"/>
+                </MudStack>
+            }
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudStack Row="true" Class="mb-4" Spacing="2">
+        <MudText Typo="Typo.h5">Sender details</MudText>
+        <MudToggleIconButton Size="Size.Small" @bind-Toggled="senderOn"
+                             Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
+    </MudStack>
+
+    @if (senderOn)
+    {
+        <MudStack Row="true" Wrap="Wrap.Wrap">
+            <MudTextField @bind-Value="package.Sender.Company" Label="Company" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Sender.Name" Label="Name" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Sender.Address" Label="Address" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Sender.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
+            <MudSelect T="string" @bind-Value="package.Sender.CountryCode" Label="CountryCode" Variant="Variant.Outlined">
+                @foreach (var country in Globals.Countries)
+                {
+                    <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <MudTextField @bind-Value="package.Sender.City" Label="City" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Sender.Phone" Label="Phone" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Sender.Email" Label="Email" Variant="Variant.Outlined"/>
+        </MudStack>
+    }
+    
+    <MudDivider Class="my-6"/>
+    <MudStack Row="true" Class="mb-4" Spacing="2">
+        <MudText Typo="Typo.h5">Receiver details</MudText>
+        <MudToggleIconButton Size="Size.Small" @bind-Toggled="recieverOn"
+                             Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
+    </MudStack>
+    @if (recieverOn)
+    {
+        <MudStack Row="true" Wrap="Wrap.Wrap">
+            <MudTextField @bind-Value="package.Receiver.Company" Label="Company" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Receiver.Name" Label="Name" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Receiver.Address" Label="Address" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Receiver.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
+            <MudSelect T="Country" Value="_receiverCountry" Label="CountryCode" Variant="Variant.Outlined" ValueChanged="ReceiverCountryChanged">
+                @foreach (var country in Globals.Countries)
+                {
+                    <MudSelectItem Value="@country">@country.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <MudTextField @bind-Value="package.Receiver.City" Label="City" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Receiver.Phone" Label="Phone" Variant="Variant.Outlined"/>
+            <MudTextField @bind-Value="package.Receiver.Email" Label="Email" Variant="Variant.Outlined"/>
+        </MudStack>
+    }
+}
+
+@code
+{
+    [CascadingParameter]
+    public GenerateLabels _Parent { get; set; }
+    public bool recieverOn = true;
+    public bool senderOn = true;
+    Country _receiverCountry;
+    [Parameter] public Package package { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        _receiverCountry = Globals.Countries.Single(c => c.IsoCodeA2 == package.Receiver.CountryCode);
+        return base.OnInitializedAsync();
+    }
+
+    private void ReceiverCountryChanged(Country country)
+    {
+        _receiverCountry = country;
+        package.Receiver.CountryCode = country.IsoCodeA2;
+        if (country.DefaultPostalCode != null) package.Receiver.PostalCode = country.DefaultPostalCode;
+        if (country.Currency != null)
+        {
+            if(country.Currency.IsCod) package.Services.Cod.currency = country.Currency;
+            if(country.Currency.IsDuty) package.Services.Duty.currency = country.Currency;
+            if(country.Currency.IsDeclaredAmount) package.Services.DeclaredValue.currency = country.Currency;
+        }
+        _Parent.RefreshState();
+        StateHasChanged();
+    }
+}

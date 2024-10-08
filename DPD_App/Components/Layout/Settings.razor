@@ -39,6 +39,10 @@
             <MudTextField T="string" Label="Protocols Save Location" Value="settings.ProtocolSaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => {settings.ProtocolSaveLocation = b; settings.SaveToFile(); StateHasChanged();}"></MudTextField>
         }
     </MudPaper>
+
+    <MudPaper>
+        <MudSwitch Class="px-4" T="bool" Value="settings.AddressDetailsVertical" ThumbIcon="@(settings.AddressDetailsVertical == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.AddressDetailsVertical == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.AddressDetailsVertical = b; settings.SaveToFile(); StateHasChanged();}">Sender/Receiver Details Vertical display</MudSwitch>
+    </MudPaper>
 </MudStack>
 
 @code

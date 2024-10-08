@@ -1,6 +1,13 @@
 ﻿@using System.Xml.Serialization
 @using DPD_App.Components.Pages
 @using DPD_App.Models
+
+<Style>
+    .my-editor-class { /* for a specific editor instance */
+        height: 700px;
+    }
+</Style>
+
 <MudGrid>
     <MudItem xs="6">
         <MudSelect T="API_METHODS" Value="CurrentMethod" Label="Select method" ValueChanged="MethodSelected">
@@ -19,10 +26,10 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" wrap="off" Style="overflow: auto" @bind-Value="Request" Label="Request" Variant="Variant.Outlined" Lines="40" />
+        <StandaloneCodeEditor @ref="_requestEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsRequest"/>
     </MudItem>
     <MudItem xs="6">
-        <MudTextField T="string" wrap="off" Style="overflow: auto" @bind-Value="Response" Label="Response" Variant="Variant.Outlined" Lines="40" />
+        <StandaloneCodeEditor @ref="_responseEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsResponse"/>
     </MudItem>
     <MudItem xs="3">
         <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
@@ -57,33 +64,47 @@
     //TODO add censoring of credentials
     //TODO add saving session ID and waybills
     //TODO maybe add downloading label
+    //TODO Repair stuff
+    static int ID = 0;
+    public int id;
     [CascadingParameter] public Profile CurrentProfile { get; set; }
-    [Parameter] public SoapData SoapData { get; set; }
     [Parameter] public SoapApi.sharedSoapData SharedSoapData { get; set; }
+    
+    private StandaloneCodeEditor _requestEditor = new StandaloneCodeEditor();
+    private StandaloneCodeEditor _responseEditor = new StandaloneCodeEditor();
 
-    public API_METHODS CurrentMethod 
+    public API_METHODS CurrentMethod { get; set; }
+
+    private string _request = "";
+
+    public SoapInterface()
     {
-        get => SoapData.CurrentMethod;
-        set => SoapData.CurrentMethod = value;
+        id = ID;
+        ID += 1;
     }
-    
-    public string Request 
+
+    public string Request
     {
-        get => SoapData.Request;
-        set => SoapData.Request = value;
+        get => _request;
+        set
+        {
+            _request = value;
+            _requestEditor.SetValue(value);
+        }
     }
-    
+
+    private string _response = "";
     public string Response
     {
-        get => SoapData.Response;
-        set => SoapData.Response = value;
+        get => _response;
+        set
+        {
+            _response = value;
+            _responseEditor.SetValue(value);
+        }
     }
 
-    public WsdlAddress WsdlAddress
-    {
-        get => SoapData.WsdlAddress;
-        set => SoapData.WsdlAddress = value;
-    }
+    public WsdlAddress WsdlAddress { get; set; }
     
     public string? DocumentData { get; set; }
     
@@ -150,13 +171,12 @@
     private void MethodSelected(API_METHODS obj)
     {
         CurrentMethod = obj;
-        SoapData.Title = obj.ToString();
         UpdateRequest();
         Response = "";
         StateHasChanged();
     }
 
-    private void UpdateRequest()
+    public async void UpdateRequest()
     {
         switch (CurrentMethod)
         {
@@ -212,4 +232,54 @@
         Console.WriteLine(DocumentData);
     }
 
+    private async void RequestChanged()
+    {
+        if(Request != await _requestEditor.GetValue()) Request = await _requestEditor.GetValue();
+        StateHasChanged();
+    }
+
+    private async void ResponseChanged()
+    {
+        if(Response != await _responseEditor.GetValue()) Response = await _responseEditor.GetValue();
+        StateHasChanged();
+    }
+    
+    private StandaloneEditorConstructionOptions EditorConstructionOptionsRequest(StandaloneCodeEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "html",
+            Value = Request,
+            Minimap = new EditorMinimapOptions(){Enabled = false},
+        };
+    }
+    
+    private StandaloneEditorConstructionOptions EditorConstructionOptionsResponse(StandaloneCodeEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "html",
+            Value = Response,
+            Minimap = new EditorMinimapOptions(){Enabled = false},
+        };
+    }
+
+    String getRequest()
+    {
+        var str = _requestEditor.GetValue();
+        Console.WriteLine(str);
+        if (str is null) return "";
+        return str.ToString();
+    }
+    
+    string getResponse()
+    {
+        var str = _responseEditor.GetValue();
+        Console.WriteLine(str);
+        if (str is null) return "";
+        return str.ToString();
+    }
+    
 }

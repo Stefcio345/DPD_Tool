@@ -1,5 +1,6 @@
 ﻿@using System.ComponentModel
 @inherits LayoutComponentBase
+@inject IJSRuntime jsRuntime
 @inject ISnackbar Snackbar
 @inject AppState AppState
 
@@ -17,7 +18,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
         
         <MudPaper Elevation="6" Class="mx-4">
-            <MudText Class="mx-4" Typo="Typo.h4">DPD App</MudText>
+            <MudText Class="mx-4" Typo="Typo.h4"><b>DPD App</b></MudText>
         </MudPaper>
         
         <MudSpacer />
@@ -32,7 +33,7 @@
 
         <MudStack Row="true">
 
-            <MudToggleIconButton @bind-Toggled="_isDarkMode"
+            <MudToggleIconButton Toggled="_isDarkMode" ToggledChanged="ChangedTheme"
                                  Icon="@Icons.Material.Filled.LightMode" Color="Color.Primary"
                                  ToggledIcon="@Icons.Material.Filled.ModeNight" ToggledColor="Color.Default"
                                  title="Motyw strony" Variant="Variant.Filled" Size="Size.Large"/>
@@ -72,12 +73,11 @@
         if (firstRender)
         {
             _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            BlazorMonaco.Editor.Global.SetTheme(jsRuntime, _isDarkMode ? "vs-dark" : "vs");
             StateHasChanged();
         }
 
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-        //Load settings
-
     }
     
     protected override Task OnInitializedAsync()
@@ -114,6 +114,14 @@
 
     public void Refresh()
     {
+        StateHasChanged();
+    }
+
+    private void ChangedTheme()
+    {
+        _isDarkMode = !_isDarkMode;
+        //Set Editor theme
+        BlazorMonaco.Editor.Global.SetTheme(jsRuntime, _isDarkMode ? "vs-dark" : "vs");
         StateHasChanged();
     }
 

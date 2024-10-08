@@ -36,55 +36,9 @@
     @if (activeMode == 1)
     {
         <MudItem xs="9">
-            <MudStack Row="true" Class="mb-4" Spacing="2">
-                <MudText Typo="Typo.h5">Sender details</MudText>
-                <MudToggleIconButton Size="Size.Small" @bind-Toggled="senderOn"
-                                     Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
-            </MudStack>
-
-            @if (senderOn)
-            {
-                <MudStack Row="true" Wrap="Wrap.Wrap">
-                    <MudTextField @bind-Value="package.Sender.Company" Label="Company" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Sender.Name" Label="Name" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Sender.Address" Label="Address" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Sender.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
-                    <MudSelect T="string" @bind-Value="package.Sender.CountryCode" Label="CountryCode" Variant="Variant.Outlined">
-                        @foreach (var country in Globals.Countries)
-                        {
-                            <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                    <MudTextField @bind-Value="package.Sender.City" Label="City" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Sender.Phone" Label="Phone" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Sender.Email" Label="Email" Variant="Variant.Outlined"/>
-                </MudStack>
-            }
-
-            <MudDivider Class="my-6"/>
-            <MudStack Row="true" Class="mb-4" Spacing="2">
-                <MudText Typo="Typo.h5">Receiver details</MudText>
-                <MudToggleIconButton Size="Size.Small" @bind-Toggled="recieverOn"
-                                     Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
-            </MudStack>
-            @if (recieverOn)
-            {
-                <MudStack Row="true" Wrap="Wrap.Wrap">
-                    <MudTextField @bind-Value="package.Receiver.Company" Label="Company" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Receiver.Name" Label="Name" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Receiver.Address" Label="Address" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Receiver.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
-                    <MudSelect T="Country" Value="_receiverCountry" Label="CountryCode" Variant="Variant.Outlined" ValueChanged="ReceiverCountryChanged">
-                        @foreach (var country in Globals.Countries)
-                        {
-                            <MudSelectItem Value="@country">@country.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                    <MudTextField @bind-Value="package.Receiver.City" Label="City" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Receiver.Phone" Label="Phone" Variant="Variant.Outlined"/>
-                    <MudTextField @bind-Value="package.Receiver.Email" Label="Email" Variant="Variant.Outlined"/>
-                </MudStack>
-            }
+            <CascadingValue Value="this">
+                <AddressDetails package="package"/>
+            </CascadingValue>
         </MudItem>
 
         <MudItem xs="3">
@@ -138,7 +92,7 @@
                                     <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.pudoToSend" Label="Sending a parcel at Pickup point" Disabled="package.International || package.Services.carryIn"/>
                                 </MudTooltip>
                                 <MudTooltip Arrow="true" Text="<carryIn/>" Placement="Placement.Top" Color="Color.Info">
-                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.carryIn" Label="Carry-in" Disabled="package.International || package.Services.dox || package.Services.pudoToSend || package.Services.digitalLabel || package.Services.selfCol"/>
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.carryIn" Label="Carry-in" Disabled="package.International || package.Services.dox || package.Services.pudoToSend || package.Services.digitalLabel || package.Services.selfCol || package.Services.dpdPickup"/>
                                 </MudTooltip>
                             </MudStack>
                         </MudItem>
@@ -174,7 +128,7 @@
                                 }
 
                                 <MudTooltip Arrow="true" Text="<dpdPickup/>" Placement="Placement.Top" Color="Color.Info">
-                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.dpdPickup" Label="Delivery to the Pickup Point" Disabled="package.Services.tires || package.Services.privPers || package.Services.inPers"/>
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.dpdPickup" Label="Delivery to the Pickup Point" Disabled="package.Services.tires || package.Services.privPers || package.Services.inPers || package.Services.guarantee || package.Services.dpdFood || package.Services.selfCol || package.Services.carryIn"/>
                                 </MudTooltip>
                                 @if (package.Services.dpdPickup)
                                 {
@@ -196,7 +150,7 @@
                                 }
 
                                 <MudTooltip Arrow="true" Text="<selfCol/>" Placement="Placement.Top" Color="Color.Info">
-                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.selfCol" Label="Personal collection" Disabled="package.International || package.Services.carryIn"/>
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.selfCol" Label="Personal collection" Disabled="package.International || package.Services.carryIn || package.Services.dpdPickup"/>
                                 </MudTooltip>
                                 @if (package.Services.selfCol)
                                 {
@@ -207,7 +161,7 @@
                                 }
 
                                 <MudTooltip Arrow="true" Text="<dpdFood/>" Placement="Placement.Top" Color="Color.Info">
-                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.dpdFood" Label="Food delivery" Disabled="package.International || package.Services.tires || package.Services.dox || package.Services.dpdLQ"/>
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.dpdFood" Label="Food delivery" Disabled="package.International || package.Services.tires || package.Services.dox || package.Services.dpdLQ || package.Services.dpdPickup"/>
                                 </MudTooltip>
                                 @if (package.Services.dpdFood)
                                 {
@@ -215,7 +169,7 @@
                                 }
 
                                 <MudTooltip Arrow="true" Text="<guarentee/>" Placement="Placement.Top" Color="Color.Info">
-                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.guarantee" Label="Guarantee"/>
+                                    <MudCheckBox Dense="true" T="bool" @bind-Value="@package.Services.guarantee" Label="Guarantee" Disabled="package.Services.dpdPickup"/>
                                 </MudTooltip>
                                 @if (package.Services.guarantee)
                                 {
@@ -243,21 +197,35 @@
 
         <MudDivider Class="mt-4 mx-4"/>
         <MudItem xs="3">
-            <MudText Typo="Typo.h5" Class="mb-2">Additional details</MudText>
+            <MudStack Row="true" Class="mb-4" Spacing="2">
+                <MudText Typo="Typo.h5" Class="mb-2">Additional details</MudText>
+                <MudToggleIconButton Size="Size.Small" @bind-Toggled="DetailsOn"
+                                     Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
+            </MudStack>
+            @if (DetailsOn)
+            {
             <MudStack>
                 <MudTextField Margin="Margin.Dense" @bind-Value="package.Ref1" Label="ref1" Variant="Variant.Outlined"/>
                 <MudTextField Margin="Margin.Dense" @bind-Value="package.Ref2" Label="ref2" Variant="Variant.Outlined"/>
                 <MudTextField Margin="Margin.Dense" @bind-Value="package.Ref3" Label="ref3" Variant="Variant.Outlined"/>
             </MudStack>
+            }
         </MudItem>
         
         <MudItem xs="9">
-            <MudText Typo="Typo.h5" Class="mb-2">Parcels</MudText>
-            <CascadingValue Value="package.Services.dpdLQ">
-                <CascadingValue Value="package.Parcels">
-                    <ParcelsTable />
+            <MudStack Row="true" Class="mb-4" Spacing="2">
+                <MudText Typo="Typo.h5" Class="mb-2">Parcels</MudText>
+                <MudToggleIconButton Size="Size.Small" @bind-Toggled="ParcelsOn"
+                                     Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
+            </MudStack>
+            @if (ParcelsOn)
+            {
+                <CascadingValue Value="package.Services.dpdLQ">
+                    <CascadingValue Value="package.Parcels">
+                        <ParcelsTable/>
+                    </CascadingValue>
                 </CascadingValue>
-            </CascadingValue>
+            }
         </MudItem>
         
         <MudDivider Class="mt-4 mx-4"/>
@@ -301,10 +269,10 @@
                             <RowTemplate>
                                 <MudTd DataLabel="Waybill" Style="font-size: 0.9vw">@context.waybill</MudTd>
                                 <MudTd DataLabel="GeoPost">
-                                    <MudLink Style="font-size: 0.9vw" Href="@context.getGeoPostLink()">GeoPost</MudLink>
+                                    <MudLink Style="font-size: 0.9vw" Target="_blank" Href="@context.getGeoPostLink()">GeoPost</MudLink>
                                 </MudTd>
                                 <MudTd DataLabel="TrackTrace">
-                                    <MudLink Style="font-size: 0.9vw" Href="@context.getTrackTraceLink()">TrackTrace</MudLink>
+                                    <MudLink Style="font-size: 0.9vw" Target="_blank" Href="@context.getTrackTraceLink()">TrackTrace</MudLink>
                                 </MudTd>
                             </RowTemplate>
                         </MudTable>
@@ -378,7 +346,6 @@
 </MudGrid>
 
 @code {
-    WsdlAddress wsdlAddres = Globals.WsdlAddresses.Single(a => a.Name == "DEMO");
     List<SoapError> Errors = new List<SoapError>();
 
     Profile profileFromTextBoxes = new Profile();
@@ -394,17 +361,14 @@
         }
     }
     
-    string _request = "";
-    string _response = "";
     private bool _processingLabel = false;
     private bool _processingProtocol = false;
-    public bool recieverOn = true;
-    public bool senderOn = true;
     public bool servicesOn = true;
+    public bool DetailsOn = true;
+    public bool ParcelsOn = true;
     public int activeMode;
-    
+
     Package package;
-    Country _receiverCountry;
     
     private List<TrackingLinkService> TrackingLinks = new List<TrackingLinkService>();
     
@@ -422,7 +386,6 @@
         if (firstRender)
         {
             UpdateCredentials(CurrentProfile);
-            ReceiverCountryChanged(Globals.Countries.Single(c => c.IsoCodeA2 == "PL"));
         }
         return base.OnAfterRenderAsync(firstRender);
     }
@@ -480,21 +443,6 @@
         _processingProtocol = false;
     }
 
-    private void ReceiverCountryChanged(Country country)
-    {
-        _receiverCountry = country;
-        package.Receiver.CountryCode = country.IsoCodeA2;
-        if (country.DefaultPostalCode != null) package.Receiver.PostalCode = country.DefaultPostalCode;
-        if (country.Currency != null)
-        {
-            if(country.Currency.IsCod) package.Services.Cod.currency = country.Currency;
-            if(country.Currency.IsDuty) package.Services.Duty.currency = country.Currency;
-            if(country.Currency.IsDeclaredAmount) package.Services.DeclaredValue.currency = country.Currency;
-        }
-        
-        StateHasChanged();
-    }
-
     private void LoginChanged(string login)
     {
         if (Regex.IsMatch(login, "01$"))
@@ -530,7 +478,7 @@
         StateHasChanged();
     }
     
-    //TODO Make error message prettier
-    //TODO Try making temporary current profile
-
+    public void RefreshState(){
+        this.StateHasChanged();
+    }
 }

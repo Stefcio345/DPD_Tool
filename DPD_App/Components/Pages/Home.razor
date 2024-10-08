@@ -5,10 +5,17 @@
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
+<Style>
+.my-editor-class { /* for a specific editor instance */
+height: 100px;
+}
+</Style>
 
 <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="Test">
         <MudText>Test</MudText>
 </MudButton>
+
+<StandaloneCodeEditor Id="my-editor-instance-id" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptions"/>
 
 @code
 {
@@ -23,5 +30,17 @@
                 {
                         Console.WriteLine(e);
                 }
+        }
+        
+        private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
+        {
+                return new StandaloneEditorConstructionOptions
+                {
+                        AutomaticLayout = true,
+                        Language = "html",
+                        Value = "<Test>\n" +
+                                "   <Dupa>1234Dupsko<Dupa/>\n" +
+                                "</Test>"
+                };
         }
 }
