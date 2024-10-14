@@ -1,5 +1,42 @@
 ﻿@page "/SoapAPI"
 @using MudBlazor.Extensions
+@inject IJSRuntime JS
+
+<Style>
+    .resize-handle {
+        width: 5px;
+        height: 88%;
+        background-color: #222222;
+        position: absolute;
+        cursor: col-resize;
+    }
+</Style>
+
+<script>
+    window.initializeResizeHandle = (elementId, dotNetHelper) => {
+        const paper = document.getElementById("MainContainer");
+        const resizeHandle = document.getElementById(elementId);
+        let isResizing = false;
+
+        resizeHandle.addEventListener('mousedown', function (e) {
+            isResizing = true;
+        });
+
+        document.addEventListener('mousemove', function (e) {
+            if (isResizing) {
+                if (e.clientX > (paper.getBoundingClientRect().left*1.2) && e.clientX < paper.getBoundingClientRect().right*0.8)
+                {
+                    const newSize = (e.clientX-paper.getBoundingClientRect().left)/(paper.getBoundingClientRect().width);
+                    dotNetHelper.invokeMethodAsync('UpdateSize', newSize);
+                }
+            }
+        });
+
+        document.addEventListener('mouseup', function () {
+            isResizing = false;
+        });
+    };
+</script>
 
 <PageTitle>SoapAPI</PageTitle>
 <MudGrid>
@@ -8,16 +45,16 @@
     </MudItem>
 </MudGrid>
 
-<MudPaper Class="pa-0" Elevation="0" Square="true" Height="100%">
-    <MudStack Row="true" Class="pa-0">
+<MudPaper Class="pa-0" Elevation="0" Square="true" MaxHeight="90%" Id="MainContainer">
+    <MudStack Row="true" Class="pa-0" Spacing="0">
         <MudPaper Class="py-0" Width="@(size + "%")">
             <MudPaper Class="pa-4" Elevation="10" Square="true" Height="100%">
                 <MudStack>
                     @foreach (var tab in Tabs)
                     {
-                        <MudButton OnClick="@(() => ActivateTab(tab))" Color="@GetTabButtonColor(tab)" Style="justify-content: left; display: flow">
+                        <MudButton OnClick="@(() => ActivateTab(tab))" Color="@GetTabButtonColor(tab)" Style="justify-content: left; display: flow" DropShadow="true" Variant="Variant.Filled">
                             <MudStack Justify="Justify.SpaceBetween" Row="true">
-                                <MudText Style="overflow: hidden">@tab.Data.CurrentMethod</MudText>
+                                <MudText Style="overflow: hidden" Class="pt-1">@tab.Data.CurrentMethod</MudText>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => { RemoveTab(@tab); })"/>
                             </MudStack>
                         </MudButton>
@@ -26,6 +63,7 @@
                 </MudStack>
             </MudPaper>
         </MudPaper>
+        <MudPaper Class="pa-0"><div Id="ResizeHandle" class="resize-handle"></div></MudPaper>
         <MudPaper Class="pa-6" Width="@(100-size + "%")">
             <CascadingValue Value="CurrentProfile">
                 <MudCard>
@@ -36,13 +74,13 @@
             </CascadingValue>
         </MudPaper>
     </MudStack>
-    <MudSlider @bind-Value="size" Min="0" Max="100" Step="0.1" />
 </MudPaper>
 
 @code {
     
     [CascadingParameter]
     public Profile CurrentProfile { get; set; }
+    private DotNetObjectReference<SoapApi>? dotNetRef;
     
     public class TabItem
     {
@@ -109,6 +147,22 @@
     public void RemoveTab(TabItem tab)
     {
         Tabs.Remove(tab);
+        StateHasChanged();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("initializeResizeHandle", "ResizeHandle", dotNetRef);
+        }
+    }
+    
+    [JSInvokable]
+    public void UpdateSize(double newSize)
+    {
+        size = newSize*100;
         StateHasChanged();
     }
 

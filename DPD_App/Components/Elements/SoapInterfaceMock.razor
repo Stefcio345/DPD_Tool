@@ -242,8 +242,8 @@
         if (Data.Update)
         {
             // Ensure editors are updated when Data changes
-            if(_requestEditor is not null) await _requestEditor.SetValue(Data.Request);
-            if(_responseEditor is not null) await _responseEditor.SetValue(Data.Response);
+            if(_requestEditor is not null) await _requestEditor.SetValue(XMLService.Prettify(Request));
+            if(_responseEditor is not null) await _responseEditor.SetValue(XMLService.Prettify(Response));
             if(WsdlAddress is null) WsdlAddress = CurrentProfile.WsdlAddress;
             if(Request.Length < 1) UpdateRequest();
             Data.Update = false;
