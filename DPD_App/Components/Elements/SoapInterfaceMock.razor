@@ -1,4 +1,5 @@
-﻿@using System.Xml.Serialization
+﻿@using System.Collections.Specialized
+@using System.Xml.Serialization
 @using DPD_App.Components.Pages
 @using DPD_App.Models
 
@@ -13,7 +14,7 @@
         <MudSelect T="API_METHODS" Value="CurrentMethod" Label="Select method" ValueChanged="MethodSelected">
             @foreach (API_METHODS item in Enum.GetValues(typeof(API_METHODS)))
             {
-                <MudSelectItem Value="@item">@item</MudSelectItem>
+            <MudSelectItem Value="@item">@item</MudSelectItem>
             }
         </MudSelect>
     </MudItem>
@@ -21,26 +22,26 @@
         <MudSelect T="WsdlAddress" @bind-Value="WsdlAddress" Label="Select enviroment">
             @foreach (var wsdlAddres in Globals.WsdlAddresses)
             {
-                <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
+            <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
             }
         </MudSelect>
     </MudItem>
     <MudItem xs="6">
-        <StandaloneCodeEditor @ref="_requestEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsRequest"/>
+        <StandaloneCodeEditor @ref="_requestEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsRequest" OnDidChangeModelContent="RequestChanged"/>
     </MudItem>
     <MudItem xs="6">
-        <StandaloneCodeEditor @ref="_responseEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsResponse"/>
+        <StandaloneCodeEditor @ref="_responseEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsResponse" OnDidChangeModelContent="ResponseChanged"/>
     </MudItem>
     <MudItem xs="3">
         <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
             @if (_processing)
             {
-                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
-                <MudText Class="ms-2">Processing</MudText>
+            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+            <MudText Class="ms-2">Processing</MudText>
             }
             else
             {
-                <MudText>Send</MudText>
+            <MudText>Send</MudText>
             }
         </MudButton>
     </MudItem>
@@ -55,70 +56,48 @@
     </MudItem>
     <MudItem xs="3">
         <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <MudButton Variant="Variant.Filled" Class="pa-2 px-4" Color="Color.Success" StartIcon="@Icons.Material.Filled.Download" Disabled="@(DocumentData is null)" OnClick="DownloadData">Download Data</MudButton> 
+            <MudButton Variant="Variant.Filled" Class="pa-2 px-4" Color="Color.Success" StartIcon="@Icons.Material.Filled.Download" Disabled="@(DocumentData is null)" OnClick="DownloadData">Download Data</MudButton>
         </MudPaper>
     </MudItem>
 </MudGrid>
 
+
+
 @code {
-    //TODO add censoring of credentials
-    //TODO add saving session ID and waybills
-    //TODO maybe add downloading label
-    //TODO Repair stuff
-    static int ID = 0;
-    public int id;
+
+    private StandaloneCodeEditor? _requestEditor;
+    private StandaloneCodeEditor? _responseEditor;
+    
     [CascadingParameter] public Profile CurrentProfile { get; set; }
     [Parameter] public SoapData Data { get; set; }
-
-    private StandaloneCodeEditor _requestEditor = new StandaloneCodeEditor();
-    private StandaloneCodeEditor _responseEditor = new StandaloneCodeEditor();
-
-    public API_METHODS CurrentMethod { get; set; }
-
-    public SoapInterface()
+    
+    public API_METHODS CurrentMethod
     {
-        id = ID;
-        ID += 1;
+        get => Data.CurrentMethod;
+        set => Data.CurrentMethod = value;
+    }
+
+    public WsdlAddress? WsdlAddress
+    {
+        get => Data.WsdlAddress;
+        set => Data.WsdlAddress = value;
     }
 
     public string Request
     {
         get => Data.Request;
-        set
-        {
-            Data.Request = value;
-            _requestEditor.SetValue(value);
-        }
+        set => Data.Request = value;
     }
     
     public string Response
     {
         get => Data.Response;
-        set
-        {
-            Data.Response = value;
-            _responseEditor.SetValue(value);
-        }
+        set => Data.Response = value;
     }
-
-    public WsdlAddress WsdlAddress { get; set; }
     
     public string? DocumentData { get; set; }
     
     private bool _processing = false;
-
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (WsdlAddress is null) WsdlAddress = CurrentProfile.WsdlAddress;
-        if (Request == "") UpdateRequest();
-        return base.OnAfterRenderAsync(firstRender);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        CurrentMethod = API_METHODS.GeneratePackagesNumbers;
-        UpdateRequest();
-    }
 
     async Task SendRequest()
     {
@@ -143,6 +122,7 @@
         }
 
         Response = XMLService.Prettify(response);
+        if(_responseEditor is not null) await _responseEditor.SetValue(Response);
         _processing = false;
         StateHasChanged();
     }
@@ -154,14 +134,19 @@
         StateHasChanged();
     }
     
+    private void DownloadData()
+    {
+        Console.WriteLine(DocumentData);
+    }
+
     private void MethodSelected(API_METHODS obj)
     {
         CurrentMethod = obj;
-        UpdateRequest();
         Response = "";
+        UpdateRequest();
         StateHasChanged();
     }
-
+    
     public async void UpdateRequest()
     {
         switch (CurrentMethod)
@@ -201,13 +186,43 @@
                 break; 
         }
         Request = XMLService.Prettify(Request);
+        
+        if(_requestEditor is not null) await _requestEditor.SetValue(Request);
     }
 
-    private void DownloadData()
+    
+    private StandaloneEditorConstructionOptions EditorConstructionOptionsRequest(StandaloneCodeEditor editor)
     {
-        Console.WriteLine(DocumentData);
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "html",
+            Value = Request,
+            Minimap = new EditorMinimapOptions(){Enabled = false},
+            StickyScroll = new EditorStickyScrollOptions(){ScrollWithEditor = false, Enabled = true},
+            ScrollBeyondLastLine = false,
+            MouseWheelZoom = false,
+            MouseWheelScrollSensitivity = 1,
+            Scrollbar = new EditorScrollbarOptions(){AlwaysConsumeMouseWheel = false},
+        };
     }
-
+    
+    private StandaloneEditorConstructionOptions EditorConstructionOptionsResponse(StandaloneCodeEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "html",
+            Value = Response,
+            Minimap = new EditorMinimapOptions(){Enabled = false},
+            StickyScroll = new EditorStickyScrollOptions(){ScrollWithEditor = false, Enabled = true},
+            ScrollBeyondLastLine = false,
+            MouseWheelZoom = false,
+            MouseWheelScrollSensitivity = 1,
+            Scrollbar = new EditorScrollbarOptions(){AlwaysConsumeMouseWheel = false},
+        };
+    }
+    
     private async void RequestChanged()
     {
         if(Request != await _requestEditor.GetValue()) Request = await _requestEditor.GetValue();
@@ -220,48 +235,19 @@
         StateHasChanged();
     }
     
-    private StandaloneEditorConstructionOptions EditorConstructionOptionsRequest(StandaloneCodeEditor editor)
+    // This method is called when parameters are set or updated
+    protected override async void OnParametersSet()
     {
-        return new StandaloneEditorConstructionOptions
+        await base.OnParametersSetAsync();
+        if (Data.Update)
         {
-            AutomaticLayout = true,
-            Language = "html",
-            Value = Request,
-            Minimap = new EditorMinimapOptions(){Enabled = false},
-        };
-    }
-    
-    private StandaloneEditorConstructionOptions EditorConstructionOptionsResponse(StandaloneCodeEditor editor)
-    {
-        return new StandaloneEditorConstructionOptions
-        {
-            AutomaticLayout = true,
-            Language = "html",
-            Value = Response,
-            Minimap = new EditorMinimapOptions(){Enabled = false},
-        };
-    }
-
-    String getRequest()
-    {
-        var str = _requestEditor.GetValue();
-        Console.WriteLine(str);
-        if (str is null) return "";
-        return str.ToString();
-    }
-    
-    string getResponse()
-    {
-        var str = _responseEditor.GetValue();
-        Console.WriteLine(str);
-        if (str is null) return "";
-        return str.ToString();
-    }
-    
-    public void SetParameters(SoapInterface soapInterface)
-    {
-        Response = soapInterface.Response;
-        Request = soapInterface.Request;
+            // Ensure editors are updated when Data changes
+            if(_requestEditor is not null) await _requestEditor.SetValue(Data.Request);
+            if(_responseEditor is not null) await _responseEditor.SetValue(Data.Response);
+            if(WsdlAddress is null) WsdlAddress = CurrentProfile.WsdlAddress;
+            if(Request.Length < 1) UpdateRequest();
+            Data.Update = false;
+        }
     }
 
 }

@@ -1,0 +1,60 @@
+﻿@page "/Compare"
+@using MudBlazor.Extensions
+@inject IJSRuntime jsRuntime
+
+<Style>
+    .my-comparer-class {
+        height: 700px;
+    }
+</Style>
+
+<PageTitle>SoapAPI</PageTitle>
+<MudGrid>
+    <MudItem xs="2">
+        <h1 class="pa-1 pb-3">Compare Text</h1>
+    </MudItem>
+</MudGrid>
+
+<StandaloneDiffEditor @ref="_diffEditor" CssClass="my-comparer-class" Id="sample-diff-editor-123" ConstructionOptions="DiffEditorConstructionOptions" OnDidInit="EditorOnDidInit"/>
+
+@code {
+    private StandaloneDiffEditor _diffEditor = null!;
+    private string _valueToSetOriginal = "";
+    private string _valueToSetModified = "";
+    
+    private StandaloneDiffEditorConstructionOptions DiffEditorConstructionOptions(StandaloneDiffEditor editor)
+    {
+        return new StandaloneDiffEditorConstructionOptions
+        {
+            OriginalEditable = true,
+            ScrollBeyondLastLine = false,
+        };
+    }
+    
+    private async Task EditorOnDidInit()
+    {
+        // Get or create the original model
+        TextModel original_model = await BlazorMonaco.Editor.Global.GetModel(jsRuntime, "sample-diff-editor-originalModel");
+        if (original_model == null)
+        {
+            var original_value = "";
+            original_model = await BlazorMonaco.Editor.Global.CreateModel(jsRuntime, original_value, "javascript", "sample-diff-editor-originalModel");
+        }
+
+        // Get or create the modified model
+        TextModel modified_model = await BlazorMonaco.Editor.Global.GetModel(jsRuntime, "sample-diff-editor-modifiedModel");
+        if (modified_model == null)
+        {
+            var modified_value = "";
+            modified_model = await BlazorMonaco.Editor.Global.CreateModel(jsRuntime, modified_value, "javascript", "sample-diff-editor-modifiedModel");
+        }
+
+        // Set the editor model
+        await _diffEditor.SetModel(new DiffEditorModel
+        {
+            Original = original_model,
+            Modified = modified_model
+        });
+    }
+    
+}

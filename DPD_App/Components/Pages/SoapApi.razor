@@ -6,57 +6,34 @@
     <MudItem xs="2">
         <h1 class="pa-1 pb-3">Soap API</h1>
     </MudItem>
-    <MudItem xs="10">
-        <MudPaper Class="pa-2 mr-20">
-            <MudStack Row="true">
-                <MudPaper Class="pa-2">
-                    <MudText>SessionId: @latestSoapData.SessionId</MudText>
-                </MudPaper>
-                <MudPaper Class="pa-2">
-                    <MudStack Row="true">
-                    <MudText>Waybills:</MudText>
-                    @foreach (var waybill in latestSoapData.Waybills)
-                    {
-                        <MudText>@waybill</MudText>
-                    }
-                    </MudStack>
-                </MudPaper>
-            </MudStack>
-        </MudPaper>
-    </MudItem>
 </MudGrid>
-
-
 
 <MudPaper Class="pa-0" Elevation="0" Square="true" Height="100%">
     <MudStack Row="true" Class="pa-0">
         <MudPaper Class="py-0" Width="@(size + "%")">
             <MudPaper Class="pa-4" Elevation="10" Square="true" Height="100%">
-                <MudList Padding="true" T="SoapInterface" SelectionMode="SelectionMode.SingleSelection" SelectedValue="CurrentTab" SelectedValueChanged="OnTabChange">
+                <MudStack>
                     @foreach (var tab in Tabs)
                     {
-                        <MudListItem Class="pa-1 my-2" Value="@tab">
+                        <MudButton OnClick="@(() => ActivateTab(tab))" Color="@GetTabButtonColor(tab)" Style="justify-content: left; display: flow">
                             <MudStack Justify="Justify.SpaceBetween" Row="true">
-                                <MudText Typo="Typo.h5" Style="overflow: hidden">@tab.CurrentMethod</MudText>
+                                <MudText Style="overflow: hidden">@tab.Data.CurrentMethod</MudText>
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => { RemoveTab(@tab); })"/>
                             </MudStack>
-                        </MudListItem>
+                        </MudButton>
                     }
-                </MudList>
-                <MudStack>
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Small" OnClick="@(() => { AddTab(); })"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Small" OnClick="@(() => { AddNewTab(); })"/>
                 </MudStack>
             </MudPaper>
         </MudPaper>
         <MudPaper Class="pa-6" Width="@(100-size + "%")">
-            @if (CurrentTab is not null)
-            {
-                <SoapInterface @ref="CurrentTab" SharedSoapData="latestSoapData"/>
-            }
-            else
-            {
-                <MudText Typo="Typo.h3">Home</MudText>
-            }
+            <CascadingValue Value="CurrentProfile">
+                <MudCard>
+                    <MudCardContent>
+                        @ActiveTab.Content
+                    </MudCardContent>
+                </MudCard>
+            </CascadingValue>
         </MudPaper>
     </MudStack>
     <MudSlider @bind-Value="size" Min="0" Max="100" Step="0.1" />
@@ -64,45 +41,74 @@
 
 @code {
     
-    public List<SoapInterface> Tabs = new();
-    public SoapInterface CurrentTab;
-    public double size = 20;
-
-    sharedSoapData latestSoapData = new sharedSoapData();
-
-    public class sharedSoapData
+    [CascadingParameter]
+    public Profile CurrentProfile { get; set; }
+    
+    public class TabItem
     {
-        public string? SessionId;
-        public List<string> Waybills = new List<string>();
+        public string Title { get; set; }
+        public RenderFragment Content { get; set; }
+        public SoapData Data;
+        public bool IsActive { get; set; }
     }
-
+    
+    private List<TabItem> Tabs { get; set; } = new List<TabItem>();
+    private TabItem ActiveTab { get; set; }
+    public double size = 20;
+    
     protected override void OnInitialized()
     {
-        base.OnInitialized();
-        Tabs.Add(new SoapInterface());
-        CurrentTab = Tabs[0];
+        // Initialize with some default tabs
+        Tabs.Add(new TabItem { Title = "Tab 1", Content = RenderFragmentForTab(), IsActive = true, Data = new SoapData(StateHasChanged)});
+
+        // Set the first tab as active
+        ActiveTab = Tabs.FirstOrDefault(t => t.IsActive);
+        ActiveTab.Data.Update = true;
+    }
+    
+    private void ActivateTab(TabItem tab)
+    {
+        foreach (var t in Tabs)
+        {
+            t.IsActive = false;
+        }
+
+        tab.IsActive = true;
+
+        ActiveTab = tab;
+        ActiveTab.Data.Update = true;
+        StateHasChanged();
     }
     
 
-    public void AddTab()
+    private RenderFragment RenderFragmentForTab() => builder =>
     {
-        var tab = new SoapInterface();
-        Tabs.Add(tab);
-        StateHasChanged();
+        builder.OpenComponent(0, typeof(SoapInterfaceMock));
+        builder.AddAttribute(1, "Data", ActiveTab.Data);
+        builder.CloseComponent();
+    };
+
+    private Color GetTabButtonColor(TabItem tab)
+    {
+        return tab.IsActive ? Color.Primary : Color.Default;
     }
 
-    public void RemoveTab(SoapInterface tab)
+    private void AddNewTab()
+    {
+        int tabIndex = Tabs.Count + 1;
+        var newTab = new TabItem
+        {
+            Title = $"Tab {tabIndex}",
+            Content = RenderFragmentForTab(),
+            IsActive = false,
+            Data = new SoapData(StateHasChanged),
+        };
+        Tabs.Add(newTab);
+    }
+    
+    public void RemoveTab(TabItem tab)
     {
         Tabs.Remove(tab);
-        StateHasChanged();
-    }
-    
-
-    private void OnTabChange(SoapInterface tab)
-    {
-        Console.WriteLine(tab.id);
-        CurrentTab = tab;
-        Console.WriteLine(CurrentTab.CurrentMethod);
         StateHasChanged();
     }
 

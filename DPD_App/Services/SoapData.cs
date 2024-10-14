@@ -5,6 +5,7 @@ namespace DPD_App;
 public class SoapData
 {
     static int TabIndex = 0;
+    public bool Update = false;
 
     private string _title = SoapData.TabIndex.ToString();
     public string Title 
