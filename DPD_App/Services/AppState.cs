@@ -1,4 +1,7 @@
 ﻿
+using DPD_App.Components.Pages;
+using DPD_App.Models;
+
 namespace DPD_App;
 
 public class AppState
@@ -24,6 +27,12 @@ public class AppState
             NotifyStateChanged();
         }
     }
+
+    public SoapApiState SoapApiData { get; set; } = new SoapApiState();
+    public PudoFinderState PudoFinderState { get; set; } = new PudoFinderState();
+    public MyPudoApiState MyPudoApiState { get; set; } = new MyPudoApiState();
+    public GenerateLabelsState GenerateLabelsState { get; set; } = new GenerateLabelsState();
+    public CompareState CompareState { get; set; } = new CompareState();
 
     public event Action OnChange;
 

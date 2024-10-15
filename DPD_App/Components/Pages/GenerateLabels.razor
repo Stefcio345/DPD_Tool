@@ -8,10 +8,14 @@
 
 <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mb-4">
     <h1 class="pa-1 pb-3">Generate Labels</h1>
-    <MudTabs Elevation="2" Rounded="true" @bind-ActivePanelIndex="activeMode">
-        <MudTabPanel Text="Simple" />
-        <MudTabPanel Text="Extended" />
-    </MudTabs>
+    <MudStack Row="true">
+        <MudTabs Elevation="2" Rounded="true" @bind-ActivePanelIndex="ActiveMode">
+            <MudTabPanel Text="Simple" />
+            <MudTabPanel Text="Extended" />
+        </MudTabs>
+        <MudIconButton Disabled="@_refreshing" Class="mb-2 px-2" Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" OnClick="RefreshData" Variant="Variant.Filled" Size="Size.Large">
+        </MudIconButton>
+    </MudStack>
 </MudStack>
 
 <MudGrid>
@@ -33,7 +37,7 @@
     <MudDivider Class="mt-6 mx-4"/>
     
     <!-- Extended mode -->
-    @if (activeMode == 1)
+    @if (ActiveMode == 1)
     {
         <MudItem xs="9">
             <CascadingValue Value="this">
@@ -44,11 +48,11 @@
         <MudItem xs="3">
             <MudStack Row="true" Class="mb-4" Spacing="2">
                 <MudText Typo="Typo.h5">Services</MudText>
-                <MudToggleIconButton Size="Size.Small" @bind-Toggled="servicesOn"
+                <MudToggleIconButton Size="Size.Small" @bind-Toggled="ServicesOn"
                                      Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
             </MudStack>
             <!-- Services -->
-            @if (servicesOn)
+            @if (ServicesOn)
             {
                 <MudPaper Class="pa-2">
                     <MudGrid Class="pa-0">
@@ -346,10 +350,16 @@
 </MudGrid>
 
 @code {
-    List<SoapError> Errors = new List<SoapError>();
-
     Profile profileFromTextBoxes = new Profile();
     Profile _currentProfile;
+    
+    MudTextField<string>? ReceiverPostalCodeField;
+    MudSelect<WsdlAddress>? EnviromentField;
+    
+    private bool _processingLabel = false;
+    private bool _processingProtocol = false;
+    private bool _refreshing = false;
+    
     [CascadingParameter]
     public Profile CurrentProfile
     {
@@ -360,27 +370,49 @@
             UpdateCredentials(_currentProfile);
         }
     }
-    
-    private bool _processingLabel = false;
-    private bool _processingProtocol = false;
-    public bool servicesOn = true;
-    public bool DetailsOn = true;
-    public bool ParcelsOn = true;
-    public int activeMode;
 
-    Package package;
-    
-    private List<TrackingLinkService> TrackingLinks = new List<TrackingLinkService>();
-    
-    MudTextField<string>? ReceiverPostalCodeField;
-    MudSelect<WsdlAddress>? EnviromentField;
-
-    protected override Task OnInitializedAsync()
+    public List<SoapError> Errors
     {
-        package = new Package();
-        return base.OnInitializedAsync();
+        get => AppState.GenerateLabelsState.Errors;
+        set => AppState.GenerateLabelsState.Errors = value;
     }
 
+    public bool ServicesOn
+    {
+        get => AppState.GenerateLabelsState.ServicesOn;
+        set => AppState.GenerateLabelsState.ServicesOn = value;
+    }
+
+    public bool DetailsOn
+    {
+        get => AppState.GenerateLabelsState.DetailsOn;
+        set => AppState.GenerateLabelsState.DetailsOn = value;
+    }
+
+    public bool ParcelsOn
+    {
+        get => AppState.GenerateLabelsState.ParcelsOn;
+        set => AppState.GenerateLabelsState.ParcelsOn = value;
+    }
+
+    public int ActiveMode
+    {
+        get => AppState.GenerateLabelsState.ActiveMode;
+        set => AppState.GenerateLabelsState.ActiveMode = value;
+    }
+
+    public List<TrackingLinkService> TrackingLinks
+    {
+        get => AppState.GenerateLabelsState.TrackingLinks;
+        set => AppState.GenerateLabelsState.TrackingLinks = value;
+    }
+
+    Package package
+    {
+        get => AppState.GenerateLabelsState.package;
+        set => AppState.GenerateLabelsState.package = value;
+    }
+    
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -481,4 +513,15 @@
     public void RefreshState(){
         this.StateHasChanged();
     }
+
+    private void RefreshData()
+    {
+        _refreshing = true;
+        package = new Package();
+        TrackingLinks.Clear();
+        Errors.Clear();
+        _refreshing = false;
+        StateHasChanged();
+    }
+
 }

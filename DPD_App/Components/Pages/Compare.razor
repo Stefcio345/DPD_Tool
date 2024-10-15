@@ -1,6 +1,7 @@
 ﻿@page "/Compare"
 @using MudBlazor.Extensions
 @inject IJSRuntime jsRuntime
+@inject AppState AppState
 
 <Style>
     .my-comparer-class {
@@ -8,20 +9,33 @@
     }
 </Style>
 
-<PageTitle>SoapAPI</PageTitle>
-<MudGrid>
-    <MudItem xs="2">
-        <h1 class="pa-1 pb-3">Compare Text</h1>
-    </MudItem>
-</MudGrid>
+<PageTitle>Compare Text</PageTitle>
+<MudStack Row="true" Justify="Justify.SpaceBetween" Class="mb-4">
+    <h1 class="pa-1 pb-3">Compare Text</h1>
+    <MudStack Row="true" Spacing="5">
+        <MudIconButton Class="mb-2 px-2" Icon="@Icons.Material.Filled.SwapHoriz" Color="Color.Primary" OnClick="SwapText" Variant="Variant.Filled" Size="Size.Large"/>
+        <MudIconButton Disabled="@_refreshing" Class="mb-2 px-2" Icon="@Icons.Material.Filled.Refresh" Color="Color.Error" OnClick="RefreshData" Variant="Variant.Filled" Size="Size.Large"/>
+    </MudStack>
+</MudStack>
 
 <StandaloneDiffEditor @ref="_diffEditor" CssClass="my-comparer-class" Id="sample-diff-editor-123" ConstructionOptions="DiffEditorConstructionOptions" OnDidInit="EditorOnDidInit"/>
 
 @code {
     private StandaloneDiffEditor _diffEditor = null!;
-    private string _valueToSetOriginal = "";
-    private string _valueToSetModified = "";
-    
+    private bool _refreshing;
+
+    private TextModel? OriginalModel
+    {
+        get => AppState.CompareState.OriginalModel;
+        set => AppState.CompareState.OriginalModel = value;
+    }
+
+    private TextModel? ModifiedModel
+    {
+        get => AppState.CompareState.ModifiedModel;
+        set => AppState.CompareState.ModifiedModel = value;
+    }
+
     private StandaloneDiffEditorConstructionOptions DiffEditorConstructionOptions(StandaloneDiffEditor editor)
     {
         return new StandaloneDiffEditorConstructionOptions
@@ -34,27 +48,44 @@
     private async Task EditorOnDidInit()
     {
         // Get or create the original model
-        TextModel original_model = await BlazorMonaco.Editor.Global.GetModel(jsRuntime, "sample-diff-editor-originalModel");
-        if (original_model == null)
+        if (OriginalModel == null)
         {
             var original_value = "";
-            original_model = await BlazorMonaco.Editor.Global.CreateModel(jsRuntime, original_value, "javascript", "sample-diff-editor-originalModel");
+            OriginalModel = await BlazorMonaco.Editor.Global.CreateModel(jsRuntime, original_value, "javascript", "sample-diff-editor-originalModel");
         }
 
         // Get or create the modified model
-        TextModel modified_model = await BlazorMonaco.Editor.Global.GetModel(jsRuntime, "sample-diff-editor-modifiedModel");
-        if (modified_model == null)
+        if (ModifiedModel == null)
         {
             var modified_value = "";
-            modified_model = await BlazorMonaco.Editor.Global.CreateModel(jsRuntime, modified_value, "javascript", "sample-diff-editor-modifiedModel");
+            ModifiedModel = await BlazorMonaco.Editor.Global.CreateModel(jsRuntime, modified_value, "javascript", "sample-diff-editor-modifiedModel");
         }
 
         // Set the editor model
         await _diffEditor.SetModel(new DiffEditorModel
         {
-            Original = original_model,
-            Modified = modified_model
+            Original = OriginalModel,
+            Modified = ModifiedModel
         });
     }
     
+    private void RefreshData()
+    {
+        _refreshing = true;
+        ModifiedModel?.SetValue("");
+        OriginalModel?.SetValue("");
+        _refreshing = false;
+        StateHasChanged();
+    }
+
+    private async void SwapText()
+    {
+        var temp = _diffEditor.OriginalEditor.GetValue();
+        OriginalModel?.SetValue(await _diffEditor.ModifiedEditor.GetValue());
+        ModifiedModel?.SetValue(await temp);
+        StateHasChanged();
+    }
+    
+    
+
 }

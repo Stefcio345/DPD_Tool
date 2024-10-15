@@ -1,6 +1,7 @@
 ﻿@page "/MyPudoAPI"
 @using System.Text.Json
 @using DPD_App.Json
+@inject AppState AppState
 
 <PageTitle>MyPudoAPI</PageTitle>
 
@@ -48,7 +49,7 @@
                 <MudTextField Immediate="true" T="string" Value="ZipCode" Label="Zip Code" Variant="Variant.Outlined" ValueChanged="OnAddressSelectZipCode"/>
             </MudItem>
             <MudItem xs="6">
-                <MudSlider Immediate="true" T="int" Size="Size.Large" Value="maxPudoNumberValue" Min="1" Max="25" Step="1" Color="Color.Primary" ValueChanged="MaxPudoNumberValueChanged">Value: @maxPudoNumberValue.ToString()</MudSlider>
+                <MudSlider Immediate="true" T="int" Size="Size.Large" Value="MaxPudoNumberValue" Min="1" Max="25" Step="1" Color="Color.Primary" ValueChanged="MaxPudoNumberValueChanged">Value: @MaxPudoNumberValue.ToString()</MudSlider>
             </MudItem>
             break;
 
@@ -73,12 +74,12 @@
             <MudPaper Class="pa-3">
                 <MudGrid Justify="Justify.SpaceBetween">
                     <MudItem>
-                        <MudSwitch T="bool" Value="dateFrom" ThumbIcon="@(dateFrom == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(dateFrom == true ? Color.Success : Color.Error)" ValueChanged="DateFromChanged">Date from</MudSwitch>
+                        <MudSwitch T="bool" Value="DateFrom" ThumbIcon="@(DateFrom == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(DateFrom == true ? Color.Success : Color.Error)" ValueChanged="DateFromChanged">Date from</MudSwitch>
                     </MudItem>
                     <MudItem>
-                        @if (dateFrom)
+                        @if (DateFrom)
                         {
-                            <MudTextField Value="dateFromValue" T="DateTime?" Format="yyyy-MM-dd" Margin="Margin.Dense" Variant="Variant.Outlined" Label="Date" InputType="InputType.Date" ValueChanged="DateFromValueChanged"/>
+                            <MudTextField Value="DateFromValue" T="DateTime?" Format="yyyy-MM-dd" Margin="Margin.Dense" Variant="Variant.Outlined" Label="Date" InputType="InputType.Date" ValueChanged="DateFromValueChanged"/>
                         }
                     </MudItem>
                 </MudGrid>
@@ -87,12 +88,12 @@
             <MudPaper Class="pa-3">
                 <MudGrid Justify="Justify.SpaceBetween">
                     <MudItem>
-                        <MudSwitch T="bool" Value="holidayTolerant" ThumbIcon="@(holidayTolerant == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(holidayTolerant == true ? Color.Success : Color.Error)" ValueChanged="HolidayTolerantChanged">Holiday</MudSwitch>
+                        <MudSwitch T="bool" Value="HolidayTolerant" ThumbIcon="@(HolidayTolerant == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(HolidayTolerant == true ? Color.Success : Color.Error)" ValueChanged="HolidayTolerantChanged">Holiday</MudSwitch>
                     </MudItem>
                     <MudItem>
-                    @if (holidayTolerant)
+                    @if (HolidayTolerant)
                     {
-                        <MudSelect Value="holidayTolerantValue" T="int" Label="HolidayTolerant" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" ValueChanged="HolidayTolerantValueChanged">
+                        <MudSelect Value="HolidayTolerantValue" T="int" Label="HolidayTolerant" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" ValueChanged="HolidayTolerantValueChanged">
                             <MudSelectItem T="int" Value="0"/>
                             <MudSelectItem T="int" Value="1"/>
                             <MudSelectItem T="int" Value="2"/>
@@ -106,7 +107,7 @@
             <MudPaper Class="pa-3">
                 <MudGrid Justify="Justify.SpaceBetween">
                     <MudItem>
-                        <MudSwitch T="bool" Value="servicePudoDisplay" ThumbIcon="@(servicePudoDisplay == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(servicePudoDisplay == true ? Color.Success : Color.Error)" ValueChanged="ServicePudoDisplayChanged">Display service codes</MudSwitch>
+                        <MudSwitch T="bool" Value="ServicePudoDisplay" ThumbIcon="@(ServicePudoDisplay == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(ServicePudoDisplay == true ? Color.Success : Color.Error)" ValueChanged="ServicePudoDisplayChanged">Display service codes</MudSwitch>
                     </MudItem>
                 </MudGrid>
             </MudPaper>
@@ -114,12 +115,12 @@
             <MudPaper Class="pa-3">
                 <MudGrid Justify="Justify.SpaceBetween">
                     <MudItem>
-                        <MudSwitch T="bool" Value="partner" ThumbIcon="@(partner == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(partner == true ? Color.Success : Color.Error)" ValueChanged="PartnerChanged">Partner</MudSwitch>
+                        <MudSwitch T="bool" Value="Partner" ThumbIcon="@(Partner == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(Partner == true ? Color.Success : Color.Error)" ValueChanged="PartnerChanged">Partner</MudSwitch>
                     </MudItem>
                     <MudItem>
-                        @if (partner)
+                        @if (Partner)
                         {
-                            <MudTextField Immediate="true" Value="partnerValue" T="string" Margin="Margin.Dense" Variant="Variant.Outlined" Label="Partner name" ValueChanged="PartnerValueChanged"/>
+                            <MudTextField Immediate="true" Value="PartnerValue" T="string" Margin="Margin.Dense" Variant="Variant.Outlined" Label="Partner name" ValueChanged="PartnerValueChanged"/>
                         }
                     </MudItem>
                 </MudGrid>
@@ -233,36 +234,124 @@
 @code {
     [CascadingParameter]
     public Profile CurrentProfile { get; set; }
-    public List<PudoItem> PudoItems = new List<PudoItem>();
-    
+
+    public List<PudoItem> PudoItems
+    {
+        get => AppState.MyPudoApiState.PudoItems;
+        set => AppState.MyPudoApiState.PudoItems = value;
+    }
+
     private MudTextField<string>? Query;
     private MudDataGrid<PudoItem> DataGrid;
     bool _processing;
     private string? key;
-    private string? PudoLink;
-    private Country? SelectedCountry;
-    private string? PointID;
-    private string? response;
-    private string? SelectedFiltering = "Country";
+    private string? PudoLink
+    {
+        get => AppState.MyPudoApiState.PudoLink;
+        set => AppState.MyPudoApiState.PudoLink = value;
+    }
 
-    private string? City;
-    private string? ZipCode;
-    int maxPudoNumberValue = 25;
+    private Country? SelectedCountry
+    {
+        get => AppState.MyPudoApiState.SelectedCountry;
+        set => AppState.MyPudoApiState.SelectedCountry = value;
+    }
 
-    private string? Latitude;
-    private string? Longitude;
-    private decimal Distance = 100;
-    
-    //Filters
-    bool partner = false;
-    bool servicePudoDisplay = false;
-    bool holidayTolerant = false;
-    bool dateFrom = false;
-    
-    
-    string? partnerValue;
-    int holidayTolerantValue;
-    DateTime? dateFromValue;
+    public string? PointID
+    {
+        get => AppState.MyPudoApiState.PointID;
+        set => AppState.MyPudoApiState.PointID = value;
+    }
+
+    public string? Response
+    {
+        get => AppState.MyPudoApiState.response;
+        set => AppState.MyPudoApiState.response = value;
+    }
+
+    public string? SelectedFiltering
+    {
+        get => AppState.MyPudoApiState.SelectedFiltering;
+        set => AppState.MyPudoApiState.SelectedFiltering = value;
+    }
+
+    public string? City
+    {
+        get => AppState.MyPudoApiState.City;
+        set => AppState.MyPudoApiState.City = value;
+    }
+
+    public string? ZipCode
+    {
+        get => AppState.MyPudoApiState.ZipCode;
+        set => AppState.MyPudoApiState.ZipCode = value;
+    }
+
+    public int MaxPudoNumberValue
+    {
+        get => AppState.MyPudoApiState.maxPudoNumberValue;
+        set => AppState.MyPudoApiState.maxPudoNumberValue = value;
+    }
+
+    public string? Latitude
+    {
+        get => AppState.MyPudoApiState.Latitude;
+        set => AppState.MyPudoApiState.Latitude = value;
+    }
+
+    public string? Longitude
+    {
+        get => AppState.MyPudoApiState.Longitude;
+        set => AppState.MyPudoApiState.Longitude = value;
+    }
+
+    public decimal Distance
+    {
+        get => AppState.MyPudoApiState.Distance;
+        set => AppState.MyPudoApiState.Distance = value;
+    }
+
+    public bool Partner
+    {
+        get => AppState.MyPudoApiState.partner;
+        set => AppState.MyPudoApiState.partner = value;
+    }
+
+    public bool ServicePudoDisplay
+    {
+        get => AppState.MyPudoApiState.servicePudoDisplay;
+        set => AppState.MyPudoApiState.servicePudoDisplay = value;
+    }
+
+    public bool HolidayTolerant
+    {
+        get => AppState.MyPudoApiState.holidayTolerant;
+        set => AppState.MyPudoApiState.holidayTolerant = value;
+    }
+
+    public bool DateFrom
+    {
+        get => AppState.MyPudoApiState.dateFrom;
+        set => AppState.MyPudoApiState.dateFrom = value;
+    }
+
+    public string? PartnerValue
+    {
+        get => AppState.MyPudoApiState.partnerValue;
+        set => AppState.MyPudoApiState.partnerValue = value;
+    }
+
+    public int HolidayTolerantValue
+    {
+        get => AppState.MyPudoApiState.holidayTolerantValue;
+        set => AppState.MyPudoApiState.holidayTolerantValue = value;
+    }
+
+    public DateTime? DateFromValue
+    {
+        get => AppState.MyPudoApiState.dateFromValue;
+        set => AppState.MyPudoApiState.dateFromValue = value;
+    }
     
     protected override Task OnInitializedAsync()
     {
@@ -309,7 +398,7 @@
     }
     private void MaxPudoNumberValueChanged(int obj)
     {
-        maxPudoNumberValue = obj;
+        MaxPudoNumberValue = obj;
         UpdateQuery();
     }
 
@@ -335,44 +424,44 @@
     //Filters
     private void DateFromChanged(bool obj)
     {
-        dateFrom = obj;
+        DateFrom = obj;
         UpdateQuery();
     }
 
     private void HolidayTolerantChanged(bool obj)
     {
-        holidayTolerant = obj;
+        HolidayTolerant = obj;
         UpdateQuery();
     }
 
     private void ServicePudoDisplayChanged(bool obj)
     {
-        servicePudoDisplay = obj;
+        ServicePudoDisplay = obj;
         UpdateQuery();
     }
 
     private void PartnerChanged(bool obj)
     {
-        partner = obj;
+        Partner = obj;
         UpdateQuery();
     }
     
     //Values changed
     private void HolidayTolerantValueChanged(int obj)
     {
-        holidayTolerantValue = obj;
+        HolidayTolerantValue = obj;
         UpdateQuery();
     }
 
     private void DateFromValueChanged(DateTime? obj)
     {
-        dateFromValue = obj;
+        DateFromValue = obj;
         UpdateQuery();
     }
 
     private void PartnerValueChanged(string obj)
     {
-        partnerValue = obj;
+        PartnerValue = obj;
         UpdateQuery();
     }
     
@@ -380,9 +469,9 @@
     private async void SendRequest()
     {
         _processing = true;
-        response = await NetworkService.SendHttpRequest(PudoLink);
+        Response = await NetworkService.SendHttpRequest(PudoLink);
         //repsonseShow = new MarkupString(response);
-        var myDeserializedClass = JsonSerializer.Deserialize<Root>(response);
+        var myDeserializedClass = JsonSerializer.Deserialize<Root>(Response);
         PudoItems = myDeserializedClass.pudoItems;
         DataGrid.ReloadServerData();
         _processing = false;
@@ -404,7 +493,7 @@
                 break;
             
             case "Address":
-                str += $"list/byaddress?requestID=zap001&city={City}&zipCode={ZipCode}&maxPudoNumber={maxPudoNumberValue}";
+                str += $"list/byaddress?requestID=zap001&city={City}&zipCode={ZipCode}&maxPudoNumber={MaxPudoNumberValue}";
                 break;
             
             case "Geolocation":
@@ -417,21 +506,21 @@
             str += $"&key={key}";
         }
         
-        if (dateFrom)
+        if (DateFrom)
         {
-            str = str + "&dateFrom=" + dateFromValue?.ToString("dd/MM/yyyy");
+            str = str + "&dateFrom=" + DateFromValue?.ToString("dd/MM/yyyy");
         }
-        if (holidayTolerant)
+        if (HolidayTolerant)
         {
-            str = str + "&holidayTolerant=" + holidayTolerantValue;
+            str = str + "&holidayTolerant=" + HolidayTolerantValue;
         }
-        if (servicePudoDisplay)
+        if (ServicePudoDisplay)
         {
             str = str + "&servicePudoDisplay=1";
         }
-        if (partner)
+        if (Partner)
         {
-            str = str + "&partner=" + partnerValue;
+            str = str + "&partner=" + PartnerValue;
         }
 
         PudoLink = str;

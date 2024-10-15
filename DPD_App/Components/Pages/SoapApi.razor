@@ -1,6 +1,7 @@
 ﻿@page "/SoapAPI"
 @using MudBlazor.Extensions
 @inject IJSRuntime JS
+@inject AppState AppState
 
 <Style>
     .resize-handle {
@@ -68,7 +69,7 @@
             <CascadingValue Value="CurrentProfile">
                 <MudCard>
                     <MudCardContent>
-                        @ActiveTab.Content
+                        <SoapInterfaceMock Data="ActiveTab.Data"/>
                     </MudCardContent>
                 </MudCard>
             </CascadingValue>
@@ -85,23 +86,32 @@
     public class TabItem
     {
         public string Title { get; set; }
-        public RenderFragment Content { get; set; }
         public SoapData Data;
         public bool IsActive { get; set; }
     }
-    
-    private List<TabItem> Tabs { get; set; } = new List<TabItem>();
-    private TabItem ActiveTab { get; set; }
-    public double size = 20;
-    
+
+    public List<TabItem> Tabs
+    {
+        get => AppState.SoapApiData.Tabs;
+        set => AppState.SoapApiData.Tabs = value;
+    }
+    private TabItem? ActiveTab { get; set; }
+    public double size
+    {
+        get => AppState.SoapApiData.size;
+        set => AppState.SoapApiData.size = value; 
+    }
+
     protected override void OnInitialized()
     {
-        // Initialize with some default tabs
-        Tabs.Add(new TabItem { Title = "Tab 1", Content = RenderFragmentForTab(), IsActive = true, Data = new SoapData(StateHasChanged)});
-
+        // Initialize with default tab
+        if(Tabs.Count == 0) Tabs.Add(new TabItem { Title = "Tab 1", IsActive = true, Data = new SoapData(StateHasChanged) });
         // Set the first tab as active
-        ActiveTab = Tabs.FirstOrDefault(t => t.IsActive);
-        ActiveTab.Data.Update = true;
+        if (ActiveTab is null)
+        {
+            ActiveTab = Tabs.FirstOrDefault(t => t.IsActive);
+            ActiveTab.Data.Update = true;
+        }
     }
     
     private void ActivateTab(TabItem tab)
@@ -117,14 +127,6 @@
         ActiveTab.Data.Update = true;
         StateHasChanged();
     }
-    
-
-    private RenderFragment RenderFragmentForTab() => builder =>
-    {
-        builder.OpenComponent(0, typeof(SoapInterfaceMock));
-        builder.AddAttribute(1, "Data", ActiveTab.Data);
-        builder.CloseComponent();
-    };
 
     private Color GetTabButtonColor(TabItem tab)
     {
@@ -137,7 +139,6 @@
         var newTab = new TabItem
         {
             Title = $"Tab {tabIndex}",
-            Content = RenderFragmentForTab(),
             IsActive = false,
             Data = new SoapData(StateHasChanged),
         };
@@ -147,6 +148,10 @@
     public void RemoveTab(TabItem tab)
     {
         Tabs.Remove(tab);
+        if (tab.IsActive)
+        {
+            ActivateTab(Tabs.First());
+        }
         StateHasChanged();
     }
     
