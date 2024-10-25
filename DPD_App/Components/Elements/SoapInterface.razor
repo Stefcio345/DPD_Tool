@@ -1,6 +1,8 @@
-﻿@using System.Xml.Serialization
+﻿@using System.Collections.Specialized
+@using System.Xml.Serialization
 @using DPD_App.Components.Pages
 @using DPD_App.Models
+@inject ISnackbar Snackbar
 
 <Style>
     .my-editor-class { /* for a specific editor instance */
@@ -9,121 +11,109 @@
 </Style>
 
 <MudGrid>
-    <MudItem xs="6">
-        <MudSelect T="API_METHODS" Value="CurrentMethod" Label="Select method" ValueChanged="MethodSelected">
-            @foreach (API_METHODS item in Enum.GetValues(typeof(API_METHODS)))
-            {
-                <MudSelectItem Value="@item">@item</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="6">
-        <MudSelect T="WsdlAddress" @bind-Value="WsdlAddress" Label="Select enviroment">
-            @foreach (var wsdlAddres in Globals.WsdlAddresses)
-            {
-                <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
-            }
-        </MudSelect>
-    </MudItem>
-    <MudItem xs="6">
-        <StandaloneCodeEditor @ref="_requestEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsRequest"/>
-    </MudItem>
-    <MudItem xs="6">
-        <StandaloneCodeEditor @ref="_responseEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsResponse"/>
-    </MudItem>
-    <MudItem xs="3">
-        <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
-            @if (_processing)
-            {
-                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
-                <MudText Class="ms-2">Processing</MudText>
-            }
-            else
-            {
-                <MudText>Send</MudText>
-            }
-        </MudButton>
-    </MudItem>
-    <MudItem xs="3">
-        <MudItem xs="3">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify</MudButton>
-        </MudItem>
-    </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
+    <!-- BUTTONS -->
+    
+    <MudItem xs="12">
+        <MudPaper Elevation="5" Class="mb-2 pa-1">
+            <MudStack Row="true" Justify="Justify.SpaceBetween">
+                <MudButton Size="Size.Large" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                        <MudText Class="ms-2">Processing</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Send</MudText>
+                    }
+                </MudButton>
+
+                <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify</MudButton>
+
+                <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Download" Disabled="@(DocumentData is null)" OnClick="DownloadData">Download Data</MudButton>
+
+                <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" OnClick="RefreshData" Variant="Variant.Filled" Size="Size.Large"/>
+
+            </MudStack>
         </MudPaper>
     </MudItem>
-    <MudItem xs="3">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">
-            <MudButton Variant="Variant.Filled" Class="pa-2 px-4" Color="Color.Success" StartIcon="@Icons.Material.Filled.Download" Disabled="@(DocumentData is null)" OnClick="DownloadData">Download Data</MudButton> 
+    
+    <!-- EDITORS -->
+    <MudItem xs="12">
+        <MudPaper Elevation="5" Height="800px" Class="pa-3">
+            <MudGrid >
+                <MudItem xs="6">
+                    <ChooseSoapMethod Data="Data" Parent="this"/>
+                    <StandaloneCodeEditor @ref="_requestEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsRequest" OnDidChangeModelContent="RequestChanged"/>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudSelect T="WsdlAddress" @bind-Value="WsdlAddress" Label="Select enviroment">
+                        @foreach (var wsdlAddres in Globals.WsdlAddresses)
+                        {
+                            <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <StandaloneCodeEditor @ref="_responseEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsResponse" OnDidChangeModelContent="ResponseChanged"/>
+                </MudItem>
+            </MudGrid>
         </MudPaper>
     </MudItem>
 </MudGrid>
 
+
+
 @code {
-    //TODO add censoring of credentials
-    //TODO add saving session ID and waybills
-    //TODO maybe add downloading label
-    //TODO Repair stuff
-    static int ID = 0;
-    public int id;
+
+    private StandaloneCodeEditor? _requestEditor;
+    private StandaloneCodeEditor? _responseEditor;
+    
     [CascadingParameter] public Profile CurrentProfile { get; set; }
     [Parameter] public SoapData Data { get; set; }
-
-    private StandaloneCodeEditor _requestEditor = new StandaloneCodeEditor();
-    private StandaloneCodeEditor _responseEditor = new StandaloneCodeEditor();
-
-    public API_METHODS CurrentMethod { get; set; }
-
-    public SoapInterface()
+    
+    public SOAP_API_METHODS CurrentMethod
     {
-        id = ID;
-        ID += 1;
+        get => Data.CurrentMethod;
+        set => Data.CurrentMethod = value;
+    }
+
+    public WsdlAddress WsdlAddress
+    {
+        get => Data.WsdlAddress;
+        set => Data.WsdlAddress = value;
+    }
+    
+    public API_SYSTEM CurrentSystem
+    {
+        get => Data.CurrentSystem;
+        set => Data.CurrentSystem = value;
     }
 
     public string Request
     {
         get => Data.Request;
-        set
-        {
-            Data.Request = value;
-            _requestEditor.SetValue(value);
-        }
+        set => Data.Request = value;
     }
     
     public string Response
     {
         get => Data.Response;
-        set
-        {
-            Data.Response = value;
-            _responseEditor.SetValue(value);
-        }
+        set => Data.Response = value;
+    }
+    
+    public string? DocumentData
+    {
+        get => Data.DocumentData;
+        set => Data.DocumentData = value; 
     }
 
-    public WsdlAddress WsdlAddress { get; set; }
-    
-    public string? DocumentData { get; set; }
+    public SessionData SessionData { get; set; } = new SessionData();
     
     private bool _processing = false;
-
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (WsdlAddress is null) WsdlAddress = CurrentProfile.WsdlAddress;
-        if (Request == "") UpdateRequest();
-        return base.OnAfterRenderAsync(firstRender);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        CurrentMethod = API_METHODS.GeneratePackagesNumbers;
-        UpdateRequest();
-    }
 
     async Task SendRequest()
     {
         _processing = true;
-        var response = await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.Address, Request);
+        var response = await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.GetAddress(CurrentSystem), Request);
         
         //Deserialize repsonse
         Envelope result;
@@ -132,6 +122,26 @@
         using var reader = new StringReader(response);
         result = (Envelope)envelopeSerializer.Deserialize(reader)!;
 
+        //If has Package details, save them
+        if (result.Body.GeneratePackagesNumbersV9Response is not null)
+        {
+            if (result.Body.GeneratePackagesNumbersV9Response.Return.Status == "OK")
+            {
+                SessionData = new SessionData();
+                SessionData.SessionId = result.Body.GeneratePackagesNumbersV9Response.Return.SessionId;
+                SessionData.Packages.PackageId = result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.PackageId;
+                foreach (var parcel in result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel)
+                {
+                    SessionData.Packages.Parcels.Add(new ParcelData()
+                    {
+                        ParcelId = parcel.ParcelId,
+                        Waybill = parcel.Waybill
+                    });
+                }
+            }
+        }
+
+        //If has document data save it in variable
         if (result.Body.GenerateSpedLabelsV4Response is not null)
         {
             DocumentData = result.Body.GenerateSpedLabelsV4Response.Return.DocumentData;
@@ -141,73 +151,147 @@
         {
             DocumentData = result.Body.GenerateProtocolV2Response.Return.DocumentData;
         }
+        
+        if (result.Body.GenerateDomesticReturnLabelV1Response is not null)
+        {
+            DocumentData = result.Body.GenerateDomesticReturnLabelV1Response.Return.DocumentData;
+        }
 
         Response = XMLService.Prettify(response);
+        _responseEditor?.SetValue(LoggingService.ShortenDocumentData(Response));
         _processing = false;
         StateHasChanged();
     }
-    
-    async Task Prettify()
+
+    Task Prettify()
     {
         Request = XMLService.Prettify(Request);
         Response = XMLService.Prettify(Response);
         StateHasChanged();
+        return Task.CompletedTask;
     }
     
-    private void MethodSelected(API_METHODS obj)
+    private void DownloadData()
     {
-        CurrentMethod = obj;
-        UpdateRequest();
-        Response = "";
-        StateHasChanged();
+        var name = "";
+        if (SessionData is not null) name = SessionData.Packages.Parcels[0].Waybill; 
+        var filename = FileService.SaveBase64ToPDF(DocumentData, PrintType.Custom, name);
+        Snackbar.Add(builder =>
+            {
+                builder.OpenElement(0, "span");
+                builder.AddContent(1, "File successfully downloaded: ");
+                builder.OpenElement(2, "a");
+                builder.AddAttribute(3, "href", $"/pdfs/{filename}");
+                builder.AddAttribute(4, "target", "_blank");
+                builder.AddContent(5, $"{filename}");
+                builder.CloseElement();
+                builder.CloseElement();
+            }, 
+            Severity.Success);
     }
-
+    
     public async void UpdateRequest()
     {
         switch (CurrentMethod)
         {
-            case API_METHODS.GeneratePackagesNumbers:
+            case SOAP_API_METHODS.GeneratePackagesNumbers:
                 var packagesNumbersV9 = new GeneratePackagesNumbersV9();
                 packagesNumbersV9.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = packagesNumbersV9.CreateSoapEnvelope();
                 break;
-            case API_METHODS.GenerateSpedLabels:
+            case SOAP_API_METHODS.GenerateSpedLabels:
                 var spedLabelsV4 = new GenerateSpedLabelsV4();
+                spedLabelsV4.DpdServicesParamsV1.Session.SessionId = SessionData.SessionId;
+                spedLabelsV4.DpdServicesParamsV1.Session.Packages.PackageId = SessionData.Packages.PackageId;
+                if (SessionData.SessionId is not null) spedLabelsV4.DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
+                foreach (var parcelData in SessionData.Packages.Parcels)
+                {
+                    spedLabelsV4.DpdServicesParamsV1.Session.Packages.Parcels.Add(new ParcelsXml(CallTypes.LABEL, parcelData.Waybill)); 
+                }
                 spedLabelsV4.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = spedLabelsV4.CreateSoapEnvelope();
                 break;
-            case API_METHODS.GenerateProtocol:
+            case SOAP_API_METHODS.GenerateProtocol:
                 var generateProtocolV2 = new GenerateProtocolV2();
+                generateProtocolV2.DpdServicesParamsV1.Session.SessionId = SessionData.SessionId;
+                generateProtocolV2.DpdServicesParamsV1.Session.Packages.PackageId = SessionData.Packages.PackageId;
+                if (SessionData is not null) generateProtocolV2.DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
+                foreach (var parcelData in SessionData.Packages.Parcels)
+                {
+                    generateProtocolV2.DpdServicesParamsV1.Session.Packages.Parcels.Add(new ParcelsXml(CallTypes.LABEL, parcelData.Waybill)); 
+                }
                 generateProtocolV2.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = generateProtocolV2.CreateSoapEnvelope();
                 break;
-            case API_METHODS.GenerateInternationalPackageNumbers:
+            case SOAP_API_METHODS.GenerateInternationalPackageNumbers:
                 var generateInternationalPackageNumbers = new GenerateInternationalPackageNumbersV1();
                 generateInternationalPackageNumbers.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = generateInternationalPackageNumbers.CreateSoapEnvelope();
                 break;
-            case API_METHODS.FindPostalCode:
+            case SOAP_API_METHODS.FindPostalCode:
                 var findPostalCodeV1 = new FindPostalCodeV1();
                 findPostalCodeV1.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = findPostalCodeV1.CreateSoapEnvelope();
                 break;
-            case API_METHODS.GetCourierOrderAvailability:
+            case SOAP_API_METHODS.GetCourierOrderAvailability:
                 var getCourierOrderAvailabilityV1 = new GetCourierOrderAvailabilityV1();
                 getCourierOrderAvailabilityV1.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = getCourierOrderAvailabilityV1.CreateSoapEnvelope();
+                break;
+            case SOAP_API_METHODS.GenerateDomesticReturnLabel:
+                var generateDomesticReturnLabel = new GenerateDomesticReturnLabelV1();
+                if (SessionData.Packages.Parcels.Count > 0) generateDomesticReturnLabel.ReturnedWaybillsV1.Waybill = new List<string>();
+                foreach (var parcelData in SessionData.Packages.Parcels)
+                {
+                    generateDomesticReturnLabel.ReturnedWaybillsV1.Waybill.Add(parcelData.Waybill); 
+                }
+                generateDomesticReturnLabel.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
+                Request = generateDomesticReturnLabel.CreateSoapEnvelope();
                 break;
             default:
                 Request = "Method currently not implemented";
                 break; 
         }
         Request = XMLService.Prettify(Request);
+        Response = "";
+        
+        if(_requestEditor is not null) await _requestEditor.SetValue(Request);
     }
 
-    private void DownloadData()
+    
+    private StandaloneEditorConstructionOptions EditorConstructionOptionsRequest(StandaloneCodeEditor editor)
     {
-        Console.WriteLine(DocumentData);
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "html",
+            Value = Request,
+            Minimap = new EditorMinimapOptions(){Enabled = false},
+            StickyScroll = new EditorStickyScrollOptions(){ScrollWithEditor = false, Enabled = true},
+            ScrollBeyondLastLine = false,
+            MouseWheelZoom = false,
+            MouseWheelScrollSensitivity = 1,
+            Scrollbar = new EditorScrollbarOptions(){AlwaysConsumeMouseWheel = false},
+        };
     }
-
+    
+    private StandaloneEditorConstructionOptions EditorConstructionOptionsResponse(StandaloneCodeEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+            AutomaticLayout = true,
+            Language = "html",
+            Value = Response,
+            Minimap = new EditorMinimapOptions(){Enabled = false},
+            StickyScroll = new EditorStickyScrollOptions(){ScrollWithEditor = false, Enabled = true},
+            ScrollBeyondLastLine = false,
+            MouseWheelZoom = false,
+            MouseWheelScrollSensitivity = 1,
+            Scrollbar = new EditorScrollbarOptions(){AlwaysConsumeMouseWheel = false},
+            ReadOnly = true,
+        };
+    }
+    
     private async void RequestChanged()
     {
         if(Request != await _requestEditor.GetValue()) Request = await _requestEditor.GetValue();
@@ -220,48 +304,24 @@
         StateHasChanged();
     }
     
-    private StandaloneEditorConstructionOptions EditorConstructionOptionsRequest(StandaloneCodeEditor editor)
+    // This method is called when parameters are set or updated
+    protected override async void OnParametersSet()
     {
-        return new StandaloneEditorConstructionOptions
+        await base.OnParametersSetAsync();
+        if (Data.Update)
         {
-            AutomaticLayout = true,
-            Language = "html",
-            Value = Request,
-            Minimap = new EditorMinimapOptions(){Enabled = false},
-        };
-    }
-    
-    private StandaloneEditorConstructionOptions EditorConstructionOptionsResponse(StandaloneCodeEditor editor)
-    {
-        return new StandaloneEditorConstructionOptions
-        {
-            AutomaticLayout = true,
-            Language = "html",
-            Value = Response,
-            Minimap = new EditorMinimapOptions(){Enabled = false},
-        };
+            // Ensure editors are updated when Data changes
+            if(_requestEditor is not null) await _requestEditor.SetValue(XMLService.Prettify(Request));
+            if(_responseEditor is not null) await _responseEditor.SetValue(XMLService.Prettify(Response));
+            if(Request.Length < 1) UpdateRequest();
+            Data.Update = false;
+        }
     }
 
-    String getRequest()
+    private void RefreshData(MouseEventArgs obj)
     {
-        var str = _requestEditor.GetValue();
-        Console.WriteLine(str);
-        if (str is null) return "";
-        return str.ToString();
-    }
-    
-    string getResponse()
-    {
-        var str = _responseEditor.GetValue();
-        Console.WriteLine(str);
-        if (str is null) return "";
-        return str.ToString();
-    }
-    
-    public void SetParameters(SoapInterface soapInterface)
-    {
-        Response = soapInterface.Response;
-        Request = soapInterface.Request;
+        UpdateRequest();
+        StateHasChanged();
     }
 
 }

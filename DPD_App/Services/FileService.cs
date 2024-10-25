@@ -3,7 +3,7 @@
 public class FileService
 {
     public static AppSettings Settings { get; set; }
-    public static string SaveBase64ToPDF(string base64Label, PrintType type)
+    public static string SaveBase64ToPDF(string base64Label, PrintType type, string filename = "")
     {
         string docPath = "./";
         
@@ -15,13 +15,24 @@ public class FileService
             case PrintType.Protocol:
                 docPath = Globals.SaveLocation + "/" + Settings.ProtocolSaveLocation;
                 break;
+            case PrintType.Custom:
+                docPath = Globals.SaveLocation + "/" + Settings.SoapDownloadLocation;
+                break;
         }
         
         Directory.CreateDirectory(docPath);
-        
-        var filename = $"{DateTime.Now:dd-MM-yyyy_HHmmss}_{type}.pdf";
+
+        if (filename == "") filename = $"{DateTime.Now:dd-MM-yyyy_HHmmss}_{type}.pdf";
+        else filename = filename + ".pdf";
         
         using (FileStream stream = File.Create(Path.Combine(docPath, filename)))
+        {
+            Byte[] byteArray = Convert.FromBase64String(base64Label);
+            stream.Write(byteArray, 0, byteArray.Length);
+        }
+        
+        //Save to wwwroot
+        using (FileStream stream = File.Create(Path.Combine("wwwroot/pdfs", filename)))
         {
             Byte[] byteArray = Convert.FromBase64String(base64Label);
             stream.Write(byteArray, 0, byteArray.Length);

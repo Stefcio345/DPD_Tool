@@ -33,4 +33,20 @@ public class LoggingService
         if (str.Length > maxLogLength) return str[..((maxLogLength/2)-3)] + "[***]" + str[^((maxLogLength/2)-2)..str.Length];
         return str;
     }
+    
+    public static string ShortenString(string str, int maxLength)
+    {
+        if (str.Length > maxLength) return str[..((maxLength/2)-3)] + "[***]" + str[^((maxLength/2)-2)..str.Length];
+        return str;
+    }
+    
+    public static string ShortenDocumentData(string str)
+    {
+        var match = Regex.Match(str, @"<documentData>(.*?)<\/documentData>");
+        var shortenedDocumentData = ShortenString(match.Groups[1].Value, 200);
+        
+        //Swap dodcumentData with shortened version
+        return str.Remove(match.Groups[1].Index, match.Groups[1].Length)
+            .Insert(match.Groups[1].Index, shortenedDocumentData);
+    }
 }

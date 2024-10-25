@@ -26,4 +26,8 @@
       <Folder Include="Data\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\pdfs\16-10-2024_143708_Custom.pdf" />
+    </ItemGroup>
+
 </Project>

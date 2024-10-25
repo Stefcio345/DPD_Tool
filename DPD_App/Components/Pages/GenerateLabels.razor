@@ -18,7 +18,7 @@
     </MudStack>
 </MudStack>
 
-<MudGrid>
+<MudGrid @onkeydown="OnEnter">
     <MudItem xs="12">
         <MudStack Row="true">
             <MudTextField T="string" Value="profileFromTextBoxes.Login" Label="Login" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged" Immediate="true"></MudTextField>
@@ -522,6 +522,15 @@
         Errors.Clear();
         _refreshing = false;
         StateHasChanged();
+    }
+    
+    //TODO Debug this
+    private async void OnEnter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            await GenerateLabel();
+        }
     }
 
 }

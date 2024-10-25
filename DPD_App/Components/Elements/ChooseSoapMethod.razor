@@ -1,0 +1,56 @@
+﻿<MudStack Row="true" Justify="Justify.Center">
+    <!-- Method choose -->
+    <MudMenu Label="DPD Services" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" AnchorOrigin="Origin.BottomLeft">
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.GeneratePackagesNumbers); })">GeneratePackagesNumbers</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.GenerateInternationalPackageNumbers); })">GenerateInternationalPackageNumbers</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.GenerateSpedLabels); })">GenerateSpedLabels</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.GenerateProtocol); })">GenerateProtocol</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.FindPostalCode); })">FindPostalCode</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.GetCourierOrderAvailability); })">GetCourierOrderAvailability</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.GenerateDomesticReturnLabel); })">GenerateDomesticReturnLabel</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.GenerateReturnLabel); })">GenerateReturnLabel</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.AppendParcelsToPackage); })">AppendParcelsToPackage</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.GenerateProtocolWithDestinations); })">GenerateProtocolWithDestinations</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.PackagesPickupCall); })">PackagesPickupCall</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedDpdServices(SOAP_API_METHODS.ImportDeliveryBusinessEvent); })">ImportDeliveryBusinessEvent</MudMenuItem>
+    </MudMenu>
+    <MudMenu Label="InfoServices" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" AnchorOrigin="Origin.BottomLeft" Disabled="@(Data.WsdlAddress?.Name == "DEMO")">
+        <MudMenuItem OnClick="@(() => { MethodSelectedInfoServices(SOAP_API_METHODS.GetEventsForCustomer); })">GetEventsForCustomer</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedInfoServices(SOAP_API_METHODS.MarkEventsAsProcesses); })">MarkEventsAsProcessed</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedInfoServices(SOAP_API_METHODS.GetEventsForWaybill); })">GetEventsForWaybill</MudMenuItem>
+    </MudMenu>
+    <MudMenu Label="APPServices" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" AnchorOrigin="Origin.BottomLeft">
+        <MudMenuItem OnClick="@(() => { MethodSelectedAppServices(SOAP_API_METHODS.ImportPackagesCRIN); })">ImportPackagesCRIN</MudMenuItem>
+        <MudMenuItem OnClick="@(() => { MethodSelectedAppServices(SOAP_API_METHODS.ImportPackagesCROUT); })">ImportPackagesCROUT</MudMenuItem>
+    </MudMenu>
+</MudStack>
+
+@code
+{
+    [Parameter] public SoapData Data { get; set; }
+    [Parameter] public SoapInterface Parent { get; set; }
+
+    private void MethodSelectedDpdServices(SOAP_API_METHODS obj)
+    {
+        Data.CurrentMethod = obj;
+        Data.CurrentSystem = API_SYSTEM.DPD_SERVICES;
+        Parent.UpdateRequest();
+        StateHasChanged();
+    }
+    
+    private void MethodSelectedInfoServices(SOAP_API_METHODS obj)
+    {
+        Data.CurrentMethod = obj;
+        Data.CurrentSystem = API_SYSTEM.INFO_SERVICES;
+        Parent.UpdateRequest();
+        StateHasChanged();
+    }
+    
+    private void MethodSelectedAppServices(SOAP_API_METHODS obj)
+    {
+        Data.CurrentMethod = obj;
+        Data.CurrentSystem = API_SYSTEM.APP_SERVICES;
+        Parent.UpdateRequest();
+        StateHasChanged();
+    }
+}

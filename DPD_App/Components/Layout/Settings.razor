@@ -1,7 +1,7 @@
 ﻿
 
 <MudDrawerHeader>
-    <MudText Typo="Typo.h6">Settings</MudText>
+    <MudText Typo="Typo.h4">Settings</MudText>
 </MudDrawerHeader>
 
 <MudStack Class="mx-4">
@@ -20,6 +20,22 @@
             {
                 <MudTextField T="string" Label="Log Save location" Value="settings.LogSaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => { settings.LogSaveLocation = b; settings.SaveToFile(); StateHasChanged(); }"></MudTextField>
             }
+        }
+    </MudPaper>
+    <MudPaper>
+        <MudStack>
+            @if (_displaySoapAPI)
+            {
+                <MudButton Variant="Variant.Filled" Size="Size.Large" Class="mb-3" OnClick="() => _displaySoapAPI = !_displaySoapAPI" EndIcon="@Icons.Material.Filled.ArrowUpward">Soap API</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Size="Size.Large" Class="mb-3" OnClick="() => _displaySoapAPI = !_displaySoapAPI" EndIcon="@Icons.Material.Filled.ArrowDownward">Soap API</MudButton>
+            }
+        </MudStack>
+        @if (_displaySoapAPI)
+        {
+            <MudTextField T="string" Label="SoapAPI save location" Value="settings.SoapDownloadLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => { settings.SoapDownloadLocation = b; settings.SaveToFile(); StateHasChanged(); }"></MudTextField>
         }
     </MudPaper>
     <MudPaper>
@@ -49,4 +65,6 @@
 {
     [CascadingParameter]
     public AppSettings settings { get; set; }
+
+    private bool _displaySoapAPI = false;
 }

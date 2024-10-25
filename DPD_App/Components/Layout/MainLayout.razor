@@ -52,6 +52,11 @@
 
     <MudDrawer @bind-Open="@_open" ClipMode="DrawerClipMode.Docked" Variant="AppState.Settings.MiniDrawer?DrawerVariant.Mini:DrawerVariant.Responsive" Elevation="_themeManager.DrawerElevation">
         <NavMenu/>
+        <MudIconButton Style="position: absolute; bottom: 1px; left: 2px" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary"
+                       Size="Size.Large" aria-label="github" 
+                       Href="https://github.com/Stefcio345/DPD_Tool"
+                       Target="_blank" 
+                       Class="pa-1 ma-1"/>
     </MudDrawer>
     
     <CascadingValue Value="AppState.CurrentProfile">

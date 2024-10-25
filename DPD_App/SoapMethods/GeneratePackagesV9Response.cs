@@ -9,7 +9,7 @@ public class Return {
     public string? Status { get; set; } 
 
     [XmlElement(ElementName="SessionId", Namespace="")] 
-    public int SessionId { get; set; } 
+    public string SessionId { get; set; } 
 
     [XmlElement(ElementName="Packages", Namespace="")] 
     public PackagesXml Packages { get; set; } 

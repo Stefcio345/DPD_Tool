@@ -8,6 +8,9 @@ public class PackagesXml {
     [XmlElement(ElementName="Package")] 
     public PackageXml? Package { get; set; }
     
+    [XmlElement(ElementName="packageId")] 
+    public string? PackageId { get; set; }
+    
     [XmlElement("parcels")]
     public List<ParcelsXml>? Parcels { get; set; }
 

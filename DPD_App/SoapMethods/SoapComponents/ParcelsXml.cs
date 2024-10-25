@@ -101,7 +101,7 @@ public class ParcelXml {
     public string? Status { get; set; } 
 
     [XmlElement(ElementName="ParcelId")] 
-    public int? ParcelId { get; set; } 
+    public string? ParcelId { get; set; } 
 
     [XmlElement(ElementName="Waybill")] 
     public string? Waybill { get; set; } 

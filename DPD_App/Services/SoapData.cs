@@ -18,8 +18,8 @@ public class SoapData
         }
     }
     
-    private API_METHODS _currentMethod;
-    public API_METHODS CurrentMethod 
+    private SOAP_API_METHODS _currentMethod;
+    public SOAP_API_METHODS CurrentMethod 
     {
         get => _currentMethod;
         set
@@ -41,7 +41,6 @@ public class SoapData
     }
 
     private string _response;
-
     public string Response
     {
         get => _response;
@@ -53,7 +52,6 @@ public class SoapData
     }
     
     private WsdlAddress _wsdlAddress;
-
     public WsdlAddress WsdlAddress
     {
         get => _wsdlAddress;
@@ -64,10 +62,35 @@ public class SoapData
         }
     }
 
-    public SoapData(Action onChange)
+    private API_SYSTEM _currentSystem;
+    public API_SYSTEM CurrentSystem
+    {
+        get => _currentSystem;
+        set
+        {
+            _currentSystem = value;
+            NotifyStateChanged();
+        }
+    }
+
+    private string? _documentData;
+
+    public string? DocumentData
+    {
+        get => _documentData;
+        set
+        {
+            _documentData = value;
+            NotifyStateChanged();
+        }
+    }
+
+    public SoapData(Action onChange, Profile currentProfile)
     {
         OnChange += onChange;
-        _currentMethod = API_METHODS.GeneratePackagesNumbers;
+        _currentMethod = SOAP_API_METHODS.GeneratePackagesNumbers;
+        _currentSystem = API_SYSTEM.DPD_SERVICES;
+        _wsdlAddress = currentProfile.WsdlAddress;
         Title = _currentMethod.ToString();
         _request = "";
         _response = "";

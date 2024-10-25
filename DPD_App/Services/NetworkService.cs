@@ -15,7 +15,7 @@ public class NetworkService
         
         var content = new StringContent(body.CreateSoapEnvelope(), Encoding.UTF8, "text/xml");
         LoggingService.Log(LoggingType.REQUEST, await content.ReadAsStringAsync());
-
+        
         var response = await client.PostAsync(url, content);
         var responseString = await response.Content.ReadAsStringAsync();
         LoggingService.Log(LoggingType.RESPONSE, responseString);

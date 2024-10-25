@@ -4,7 +4,7 @@ public class Parcel
 {
     public string? Status { get; set; } 
     
-    public int? ParcelId { get; set; } 
+    public string? ParcelId { get; set; } 
     
     public string? Waybill { get; set; }
 

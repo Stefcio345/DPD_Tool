@@ -16,7 +16,7 @@ public class PackageService
         var newPackage = CreateGenPackageRequest(package, profile);
         
         //Call WebServices
-        var webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.Address, newPackage);
+        var webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.GetAddress(API_SYSTEM.DPD_SERVICES), newPackage);
         //Deserialize response
         var generatePackagesResponse = DeserializeGeneratePackagesResponse(webServiceResponse);
         
@@ -39,7 +39,7 @@ public class PackageService
         //Generate Labels
         var newLabel = CreateGenLabelRequest(package, profile);
         //Call WebServices
-        var webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.Address, newLabel);
+        var webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.GetAddress(API_SYSTEM.DPD_SERVICES), newLabel);
         var generateLabelsResponse = DeserializeGenerateLabelsResponse(webServiceResponse);
 
         //Check for errors
@@ -54,7 +54,7 @@ public class PackageService
         //TODO address porotkołu
         var newProtocol = CreateGenProtocolRequest(package, profile);
         //Call webservices
-        var webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.Address, newProtocol);
+        var webServiceResponse = await NetworkService.CallSoapWebService(profile.WsdlAddress.GetAddress(API_SYSTEM.DPD_SERVICES), newProtocol);
         //Deserialize response
         var generateProtocolResponse = DeserializeGenerateProtocolResponse(webServiceResponse);
         

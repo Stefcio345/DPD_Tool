@@ -1,5 +1,10 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
+using System.Xml;
 using System.Xml.Serialization;
 using MudBlazor;
 
@@ -11,8 +16,14 @@ public class Globals
 
     public static List<WsdlAddress> WsdlAddresses = new List<WsdlAddress>
     {
-        new WsdlAddress("https://dpdservices.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL","PROD"),
-        new WsdlAddress("https://dpdservicesdemo.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL", "DEMO"),
+        new WsdlAddress("https://dpdservices.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL",
+            "https://dpdinfoservices.dpd.com.pl/DPDInfoServicesObjEventsService/DPDInfoServicesObjEvents?wsdl",
+            "https://dpdappservices.dpd.com.pl/DPDCRXmlServicesService/DPDCRXmlServices?wsdl",
+            "PROD"),
+        new WsdlAddress("https://dpdservicesdemo.dpd.com.pl/DPDPackageObjServicesService/DPDPackageObjServices?WSDL",
+            "",
+            "https://dpdappservicesdemo.dpd.com.pl/DPDCRXmlServicesService/DPDCRXmlServices?wsdl",
+            "DEMO")
     };
     
     public static List<Currency> Currencies = new List<Currency>()
@@ -69,19 +80,19 @@ public class Globals
 
     public static void SaveState()
     {
-        SaveKeeper.SaveToFile(Globals.Profiles, "Profiles.xml");
+        SaveKeeper.SaveToFile(Globals.Profiles, "Profiles.json");
     }
 
     public static void LoadState()
     {
-        if (File.Exists(Globals.SaveLocation + "Profiles.xml"))
+        if (File.Exists(Globals.SaveLocation + "Profiles.json"))
         {
-            Globals.Profiles = SaveKeeper.LoadFromFile<List<Profile>>("Profiles.xml");
+            Globals.Profiles = SaveKeeper.LoadFromFile<List<Profile>>("Profiles.json");
             //TODO Add remembering choosen profile
         }
         else
         {
-            SaveKeeper.SaveToFile(Globals.Profiles, "Profiles.xml");
+            SaveKeeper.SaveToFile(Globals.Profiles, "Profiles.json");
         }
     }
 }
@@ -89,29 +100,31 @@ public class Globals
 public class AppSettings
 {
 
-    public bool LogRequests = false;
-    public bool ShortenLogs = true;
-    public int MaxLogSize = 1000;
-    public bool LogToConsole = false;
-    public bool LogToFile = false;
-    public string LogSaveLocation = "Logs";
+    public bool LogRequests { get; set; } = false;
+    public bool ShortenLogs { get; set; } = true;
+    public int MaxLogSize { get; set; } = 1000;
+    public bool LogToConsole { get; set; } = false;
+    public bool LogToFile { get; set; } = false;
+    public string LogSaveLocation { get; set; } = "Logs";
     
-    public bool MiniDrawer = false;
+    public bool MiniDrawer { get; set; } = false;
     
-    public bool SaveLabelsToFile = false;
-    public string LabelSaveLocation = "Labels";
+    public bool SaveLabelsToFile { get; set; } = false;
+    public string LabelSaveLocation { get; set; } = "Labels";
     
-    public bool SaveProtocolsToFile = false;
-    public string ProtocolSaveLocation = "Protocols";
+    public bool SaveProtocolsToFile { get; set; } = false;
+    public string ProtocolSaveLocation { get; set; } = "Protocols";
     
-    public bool AddressDetailsVertical = false;
+    public string SoapDownloadLocation { get; set; } = "SoapAPI";
+    
+    public bool AddressDetailsVertical { get; set; } = false;
 
 
     public void LoadFromFile()
     {
-        if (File.Exists(Globals.SaveLocation + "Settings.xml"))
+        if (File.Exists(Globals.SaveLocation + "Settings.json"))
         {
-            var temp = SaveKeeper.LoadFromFile<AppSettings>("Settings.xml");
+            var temp = SaveKeeper.LoadFromFile<AppSettings>("Settings.json");
             LogRequests = temp.LogRequests;
             ShortenLogs = temp.ShortenLogs;
             MaxLogSize = temp.MaxLogSize;
@@ -124,16 +137,17 @@ public class AppSettings
             SaveProtocolsToFile = temp.SaveProtocolsToFile;
             ProtocolSaveLocation = temp.ProtocolSaveLocation;
             AddressDetailsVertical = temp.AddressDetailsVertical;
+            SoapDownloadLocation = temp.SoapDownloadLocation;
         }
         else
         {
-            SaveKeeper.SaveToFile(this, "Settings.xml");
+            SaveKeeper.SaveToFile(this, "Settings.json");
         }
     }
 
     public void SaveToFile()
     {
-        SaveKeeper.SaveToFile(this, "Settings.xml");
+        SaveKeeper.SaveToFile(this, "Settings.json");
     }
 }
 
@@ -141,38 +155,17 @@ public class SaveKeeper()
 {
     public static void SaveToFile<T>(T objectToSave, string filename)
     {
-        TextWriter writer = null;
-        try
-        {
-            var serializer = new XmlSerializer(typeof(T));
-            writer = new StreamWriter(Globals.SaveLocation + filename, false);
-            serializer.Serialize(writer, objectToSave);
-        }
-        finally
-        {
-            if (writer != null)
-                writer.Close();
-        }
-
+        var jsonString = JsonSerializer.Serialize(objectToSave, new JsonSerializerOptions{WriteIndented = true});
+        File.WriteAllText(Globals.SaveLocation + filename, jsonString);
     }
     public static T LoadFromFile<T>(string filename)
     {
-        TextReader reader = null;
-        try
-        {
-            var serializer = new XmlSerializer(typeof(T));
-            reader = new StreamReader(Globals.SaveLocation + filename);
-            return (T)serializer.Deserialize(reader);
-        }
-        finally
-        {
-            if (reader != null)
-                reader.Close();
-        }
+        var jsonString = File.ReadAllText(Globals.SaveLocation + filename);
+        return JsonSerializer.Deserialize<T>(jsonString);
     }
 }
 
-public enum API_METHODS
+public enum SOAP_API_METHODS
 {
     GeneratePackagesNumbers,
     GenerateInternationalPackageNumbers,
@@ -185,7 +178,21 @@ public enum API_METHODS
     GetCourierOrderAvailability,
     GenerateProtocolWithDestinations,
     PackagesPickupCall,
-    ImportDeliveryBusinessEvent
+    ImportDeliveryBusinessEvent,
+    
+    GetEventsForCustomer,
+    MarkEventsAsProcesses,
+    GetEventsForWaybill,
+    
+    ImportPackagesCRIN,
+    ImportPackagesCROUT
+}
+
+public enum API_SYSTEM
+{
+    DPD_SERVICES,
+    INFO_SERVICES,
+    APP_SERVICES
 }
 
 public enum CallTypes
@@ -203,6 +210,7 @@ public enum PrintType
 {
     Label,
     Protocol,
+    Custom
 }
 
 
@@ -280,19 +288,37 @@ public class MapFilter
 
 public class WsdlAddress
 {
-    public string Address { get; set; }
+    [JsonInclude]
+    private string DpdServicesAddress { get; set; }
+    [JsonInclude]
+    private string InfoServicesAddress { get; set; }
+    [JsonInclude]
+    private string AppServicesAddress { get; set; }
     public string Name { get; set; }
 
     public WsdlAddress()
     {
-        Address = "";
+        DpdServicesAddress = "";
         Name = "";
     }
 
-    public WsdlAddress(string address, string name)
+    public WsdlAddress(string dpdServicesAddress, string infoServicesAddress, string appServicesAddress,  string name)
     {
-        Address = address;
+        DpdServicesAddress = dpdServicesAddress;
+        InfoServicesAddress = infoServicesAddress;
+        AppServicesAddress = appServicesAddress;
         Name = name;
+    }
+
+    public string GetAddress(API_SYSTEM system)
+    {
+        return system switch
+        {
+            API_SYSTEM.DPD_SERVICES => DpdServicesAddress,
+            API_SYSTEM.INFO_SERVICES => InfoServicesAddress,
+            API_SYSTEM.APP_SERVICES => AppServicesAddress,
+            _ => throw new ArgumentOutOfRangeException(nameof(system), system, null)
+        };
     }
 
     public override string ToString()

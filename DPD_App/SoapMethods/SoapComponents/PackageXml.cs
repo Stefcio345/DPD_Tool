@@ -11,7 +11,7 @@ public class PackageXml {
     public ValidationDetails? ValidationDetails { get; set; } 
 
     [XmlElement(ElementName="PackageId")] 
-    public int PackageId { get; set; } 
+    public string PackageId { get; set; } 
 
     [XmlElement(ElementName="Parcels")] 
     public ParcelsXml? Parcels { get; set; } 

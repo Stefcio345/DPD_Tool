@@ -65,13 +65,9 @@
             </MudPaper>
         </MudPaper>
         <MudPaper Class="pa-0"><div Id="ResizeHandle" class="resize-handle"></div></MudPaper>
-        <MudPaper Class="pa-6" Width="@(100-size + "%")">
+        <MudPaper Elevation="0" Class="pa-4" Width="@(100-size + "%")">
             <CascadingValue Value="CurrentProfile">
-                <MudCard>
-                    <MudCardContent>
-                        <SoapInterfaceMock Data="ActiveTab.Data"/>
-                    </MudCardContent>
-                </MudCard>
+                <SoapInterface Data="ActiveTab.Data"/>
             </CascadingValue>
         </MudPaper>
     </MudStack>
@@ -105,7 +101,7 @@
     protected override void OnInitialized()
     {
         // Initialize with default tab
-        if(Tabs.Count == 0) Tabs.Add(new TabItem { Title = "Tab 1", IsActive = true, Data = new SoapData(StateHasChanged) });
+        if(Tabs.Count == 0) Tabs.Add(new TabItem { Title = "Tab 1", IsActive = true, Data = new SoapData(StateHasChanged, CurrentProfile) });
         // Set the first tab as active
         if (ActiveTab is null)
         {
@@ -140,7 +136,7 @@
         {
             Title = $"Tab {tabIndex}",
             IsActive = false,
-            Data = new SoapData(StateHasChanged),
+            Data = new SoapData(StateHasChanged, CurrentProfile),
         };
         Tabs.Add(newTab);
     }

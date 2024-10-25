@@ -30,7 +30,13 @@ public class Body
     public FindPostalCodeV1? FindPostalCodeV1 { get; set; } 
     
     [XmlElement(ElementName="getCourierOrderAvailabilityV1", Namespace="http://dpdservices.dpd.com.pl/")] 
-    public GetCourierOrderAvailabilityV1 GetCourierOrderAvailabilityV1 { get; set; } 
+    public GetCourierOrderAvailabilityV1? GetCourierOrderAvailabilityV1 { get; set; } 
+    
+    [XmlElement(ElementName="generateDomesticReturnLabelV1", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public GenerateDomesticReturnLabelV1? GenerateDomesticReturnLabelV1 { get; set; } 
+    
+    [XmlElement(ElementName="generateDomesticReturnLabelV1Response", Namespace="http://dpdservices.dpd.com.pl/")] 
+    public GenerateDomesticReturnLabelV1Response? GenerateDomesticReturnLabelV1Response { get; set; }
     
     [XmlElement(ElementName="Fault")] 
     public Fault? Fault { get; set; } 
