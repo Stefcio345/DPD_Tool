@@ -16,7 +16,7 @@ public class NetworkService
         var content = new StringContent(body.CreateSoapEnvelope(), Encoding.UTF8, "text/xml");
         LoggingService.Log(LoggingType.REQUEST, await content.ReadAsStringAsync());
         
-        var response = await client.PostAsync(url, content);
+        using var response = await client.PostAsync(url, content);
         var responseString = await response.Content.ReadAsStringAsync();
         LoggingService.Log(LoggingType.RESPONSE, responseString);
         return responseString;
@@ -30,7 +30,7 @@ public class NetworkService
         var content = new StringContent(requestBody, Encoding.UTF8, "text/xml");
         LoggingService.Log(LoggingType.REQUEST, await content.ReadAsStringAsync());
 
-        var response = await client.PostAsync(url, content);
+        using var response = await client.PostAsync(url, content);
         var responseString = await response.Content.ReadAsStringAsync();
         LoggingService.Log(LoggingType.RESPONSE, responseString);
         return responseString;
@@ -43,7 +43,7 @@ public class NetworkService
         var request = new HttpRequestMessage(HttpMethod.Get, url);
         LoggingService.Log(LoggingType.REQUEST, request.ToString());
 
-        var response = await client.SendAsync(request);
+        using var response = await client.SendAsync(request);
         var responseString = await response.Content.ReadAsStringAsync();
         LoggingService.Log(LoggingType.RESPONSE, responseString);
         return responseString;

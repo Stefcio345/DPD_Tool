@@ -41,4 +41,6 @@ public class Root
     public int quality { get; set; }
     public string requestID { get; set; }
     public List<PudoItem> pudoItems { get; set; }
+    public string? code { get; set; }
+    public string? message { get; set; }
 }

@@ -1,0 +1,14 @@
+﻿<MudCard Style="white-space: pre-wrap">
+    <MudCardContent Style="text-align: center">
+        <h3>Error</h3>
+    </MudCardContent>
+    @foreach (var error in Errors)
+    {
+        <ErrorPaper Error="error" />
+    }
+</MudCard>
+
+@code
+{
+    [Parameter] public List<SoapError> Errors { get; set; }
+}

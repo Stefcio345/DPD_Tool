@@ -5,6 +5,7 @@ namespace DPD_App.Models;
 public class MyPudoApiState
 {
     public List<PudoItem> PudoItems = new List<PudoItem>();
+    public List<SoapError> Errors = new List<SoapError>();
     
     public string? PudoLink;
     public Country? SelectedCountry;

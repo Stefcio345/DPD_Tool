@@ -6,15 +6,14 @@
 
 <Style>
     .my-editor-class { /* for a specific editor instance */
-        height: 700px;
+        height: 100%;
     }
 </Style>
 
 <MudGrid>
     <!-- BUTTONS -->
-    
     <MudItem xs="12">
-        <MudPaper Elevation="5" Class="mb-2 pa-1">
+        <MudPaper Elevation="5" Class="mb-2 pa-2">
             <MudStack Row="true" Justify="Justify.SpaceBetween">
                 <MudButton Size="Size.Large" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
                     @if (_processing)
@@ -29,30 +28,34 @@
                 </MudButton>
 
                 <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify</MudButton>
+                
+                <ChooseSoapMethod Data="Data" Parent="this"/>
 
-                <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Download" Disabled="@(DocumentData is null)" OnClick="DownloadData">Download Data</MudButton>
+                <MudIconButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Success" Icon="@Icons.Material.Filled.Download" Disabled="@(DocumentData is null)" OnClick="DownloadData"></MudIconButton>
 
-                <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" OnClick="RefreshData" Variant="Variant.Filled" Size="Size.Large"/>
-
-            </MudStack>
+                <MudStack Row="true">
+                    <!-- enviroment choose -->
+                    <MudButtonGroup DropShadow="true" Color="Color.Success" Size="Size.Large" Variant="Variant.Filled" OverrideStyles="false">
+                        @foreach (var wsdlAddres in Globals.WsdlAddresses)
+                        {
+                        <MudButton OnClick="@(() => { WsdlAddress = wsdlAddres; })" Variant="@GetEnviromentButtonVariant(wsdlAddres)" Color="@GetEnviromentButtonColor(wsdlAddres)">@wsdlAddres.Name</MudButton>
+                        }
+                    </MudButtonGroup>
+                    <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" OnClick="RefreshData" Variant="Variant.Filled" Size="Size.Large"/>
+                </MudStack>
+                
+                </MudStack>
         </MudPaper>
     </MudItem>
     
     <!-- EDITORS -->
     <MudItem xs="12">
-        <MudPaper Elevation="5" Height="800px" Class="pa-3">
-            <MudGrid >
-                <MudItem xs="6">
-                    <ChooseSoapMethod Data="Data" Parent="this"/>
+        <MudPaper Height="800px" Class="px-3 pb-3 pt-0">
+            <MudGrid Style="height: 100%">
+                <MudItem xs="6" Class="pt-2 pr-2">
                     <StandaloneCodeEditor @ref="_requestEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsRequest" OnDidChangeModelContent="RequestChanged"/>
                 </MudItem>
-                <MudItem xs="6">
-                    <MudSelect T="WsdlAddress" @bind-Value="WsdlAddress" Label="Select enviroment">
-                        @foreach (var wsdlAddres in Globals.WsdlAddresses)
-                        {
-                            <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
-                        }
-                    </MudSelect>
+                <MudItem xs="6" Class="pt-2 pl-2">
                     <StandaloneCodeEditor @ref="_responseEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsResponse" OnDidChangeModelContent="ResponseChanged"/>
                 </MudItem>
             </MudGrid>
@@ -322,6 +325,16 @@
     {
         UpdateRequest();
         StateHasChanged();
+    }
+
+    private Color GetEnviromentButtonColor(WsdlAddress wsdlAddres)
+    {
+        return wsdlAddres.Name == WsdlAddress.Name ? Color.Primary : Color.Default;
+    }
+    
+    private Variant GetEnviromentButtonVariant(WsdlAddress wsdlAddres)
+    {
+        return wsdlAddres.Name == WsdlAddress.Name ? Variant.Filled : Variant.Text;
     }
 
 }

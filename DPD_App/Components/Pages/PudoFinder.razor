@@ -11,7 +11,7 @@
     <MudItem xs="3" Class="justify-center">
         <MudStack>
             <!-- Key input -->
-            <MudTextField Immediate="true" Value="CurrentProfile.WidgetKey" T="string" Label="Widget Key" Variant="Variant.Outlined" TextChanged="OnKeyChanged"/>
+            <MudTextField Immediate="true" Value="key" T="string" Label="Widget Key" Variant="Variant.Outlined" TextChanged="OnKeyChanged"/>
 
             <!-- Country select -->
             <MudSelect T="Country" Value="SelectedCountry" Variant="Variant.Outlined" Label="Select country" ValueChanged="OnCountrySelect">
@@ -74,6 +74,12 @@
     public string? Query { get; set; }
     
     private string? key;
+
+    protected override Task OnInitializedAsync()
+    {
+        key = CurrentProfile.WidgetKey;
+        return base.OnInitializedAsync();
+    }
 
     private void OnCountrySelect(Country obj)
     {
