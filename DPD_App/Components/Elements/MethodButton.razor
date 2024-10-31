@@ -1,6 +1,6 @@
 ﻿<MudMenuItem Class="px-1 py-0 my-0">
     <MudStack>
-        <MudButton Style="justify-content: left" OnClick="@(() => { MethodSelected(Method, System); })" Variant="Variant.Filled" Color="@GetButtonColor(Method)">
+        <MudButton Style="justify-content: left" OnClick="@(() => { MethodSelected(Method, System); })" Variant="Variant.Filled">
             <MudText>
                 @Name
             </MudText>
@@ -17,15 +17,15 @@
     [Parameter] public SoapData Data { get; set; }
     [Parameter] public SoapInterface Parent { get; set; }
     
-    private Color GetButtonColor(SOAP_API_METHODS currentMethod)
-    {
-        return currentMethod == Data.CurrentMethod ? Color.Primary : Color.Default;
-    }
+    //private Color GetButtonColor(SOAP_API_METHODS currentMethod)
+    //{
+        //return currentMethod == Data.CurrentMethod ? Color.Primary : Color.Default;
+    //}
     
     private void MethodSelected(SOAP_API_METHODS obj, API_SYSTEM system)
     {
-        Data.CurrentMethod = obj;
-        Data.CurrentSystem = system;
+        //Data.CurrentMethod = obj;
+        //Data.CurrentSystem = system;
         Parent.UpdateRequest();
         StateHasChanged();
     }

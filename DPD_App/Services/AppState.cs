@@ -55,5 +55,6 @@ public class AppState
         Settings.LoadFromFile();
         LoggingService.Settings = Settings;
         FileService.Settings = Settings;
+        SoapData.Settings = Settings;
     }
 }

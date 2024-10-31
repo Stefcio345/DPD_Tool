@@ -49,25 +49,44 @@
     <MudStack Row="true" Class="pa-0" Spacing="0">
         <MudPaper Class="py-0" Width="@(size + "%")">
             <MudPaper Class="pa-4" Square="true" Height="100%">
+                <MudText Typo="Typo.h4" Class="pa-1">Tabs</MudText>
                 <MudStack>
                     @foreach (var tab in Tabs)
                     {
                         <MudButton OnClick="@(() => ActivateTab(tab))" Color="@GetTabButtonColor(tab)" Style="justify-content: left; display: flow" DropShadow="true" Variant="Variant.Filled">
                             <MudStack Justify="Justify.SpaceBetween" Row="true">
-                                <MudText Style="overflow: hidden" Class="pt-1">@tab.Data.CurrentMethod</MudText>
+                                @if (tab.Data.CurrentMethod.Type != SOAP_API_METHODS.EMPTY)
+                                {
+                                    <MudText Style="overflow: hidden" Class="pt-1">@tab.Data.CurrentMethod.Type</MudText>
+                                }
+                                else
+                                {
+                                    <MudText Style="overflow: hidden" Class="pt-1">@tab.Title</MudText>
+                                }
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => { RemoveTab(@tab); })"/>
                             </MudStack>
                         </MudButton>
                     }
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Small" OnClick="@(() => { AddNewTab(); })"/>
+                    <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Small" OnClick="@(() => { AddNewTab(); })">Add new tab</MudButton>
                 </MudStack>
             </MudPaper>
         </MudPaper>
         <MudPaper Id="ResizeHandle" class="resize-handle" />
-        <MudPaper Elevation="0" Class="pa-0" Width="@(100-size + "%")">
-            <CascadingValue Value="CurrentProfile">
-                <SoapInterface Data="ActiveTab.Data"/>
-            </CascadingValue>
+        <MudPaper Elevation="0" Class="pa-0" Width="@(100 - size + "%")">
+            @if (ActiveTab is not null)
+            {
+                <CascadingValue Value="CurrentProfile">
+                    <SoapInterface Data="ActiveTab.Data"/>
+                </CascadingValue>
+            }
+            else
+            {
+                <MudPaper Height="100%">
+                    <MudText Typo="Typo.h3">
+                        Sample Page
+                    </MudText>
+                </MudPaper>
+            }
         </MudPaper>
     </MudStack>
 </MudPaper>
@@ -117,6 +136,12 @@
         }
 
         tab.IsActive = true;
+        
+        //If Tab was empty delete
+        //if (ActiveTab.Data.CurrentMethod is null)
+        //{
+        //    RemoveTab(ActiveTab);
+        //}
 
         ActiveTab = tab;
         ActiveTab.Data.Update = true;
@@ -138,6 +163,8 @@
             Data = new SoapData(StateHasChanged, CurrentProfile),
         };
         Tabs.Add(newTab);
+        //Switch to new tab
+        ActivateTab(newTab);
     }
     
     public void RemoveTab(TabItem tab)
@@ -145,7 +172,14 @@
         Tabs.Remove(tab);
         if (tab.IsActive)
         {
-            ActivateTab(Tabs.First());
+            if (Tabs.Count > 0)
+            {
+                ActivateTab(Tabs.First());
+            }
+            else
+            {
+                ActiveTab = null;
+            }
         }
         StateHasChanged();
     }

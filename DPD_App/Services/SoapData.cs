@@ -4,6 +4,8 @@ namespace DPD_App;
 
 public class SoapData
 {
+    public static AppSettings Settings { get; set; }
+    
     static int TabIndex = 0;
     public bool Update = false;
 
@@ -18,8 +20,8 @@ public class SoapData
         }
     }
     
-    private SOAP_API_METHODS _currentMethod;
-    public SOAP_API_METHODS CurrentMethod 
+    private SoapApiMethod _currentMethod;
+    public SoapApiMethod CurrentMethod 
     {
         get => _currentMethod;
         set
@@ -62,17 +64,6 @@ public class SoapData
         }
     }
 
-    private API_SYSTEM _currentSystem;
-    public API_SYSTEM CurrentSystem
-    {
-        get => _currentSystem;
-        set
-        {
-            _currentSystem = value;
-            NotifyStateChanged();
-        }
-    }
-
     private string? _documentData;
 
     public string? DocumentData
@@ -88,10 +79,9 @@ public class SoapData
     public SoapData(Action onChange, Profile currentProfile)
     {
         OnChange += onChange;
-        _currentMethod = SOAP_API_METHODS.GeneratePackagesNumbers;
-        _currentSystem = API_SYSTEM.DPD_SERVICES;
+        _currentMethod = Settings.DefaultSoapMethod ?? new SoapApiMethod();
         _wsdlAddress = currentProfile.WsdlAddress;
-        Title = _currentMethod.ToString();
+        Title = _currentMethod?.Name ?? "";
         _request = "";
         _response = "";
         TabIndex += 1;

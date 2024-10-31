@@ -9,20 +9,28 @@ public class Return {
     public string? Status { get; set; } 
 
     [XmlElement(ElementName="SessionId", Namespace="")] 
-    public string SessionId { get; set; } 
+    public string? SessionId { get; set; } 
 
     [XmlElement(ElementName="Packages", Namespace="")] 
-    public PackagesXml Packages { get; set; } 
+    public PackagesXml? Packages { get; set; } 
     
     [XmlElement(ElementName="documentData", Namespace="")] 
     public string? DocumentData { get; set; } 
+    
+    //Needed for append parcels to package
+    [XmlElement(ElementName="parcels", Namespace="")] 
+    public List<ParcelXml>? Parcels { get; set; } 
 
     [XmlElement(ElementName="session", Namespace="")] 
     public Session? Session { get; set; } 
+    
+    //Needed for AppendParcelsToPackage
+    [XmlElement(ElementName="status", Namespace="")] 
+    public string? status { get { return Status; } set { Status = value; } }
 }
 
 [XmlRoot(ElementName="generatePackagesNumbersV9Response", Namespace="http://dpdservices.dpd.com.pl/")]
-public class GeneratePackagesNumbersV9Response { 
+public class GeneratePackagesNumbersV9Response: IReturnable { 
 
     [XmlElement(ElementName="return", Namespace="")] 
     public Return Return { get; set; } 

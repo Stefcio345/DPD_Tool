@@ -22,6 +22,8 @@
             }
         }
     </MudPaper>
+    
+    <!-- SOAP API Settings -->
     <MudPaper>
         <MudStack>
             @if (_displaySoapAPI)
@@ -36,8 +38,15 @@
         @if (_displaySoapAPI)
         {
             <MudTextField T="string" Label="SoapAPI save location" Value="settings.SoapDownloadLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => { settings.SoapDownloadLocation = b; settings.SaveToFile(); StateHasChanged(); }"></MudTextField>
+            <MudSelect Dense="true" Clearable="true" T="SoapApiMethod?" Label="Default Soap Method" Placeholder="Method not selected" Value="settings.DefaultSoapMethod" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => { settings.DefaultSoapMethod = b; settings.SaveToFile(); StateHasChanged(); }">
+                @foreach (var method in SoapApiMethods.Methods)
+                {
+                    <MudSelectItem Value="@method">@method.Name</MudSelectItem>
+                }
+            </MudSelect>
         }
     </MudPaper>
+    
     <MudPaper>
         <MudSwitch Class="px-4" T="bool" Value="settings.MiniDrawer" ThumbIcon="@(settings.MiniDrawer == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.MiniDrawer == true ? Color.Success : Color.Error)" ValueChanged="(b) => {settings.MiniDrawer = b; settings.SaveToFile(); StateHasChanged();}">Mini Drawer</MudSwitch>
     </MudPaper>

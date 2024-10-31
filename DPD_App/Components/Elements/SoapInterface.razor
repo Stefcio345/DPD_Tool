@@ -1,7 +1,9 @@
 ﻿@using System.Collections.Specialized
+@using System.ComponentModel.Design
 @using System.Xml.Serialization
 @using DPD_App.Components.Pages
 @using DPD_App.Models
+@using Microsoft.Extensions.Logging.Console
 @inject ISnackbar Snackbar
 
 <Style>
@@ -14,37 +16,51 @@
     <!-- BUTTONS -->
     <MudItem xs="12">
         <MudPaper Elevation="5" Class="mb-2 pa-2">
-            <MudStack Row="true" Justify="Justify.SpaceBetween">
-                <MudButton Size="Size.Large" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
-                    @if (_processing)
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs="2" Class="d-flex justify-start flex-grow-1 gap-4">
+                    <MudStack Row="true">
+                        <MudButton Size="Size.Large" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
+                            @if (_processing)
+                            {
+                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                                <MudText Class="ms-2">Processing</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Send</MudText>
+                            }
+                        </MudButton>
+                        <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify</MudButton>
+                    </MudStack>
+                </MudItem>
+                
+                <MudItem xs="8" Class="d-flex justify-center flex-grow-1 gap-4 px-0">
+                    @if (Data.CurrentMethod is not null)
                     {
-                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
-                        <MudText Class="ms-2">Processing</MudText>
+                        <ChooseSoapMethod Data="Data" Parent="this" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
                     }
                     else
                     {
-                        <MudText>Send</MudText>
+                        <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Label="Select API Method" Variant="Variant.Filled" Size="Size.Large" Color="Color.Error">
+                            <ChooseSoapMethod Data="Data" Parent="this" Hover="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
+                        </MudMenu>
                     }
-                </MudButton>
-
-                <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify</MudButton>
+                </MudItem>
                 
-                <ChooseSoapMethod Data="Data" Parent="this"/>
+                <MudItem xs="2" Class="d-flex justify-end flex-grow-1 gap-4">
+                    <MudStack Row="true">
+                        <!-- enviroment choose -->
+                        <MudButtonGroup DropShadow="true" Color="Color.Success" Size="Size.Large" Variant="Variant.Filled" OverrideStyles="false">
+                            @foreach (var wsdlAddres in Globals.WsdlAddresses)
+                            {
+                                <MudButton OnClick="@(() => { WsdlAddress = wsdlAddres; })" Variant="@GetEnviromentButtonVariant(wsdlAddres)" Color="@GetEnviromentButtonColor(wsdlAddres)">@wsdlAddres.Name</MudButton>
+                            }
+                        </MudButtonGroup>
+                        <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" OnClick="RefreshData" Variant="Variant.Filled" Size="Size.Large"/>
+                    </MudStack>
+                </MudItem>
 
-                <MudIconButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Success" Icon="@Icons.Material.Filled.Download" Disabled="@(DocumentData is null)" OnClick="DownloadData"></MudIconButton>
-
-                <MudStack Row="true">
-                    <!-- enviroment choose -->
-                    <MudButtonGroup DropShadow="true" Color="Color.Success" Size="Size.Large" Variant="Variant.Filled" OverrideStyles="false">
-                        @foreach (var wsdlAddres in Globals.WsdlAddresses)
-                        {
-                        <MudButton OnClick="@(() => { WsdlAddress = wsdlAddres; })" Variant="@GetEnviromentButtonVariant(wsdlAddres)" Color="@GetEnviromentButtonColor(wsdlAddres)">@wsdlAddres.Name</MudButton>
-                        }
-                    </MudButtonGroup>
-                    <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Primary" OnClick="RefreshData" Variant="Variant.Filled" Size="Size.Large"/>
-                </MudStack>
-                
-                </MudStack>
+            </MudGrid>
         </MudPaper>
     </MudItem>
     
@@ -52,11 +68,12 @@
     <MudItem xs="12">
         <MudPaper Height="800px" Class="px-3 pb-3 pt-0">
             <MudGrid Style="height: 100%">
-                <MudItem xs="6" Class="pt-2 pr-2">
+                <MudItem xs="6" Class="pt-2 pr-2" Style="height: 100%">
                     <StandaloneCodeEditor @ref="_requestEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsRequest" OnDidChangeModelContent="RequestChanged"/>
                 </MudItem>
-                <MudItem xs="6" Class="pt-2 pl-2">
+                <MudItem xs="6" Class="pt-2 pl-2" Style="height: 100%">
                     <StandaloneCodeEditor @ref="_responseEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsResponse" OnDidChangeModelContent="ResponseChanged"/>
+                    <MudIconButton Style="position: absolute; right: 56px; bottom: 25px" Size="Size.Large" Variant="Variant.Filled" Color="Color.Success" Icon="@Icons.Material.Filled.Download" Disabled="@(DocumentData is null)" OnClick="DownloadData"/>
                 </MudItem>
             </MudGrid>
         </MudPaper>
@@ -73,7 +90,7 @@
     [CascadingParameter] public Profile CurrentProfile { get; set; }
     [Parameter] public SoapData Data { get; set; }
     
-    public SOAP_API_METHODS CurrentMethod
+    public SoapApiMethod CurrentMethod
     {
         get => Data.CurrentMethod;
         set => Data.CurrentMethod = value;
@@ -83,12 +100,6 @@
     {
         get => Data.WsdlAddress;
         set => Data.WsdlAddress = value;
-    }
-    
-    public API_SYSTEM CurrentSystem
-    {
-        get => Data.CurrentSystem;
-        set => Data.CurrentSystem = value;
     }
 
     public string Request
@@ -116,7 +127,7 @@
     async Task SendRequest()
     {
         _processing = true;
-        var response = await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.GetAddress(CurrentSystem), Request);
+        var response = await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.GetAddress(CurrentMethod.System), Request);
         
         //Deserialize repsonse
         Envelope result;
@@ -128,20 +139,15 @@
         //If has Package details, save them
         if (result.Body.GeneratePackagesNumbersV9Response is not null)
         {
-            if (result.Body.GeneratePackagesNumbersV9Response.Return.Status == "OK")
-            {
-                SessionData = new SessionData();
-                SessionData.SessionId = result.Body.GeneratePackagesNumbersV9Response.Return.SessionId;
-                SessionData.Packages.PackageId = result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.PackageId;
-                foreach (var parcel in result.Body.GeneratePackagesNumbersV9Response.Return.Packages.Package.Parcels.Parcel)
-                {
-                    SessionData.Packages.Parcels.Add(new ParcelData()
-                    {
-                        ParcelId = parcel.ParcelId,
-                        Waybill = parcel.Waybill
-                    });
-                }
-            }
+            SavePackageDetails(result.Body.GeneratePackagesNumbersV9Response, GetSessionType(Request));
+        }
+        if (result.Body.AppendParcelsToPackageV2Response is not null)
+        {
+            SavePackageDetails(result.Body.AppendParcelsToPackageV2Response, GetSessionType(Request));
+        }
+        if (result.Body.GenerateInternationalPackageNumbersV1Response is not null)
+        {
+            AddParcelToSavedDetails(result.Body.GenerateInternationalPackageNumbersV1Response);
         }
 
         //If has document data save it in variable
@@ -158,6 +164,11 @@
         if (result.Body.GenerateDomesticReturnLabelV1Response is not null)
         {
             DocumentData = result.Body.GenerateDomesticReturnLabelV1Response.Return.DocumentData;
+        }
+        
+        if (result.Body.GenerateReturnLabelV1Response is not null)
+        {
+            DocumentData = result.Body.GenerateReturnLabelV1Response.Return.DocumentData;
         }
 
         Response = XMLService.Prettify(response);
@@ -195,7 +206,7 @@
     
     public async void UpdateRequest()
     {
-        switch (CurrentMethod)
+        switch (CurrentMethod.Type)
         {
             case SOAP_API_METHODS.GeneratePackagesNumbers:
                 var packagesNumbersV9 = new GeneratePackagesNumbersV9();
@@ -205,6 +216,7 @@
             case SOAP_API_METHODS.GenerateSpedLabels:
                 var spedLabelsV4 = new GenerateSpedLabelsV4();
                 spedLabelsV4.DpdServicesParamsV1.Session.SessionId = SessionData.SessionId;
+                spedLabelsV4.DpdServicesParamsV1.Session.SessionType = SessionData.SessionType.ToString();
                 spedLabelsV4.DpdServicesParamsV1.Session.Packages.PackageId = SessionData.Packages.PackageId;
                 if (SessionData.SessionId is not null) spedLabelsV4.DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
                 foreach (var parcelData in SessionData.Packages.Parcels)
@@ -217,6 +229,7 @@
             case SOAP_API_METHODS.GenerateProtocol:
                 var generateProtocolV2 = new GenerateProtocolV2();
                 generateProtocolV2.DpdServicesParamsV1.Session.SessionId = SessionData.SessionId;
+                generateProtocolV2.DpdServicesParamsV1.Session.SessionType = SessionData.SessionType.ToString();
                 generateProtocolV2.DpdServicesParamsV1.Session.Packages.PackageId = SessionData.Packages.PackageId;
                 if (SessionData is not null) generateProtocolV2.DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
                 foreach (var parcelData in SessionData.Packages.Parcels)
@@ -250,6 +263,34 @@
                 }
                 generateDomesticReturnLabel.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = generateDomesticReturnLabel.CreateSoapEnvelope();
+                break;
+            case SOAP_API_METHODS.GenerateReturnLabel:
+                var GenerateReturnLabelV1 = new GenerateReturnLabelV1();
+                if (SessionData.Packages.Parcels.Count > 0) GenerateReturnLabelV1.ReturnedWaybillsV1.Waybill = new List<string>();
+                foreach (var parcelData in SessionData.Packages.Parcels)
+                {
+                    GenerateReturnLabelV1.ReturnedWaybillsV1.Waybill.Add(parcelData.Waybill); 
+                }
+                GenerateReturnLabelV1.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
+                Request = GenerateReturnLabelV1.CreateSoapEnvelope();
+                break;
+            case SOAP_API_METHODS.AppendParcelsToPackage:
+                var AppendParcelsToPackageV2 = new AppendParcelsToPackageV2();
+                //If package was generated add to this method
+                if (SessionData.Packages.Parcels.Count > 0) AppendParcelsToPackageV2.ParcelsAppend.PackagesearchCriteria.Waybill = SessionData.Packages.Parcels.First().Waybill;
+                AppendParcelsToPackageV2.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
+                Request = AppendParcelsToPackageV2.CreateSoapEnvelope();
+                break;
+            case SOAP_API_METHODS.PackagesPickupCall:
+                PackagesPickupCallV4 PackagesPickupCallV4 = CurrentMethod.SelectedVariant switch
+                {
+                    "UPDATE" => new PackagesPickupCallV4(PICKUP_OPERATION_TYPES.UPDATE),
+                    "CANCEL" => new PackagesPickupCallV4(PICKUP_OPERATION_TYPES.CANCEL),
+                    "INSERT" => new PackagesPickupCallV4(PICKUP_OPERATION_TYPES.INSERT),
+                    _ => new PackagesPickupCallV4(PICKUP_OPERATION_TYPES.INSERT)
+                };
+                PackagesPickupCallV4.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
+                Request = PackagesPickupCallV4.CreateSoapEnvelope();
                 break;
             default:
                 Request = "Method currently not implemented";
@@ -335,6 +376,56 @@
     private Variant GetEnviromentButtonVariant(WsdlAddress wsdlAddres)
     {
         return wsdlAddres.Name == WsdlAddress.Name ? Variant.Filled : Variant.Text;
+    }
+
+    private void SavePackageDetails(IReturnable packageReturn, SESSION_TYPE sessionType)
+    {
+        if (packageReturn.Return.Status != "OK") return;
+        //Save Package Details
+        SessionData = new SessionData();
+        SessionData.SessionType = sessionType;
+        SessionData.SessionId = packageReturn.Return.SessionId;
+        SessionData.Packages.PackageId = packageReturn.Return.Packages.Package.PackageId;
+        foreach (var parcel in packageReturn.Return.Packages.Package.Parcels.Parcel)
+        {
+            SessionData.Packages.Parcels.Add(new ParcelData()
+            {
+                ParcelId = parcel.ParcelId,
+                Waybill = parcel.Waybill
+            });
+        }
+    }
+    
+    private void AddParcelToSavedDetails(IReturnable packageReturn)
+    {
+        if (packageReturn.Return.Status != "OK") return;
+        if (packageReturn.Return.Parcels.Count <= 0) return;
+        //Append to Package
+        foreach (var parcel in packageReturn.Return.Parcels)
+        {
+            SessionData.Packages.Parcels.Add(new ParcelData()
+            {
+                ParcelId = parcel.ParcelId,
+                Waybill = parcel.Waybill
+            });
+        }
+    }
+    
+    private SESSION_TYPE GetSessionType(string request)
+    {
+        var serializer = new XmlSerializer(typeof(Envelope));
+        using var reader = new StringReader(request);
+        var requestDeserialized = (Envelope)serializer.Deserialize(reader);
+        
+        if (requestDeserialized.Body.GeneratePackagesNumbersV9 is not null)
+        {
+            return requestDeserialized.Body.GeneratePackagesNumbersV9.OpenUMLFeV11.Packages.Receiver.CountryCode != requestDeserialized.Body.GeneratePackagesNumbersV9.OpenUMLFeV11.Packages.Sender.CountryCode ? SESSION_TYPE.INTERNATIONAL : SESSION_TYPE.DOMESTIC;
+        }
+        else if (requestDeserialized.Body.GenerateInternationalPackageNumbersV1 is not null)
+        {
+            return requestDeserialized.Body.GenerateInternationalPackageNumbersV1.InternationalOpenUMLFeV1.Packages.Receiver.CountryCode != requestDeserialized.Body.GenerateInternationalPackageNumbersV1.InternationalOpenUMLFeV1.Packages.Sender.CountryCode ? SESSION_TYPE.INTERNATIONAL : SESSION_TYPE.DOMESTIC;
+        }
+        return SESSION_TYPE.DOMESTIC;
     }
 
 }

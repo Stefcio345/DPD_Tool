@@ -1,0 +1,66 @@
+﻿@using MouseEvent = MudBlazor.MouseEvent
+<MudMenuItem Class="px-1 py-0 my-0">
+    <MudStack>
+        @if (Method.Variants is null)
+        {
+            <MudButton Style="justify-content: left" OnClick="@(() => { MethodSelected(Method); })" Variant="Variant.Filled" Color="@GetButtonColor(Method)">
+                <MudText>
+                    @Method.Name
+                </MudText>
+            </MudButton>
+        }
+        else
+        {
+            <MudMenu ActivationEvent="MouseEvent.MouseOver" Label="@Method.Name" Style="justify-content: left; width: 100%" OnClick="@(() => { MethodSelected(Method); })"
+                     Variant="Variant.Filled" Color="@GetButtonColor(Method)"
+                     AnchorOrigin="Origin.CenterRight" TransformOrigin="Origin.CenterLeft">
+                
+                <ActivatorContent>
+                        <MudButton Style="width: 100%; justify-content: left" Variant="Variant.Filled" OnClick="@(() => {Method.SelectedVariant = null; MethodSelected(Method); })" Color="@GetButtonColor(Method)">
+                            <MudText>
+                                @Method.Name
+                            </MudText>
+                        </MudButton>
+                </ActivatorContent>
+                
+                <ChildContent>
+                <MudStack Spacing="1">
+                    @foreach (var variant in Method.Variants)
+                    {
+                        <MudButton Style="justify-content: left" OnClick="@(() => { Method.SelectedVariant = variant; MethodSelected(Method); })" Variant="Variant.Filled" Color="@GetButtonColorVariant(variant)">
+                            <MudText>
+                                @variant
+                            </MudText>
+                        </MudButton>
+                    }
+                </MudStack>
+                </ChildContent>
+            </MudMenu>
+        }
+    </MudStack>
+</MudMenuItem>
+
+
+@code
+{
+    [Parameter] public SoapApiMethod Method { get; set; }
+    [Parameter] public SoapData Data { get; set; }
+    [Parameter] public SoapInterface Parent { get; set; }
+    
+    private Color GetButtonColor(SoapApiMethod currentMethod)
+    {
+        return currentMethod.Type == Data.CurrentMethod.Type ? Color.Primary : Color.Default;
+    }
+    
+    private Color GetButtonColorVariant(string variant)
+    {
+        return variant == Data.CurrentMethod.SelectedVariant ? Color.Primary : Color.Default;
+    }
+    
+    private void MethodSelected(SoapApiMethod method)
+    {
+        Data.CurrentMethod = method;
+        Parent.UpdateRequest();
+        StateHasChanged();
+    }
+}

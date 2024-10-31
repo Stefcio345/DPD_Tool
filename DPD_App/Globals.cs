@@ -119,6 +119,8 @@ public class AppSettings
     
     public bool AddressDetailsVertical { get; set; } = false;
 
+    public SoapApiMethod? DefaultSoapMethod { get; set; }
+
 
     public void LoadFromFile()
     {
@@ -138,6 +140,7 @@ public class AppSettings
             ProtocolSaveLocation = temp.ProtocolSaveLocation;
             AddressDetailsVertical = temp.AddressDetailsVertical;
             SoapDownloadLocation = temp.SoapDownloadLocation;
+            DefaultSoapMethod = temp.DefaultSoapMethod;
         }
         else
         {
@@ -165,6 +168,60 @@ public class SaveKeeper()
     }
 }
 
+public class SoapApiMethod
+{
+    public string Name { get; set; }
+    public SOAP_API_METHODS Type { get; set; }
+    public API_SYSTEM System { get; set; }
+    public List<string>? Variants { get; set; }
+    public string? SelectedVariant { get; set; }
+    
+    public SoapApiMethod(string name, SOAP_API_METHODS type, API_SYSTEM system, List<string> variants = null)
+    {
+        Variants = variants;
+        Name = name;
+        Type = type;
+        System = system;
+    }
+    
+    public SoapApiMethod()
+    {
+        Name = "Empty";
+        Type = SOAP_API_METHODS.EMPTY;
+        System = API_SYSTEM.EMPTY;
+    }
+}
+
+public class SoapApiMethods
+{
+    public static List<SoapApiMethod> Methods = new List<SoapApiMethod>
+    {
+        new SoapApiMethod( "GeneratePackagesNumbers", SOAP_API_METHODS.GeneratePackagesNumbers, API_SYSTEM.DPD_SERVICES),
+        new SoapApiMethod( "GenerateInternationalPackageNumbers", SOAP_API_METHODS.GenerateInternationalPackageNumbers, API_SYSTEM.DPD_SERVICES),
+        new SoapApiMethod( "GenerateSpedLabels", SOAP_API_METHODS.GenerateSpedLabels, API_SYSTEM.DPD_SERVICES),
+        new SoapApiMethod( "GenerateProtocol", SOAP_API_METHODS.GenerateProtocol, API_SYSTEM.DPD_SERVICES),
+        new SoapApiMethod( "FindPostalCode", SOAP_API_METHODS.FindPostalCode, API_SYSTEM.DPD_SERVICES),
+        new SoapApiMethod( "GenerateDomesticReturnLabel", SOAP_API_METHODS.GenerateDomesticReturnLabel, API_SYSTEM.DPD_SERVICES),
+        new SoapApiMethod( "GenerateReturnLabel", SOAP_API_METHODS.GenerateReturnLabel, API_SYSTEM.DPD_SERVICES),
+        new SoapApiMethod( "AppendParcelsToPackage", SOAP_API_METHODS.AppendParcelsToPackage, API_SYSTEM.DPD_SERVICES),
+        new SoapApiMethod( "GetCourierOrderAvailability", SOAP_API_METHODS.GetCourierOrderAvailability, API_SYSTEM.DPD_SERVICES),
+        new SoapApiMethod( "PackagesPickupCall", SOAP_API_METHODS.PackagesPickupCall, API_SYSTEM.DPD_SERVICES, ["INSERT", "UPDATE", "CANCEL"]),
+    
+        new SoapApiMethod( "GetEventsForCustomer", SOAP_API_METHODS.GetEventsForCustomer, API_SYSTEM.INFO_SERVICES),
+        new SoapApiMethod( "MarkEventsAsProcesses", SOAP_API_METHODS.MarkEventsAsProcesses, API_SYSTEM.INFO_SERVICES),
+        new SoapApiMethod( "GetEventsForWaybill", SOAP_API_METHODS.GetEventsForWaybill, API_SYSTEM.INFO_SERVICES),
+        
+        new SoapApiMethod( "ImportPackages", SOAP_API_METHODS.ImportPackagesCRIN, API_SYSTEM.APP_SERVICES),
+        
+        new SoapApiMethod("Empty", SOAP_API_METHODS.EMPTY, API_SYSTEM.EMPTY)
+    };
+    
+    public static SoapApiMethod GetSoapApiMethod(SOAP_API_METHODS type)
+    {
+        return Methods.FirstOrDefault(m => m.Type == type) ?? new SoapApiMethod("NOT IMPLEMENTED", SOAP_API_METHODS.GeneratePackagesNumbers, API_SYSTEM.DPD_SERVICES);
+    }
+}
+
 public enum SOAP_API_METHODS
 {
     GeneratePackagesNumbers,
@@ -176,23 +233,24 @@ public enum SOAP_API_METHODS
     GenerateReturnLabel,
     AppendParcelsToPackage,
     GetCourierOrderAvailability,
-    GenerateProtocolWithDestinations,
     PackagesPickupCall,
-    ImportDeliveryBusinessEvent,
     
     GetEventsForCustomer,
     MarkEventsAsProcesses,
     GetEventsForWaybill,
     
     ImportPackagesCRIN,
-    ImportPackagesCROUT
+    ImportPackagesCROUT,
+    
+    EMPTY
 }
 
 public enum API_SYSTEM
 {
     DPD_SERVICES,
     INFO_SERVICES,
-    APP_SERVICES
+    APP_SERVICES,
+    EMPTY
 }
 
 public enum CallTypes

@@ -111,4 +111,14 @@ public class ParcelXml {
     
     [XmlElement(ElementName="ValidationDetails", Namespace="")] 
     public ValidationDetails? ValidationDetails { get; set; }
+    
+    //Needed for AppendParcelsToPackage, because they are returned with lower case letters, for some reason.
+    [XmlElement(ElementName="parcelId", Namespace="")] 
+    public string? parcelId { get { return ParcelId; } set { ParcelId = value; } }
+
+    [XmlElement(ElementName="status", Namespace="")] 
+    public string? status { get { return Status; } set { Status = value; } }
+
+    [XmlElement(ElementName="waybill", Namespace="")] 
+    public string? waybill { get { return Waybill; } set { Waybill = value; } }
 }
