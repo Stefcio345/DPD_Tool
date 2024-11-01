@@ -4,6 +4,7 @@
 @using DPD_App.Components.Pages
 @using DPD_App.Models
 @using Microsoft.Extensions.Logging.Console
+@using MouseEvent = MudBlazor.MouseEvent
 @inject ISnackbar Snackbar
 
 <Style>
@@ -35,15 +36,16 @@
                 </MudItem>
                 
                 <MudItem xs="8" Class="d-flex justify-center flex-grow-1 gap-4 px-0">
-                    @if (Data.CurrentMethod is not null)
+                    @if (Data.CurrentMethod.Type == SOAP_API_METHODS.EMPTY)
                     {
-                        <ChooseSoapMethod Data="Data" Parent="this" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
+                        <MudButton Variant="Variant.Filled" Size="Size.Large" Color="Color.Error" OnClick="() => { _open = !_open;}">Select API Method</MudButton>
+                        <MudPopover Open="_open" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+                            <ChooseSoapMethod Data="Data" Parent="this" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
+                        </MudPopover>
                     }
                     else
                     {
-                        <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Label="Select API Method" Variant="Variant.Filled" Size="Size.Large" Color="Color.Error">
-                            <ChooseSoapMethod Data="Data" Parent="this" Hover="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
-                        </MudMenu>
+                        <ChooseSoapMethod Data="Data" Parent="this" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
                     }
                 </MudItem>
                 
@@ -80,7 +82,11 @@
     </MudItem>
 </MudGrid>
 
+@code{
 
+    private bool _open;
+    //TODO Remove this when they patch MudBlazor, and add menu type hover
+}
 
 @code {
 
@@ -359,6 +365,7 @@
             if(_responseEditor is not null) await _responseEditor.SetValue(XMLService.Prettify(Response));
             if(Request.Length < 1) UpdateRequest();
             Data.Update = false;
+            _open = false;
         }
     }
 

@@ -1,44 +1,36 @@
 ﻿@using MouseEvent = MudBlazor.MouseEvent
+
 <MudMenuItem Class="px-1 py-0 my-0">
-    <MudStack>
-        @if (Method.Variants is null)
-        {
-            <MudButton Style="justify-content: left" OnClick="@(() => { MethodSelected(Method); })" Variant="Variant.Filled" Color="@GetButtonColor(Method)">
+    <MudMenu ActivationEvent="MouseEvent.MouseOver" Label="@Method.Name" Style="justify-content: left; width: 100%"
+             Variant="Variant.Filled" Color="@GetButtonColor(Method)"
+             AnchorOrigin="Origin.CenterRight" TransformOrigin="Origin.CenterLeft">
+
+        <ActivatorContent>
+            <MudButton Style="width: 100%; justify-content: left" Variant="Variant.Filled" OnClick="@(() => {Method.SelectedVariant = null; MethodSelected(Method); })" Color="@GetButtonColor(Method)">
                 <MudText>
                     @Method.Name
                 </MudText>
             </MudButton>
-        }
-        else
-        {
-            <MudMenu ActivationEvent="MouseEvent.MouseOver" Label="@Method.Name" Style="justify-content: left; width: 100%" OnClick="@(() => { MethodSelected(Method); })"
-                     Variant="Variant.Filled" Color="@GetButtonColor(Method)"
-                     AnchorOrigin="Origin.CenterRight" TransformOrigin="Origin.CenterLeft">
-                
-                <ActivatorContent>
-                        <MudButton Style="width: 100%; justify-content: left" Variant="Variant.Filled" OnClick="@(() => {Method.SelectedVariant = null; MethodSelected(Method); })" Color="@GetButtonColor(Method)">
-                            <MudText>
-                                @Method.Name
-                            </MudText>
-                        </MudButton>
-                </ActivatorContent>
-                
-                <ChildContent>
-                <MudStack Spacing="1">
-                    @foreach (var variant in Method.Variants)
-                    {
-                        <MudButton Style="justify-content: left" OnClick="@(() => { Method.SelectedVariant = variant; MethodSelected(Method); })" Variant="Variant.Filled" Color="@GetButtonColorVariant(variant)">
+        </ActivatorContent>
+        
+        <ChildContent>
+            @if(Method.Variants is not null)
+            {
+                @foreach (var variant in Method.Variants)
+                {
+                    <MudMenuItem Class="px-1 py-0 my-0">
+                        <MudButton Style="justify-content: left; width: 100%" OnClick="@(() => { Method.SelectedVariant = variant; MethodSelected(Method); })" Variant="Variant.Filled" Color="@GetButtonColorVariant(variant)">
                             <MudText>
                                 @variant
                             </MudText>
                         </MudButton>
-                    }
-                </MudStack>
-                </ChildContent>
-            </MudMenu>
-        }
-    </MudStack>
+                    </MudMenuItem>
+                }
+            }
+        </ChildContent>
+    </MudMenu>
 </MudMenuItem>
+
 
 
 @code
@@ -46,7 +38,8 @@
     [Parameter] public SoapApiMethod Method { get; set; }
     [Parameter] public SoapData Data { get; set; }
     [Parameter] public SoapInterface Parent { get; set; }
-    
+    [Parameter] public MudMenu ParentMenu { get; set; }
+
     private Color GetButtonColor(SoapApiMethod currentMethod)
     {
         return currentMethod.Type == Data.CurrentMethod.Type ? Color.Primary : Color.Default;
@@ -61,6 +54,7 @@
     {
         Data.CurrentMethod = method;
         Parent.UpdateRequest();
+        ParentMenu.CloseMenuAsync();
         StateHasChanged();
     }
 }

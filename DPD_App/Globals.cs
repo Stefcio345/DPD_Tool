@@ -190,6 +190,11 @@ public class SoapApiMethod
         Type = SOAP_API_METHODS.EMPTY;
         System = API_SYSTEM.EMPTY;
     }
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }
 
 public class SoapApiMethods
