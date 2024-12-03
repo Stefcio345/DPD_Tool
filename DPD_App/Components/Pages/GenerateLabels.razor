@@ -7,7 +7,7 @@
 <PageTitle>GenerateLabels</PageTitle>
 
 <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mb-4">
-    <h1 class="pa-1 pb-3">Generate Labels</h1>
+    <h1 class="pa-1 pb-2">Generate Labels</h1>
     <MudStack Row="true">
         <MudTabs Elevation="2" Rounded="true" @bind-ActivePanelIndex="ActiveMode">
             <MudTabPanel Text="Simple" />
@@ -19,7 +19,8 @@
 </MudStack>
 
 <MudGrid @onkeydown="OnEnter">
-    <MudItem xs="12">
+<MudItem xs="12">
+    <MudPanel>
         <MudStack Row="true">
             <MudTextField T="string" Value="profileFromTextBoxes.Login" Label="Login" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged" Immediate="true"></MudTextField>
             <MudTextField @bind-Value="profileFromTextBoxes.Password" T="string" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
@@ -28,11 +29,12 @@
             <MudSelect @ref="EnviromentField" @bind-Value="profileFromTextBoxes.WsdlAddress" T="WsdlAddress" Label="Select enviroment">
                 @foreach (var wsdlAddres in Globals.WsdlAddresses)
                 {
-                <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
+                    <MudSelectItem Value="wsdlAddres">@wsdlAddres.Name</MudSelectItem>
                 }
             </MudSelect>
         </MudStack>
-    </MudItem>
+    </MudPanel>
+</MudItem>
 
     <MudDivider Class="mt-6 mx-4"/>
     
@@ -54,7 +56,7 @@
             <!-- Services -->
             @if (ServicesOn)
             {
-                <MudPaper Class="pa-2">
+                <MudPanel>
                     <MudGrid Class="pa-0">
                         <MudItem xs="6">
                             <MudStack Spacing="0">
@@ -195,7 +197,7 @@
                             </MudStack>
                         </MudItem>
                     </MudGrid>
-                </MudPaper>
+                </MudPanel>
             }
         </MudItem>
 
@@ -208,11 +210,13 @@
             </MudStack>
             @if (DetailsOn)
             {
-            <MudStack>
-                <MudTextField Margin="Margin.Dense" @bind-Value="package.Ref1" Label="ref1" Variant="Variant.Outlined"/>
-                <MudTextField Margin="Margin.Dense" @bind-Value="package.Ref2" Label="ref2" Variant="Variant.Outlined"/>
-                <MudTextField Margin="Margin.Dense" @bind-Value="package.Ref3" Label="ref3" Variant="Variant.Outlined"/>
-            </MudStack>
+                <MudPanel>
+                    <MudStack>
+                        <MudTextField Margin="Margin.Dense" @bind-Value="package.Ref1" Label="ref1" Variant="Variant.Outlined"/>
+                        <MudTextField Margin="Margin.Dense" @bind-Value="package.Ref2" Label="ref2" Variant="Variant.Outlined"/>
+                        <MudTextField Margin="Margin.Dense" @bind-Value="package.Ref3" Label="ref3" Variant="Variant.Outlined"/>
+                    </MudStack>
+                </MudPanel>
             }
         </MudItem>
         
@@ -262,26 +266,24 @@
             <!-- Tracking links -->
             @if (package.Parcels.Count > 0)
             {
-                <MudCard>
-                    <MudCardContent>
-                        <MudTable Items="@TrackingLinks" Breakpoint="Breakpoint.Sm">
-                            <HeaderContent>
-                                <MudTh>Waybill</MudTh>
-                                <MudTh>GeoPost</MudTh>
-                                <MudTh>TrackTrace</MudTh>
-                            </HeaderContent>
-                            <RowTemplate>
-                                <MudTd DataLabel="Waybill" Style="font-size: 0.9vw">@context.waybill</MudTd>
-                                <MudTd DataLabel="GeoPost">
-                                    <MudLink Style="font-size: 0.9vw" Target="_blank" Href="@context.getGeoPostLink()">GeoPost</MudLink>
-                                </MudTd>
-                                <MudTd DataLabel="TrackTrace">
-                                    <MudLink Style="font-size: 0.9vw" Target="_blank" Href="@context.getTrackTraceLink()">TrackTrace</MudLink>
-                                </MudTd>
-                            </RowTemplate>
-                        </MudTable>
-                    </MudCardContent>
-                </MudCard>
+                <MudPanel>
+                    <MudTable Items="@TrackingLinks" Breakpoint="Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh>Waybill</MudTh>
+                            <MudTh>GeoPost</MudTh>
+                            <MudTh>TrackTrace</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Waybill" Style="font-size: 0.9vw">@context.waybill</MudTd>
+                            <MudTd DataLabel="GeoPost">
+                                <MudLink Style="font-size: 0.9vw" Target="_blank" Href="@context.getGeoPostLink()">GeoPost</MudLink>
+                            </MudTd>
+                            <MudTd DataLabel="TrackTrace">
+                                <MudLink Style="font-size: 0.9vw" Target="_blank" Href="@context.getTrackTraceLink()">TrackTrace</MudLink>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudPanel>
             }
             else
             {
@@ -299,7 +301,7 @@
         <MudItem xs="4">
             @if (package.Base64Label is not null)
             {
-                <MudCard style="height:750px">
+                <MudCard style="height:750px" Elevation="2">
                     <MudCardContent>
                         <iframe width="100%" height="100%" src="data:application/pdf;base64,@package.Base64Label" frameborder="0"></iframe>
                     </MudCardContent>
@@ -308,7 +310,7 @@
             else
             {
                 <MudCard>
-                    <MudCardContent Style="text-align: center">
+                    <MudCardContent Style="text-align: center" Elevation="2">
                         <h3>Label</h3>
                     </MudCardContent>
                 </MudCard>
@@ -317,7 +319,7 @@
         <MudItem xs="5">
             @if (package.Base64Protocol is not null)
             {
-                <MudCard style="height:750px">
+                <MudCard style="height:750px" Elevation="2">
                     <MudCardContent>
                         <iframe width="100%" height="100%" src="data:application/pdf;base64,@package.Base64Protocol" frameborder="0"></iframe>
                     </MudCardContent>
@@ -326,7 +328,7 @@
             else
             {
                 <MudCard>
-                    <MudCardContent Style="text-align: center">
+                    <MudCardContent Style="text-align: center" Elevation="2">
                         <h3>Protocol</h3>
                     </MudCardContent>
                 </MudCard>

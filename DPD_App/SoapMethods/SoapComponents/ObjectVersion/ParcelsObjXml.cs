@@ -3,10 +3,10 @@ using DPD_App;
 using DPD_App.Models;
 
 [XmlRoot(ElementName="parcels", Namespace="")]
-public class ParcelsXml{ 
+public class ParcelsObjXml{ 
     
     [XmlElement(ElementName="Parcel")] 
-    public List<ParcelXml>? Parcel { get; set; } 
+    public List<ParcelObjXml>? Parcel { get; set; } 
     
     [XmlElement(ElementName="statusInfo", Namespace="")] 
     public StatusInfo? StatusInfo { get; set; } 
@@ -41,7 +41,7 @@ public class ParcelsXml{
     [XmlElement(ElementName="customerData3", Namespace="")] 
     public string? CustomerData3 { get; set; }
 
-    public ParcelsXml()
+    public ParcelsObjXml()
     {
         Weight = "12.5";
         AdrWeight = null;
@@ -55,7 +55,7 @@ public class ParcelsXml{
         CustomerData3 = "Uwagi dla kuriera 3";
     }
     
-    public ParcelsXml MapParcel(Parcel parcel)
+    public ParcelsObjXml MapParcel(Parcel parcel)
     {
         Weight = parcel.Weight;
         AdrWeight = parcel.AdrWeight;
@@ -70,7 +70,7 @@ public class ParcelsXml{
         return this;
     }
     
-    public ParcelsXml(CallTypes type, string waybill)
+    public ParcelsObjXml(CallTypes type, string waybill)
     {
         switch (type)
         {
@@ -92,33 +92,4 @@ public class ParcelsXml{
         }
         
     }
-}
-
-[XmlRoot(ElementName="Parcel")]
-public class ParcelXml { 
-
-    [XmlElement(ElementName="Status")] 
-    public string? Status { get; set; } 
-
-    [XmlElement(ElementName="ParcelId")] 
-    public string? ParcelId { get; set; } 
-
-    [XmlElement(ElementName="Waybill")] 
-    public string? Waybill { get; set; } 
-
-    [XmlElement(ElementName="Reference", Namespace="")] 
-    public object? Reference { get; set; } 
-    
-    [XmlElement(ElementName="ValidationDetails", Namespace="")] 
-    public ValidationDetails? ValidationDetails { get; set; }
-    
-    //Needed for AppendParcelsToPackage, because they are returned with lower case letters, for some reason.
-    [XmlElement(ElementName="parcelId", Namespace="")] 
-    public string? parcelId { get { return ParcelId; } set { ParcelId = value; } }
-
-    [XmlElement(ElementName="status", Namespace="")] 
-    public string? status { get { return Status; } set { Status = value; } }
-
-    [XmlElement(ElementName="waybill", Namespace="")] 
-    public string? waybill { get { return Waybill; } set { Waybill = value; } }
 }

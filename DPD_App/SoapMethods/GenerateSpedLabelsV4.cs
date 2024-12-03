@@ -51,12 +51,12 @@ public class GenerateSpedLabelsV4: ISoapBody, IAuthData
     public GenerateSpedLabelsV4(List<string> waybills)
     {
         DpdServicesParamsV1 = new DpdServicesParamsV1();
-        if (DpdServicesParamsV1.Session.Packages.Parcels != null)
+        if (DpdServicesParamsV1.Session.PackagesObj.Parcels != null)
         {
-            DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
+            DpdServicesParamsV1.Session.PackagesObj.Parcels = new List<ParcelsObjXml>();
             for (var i = 0; i < waybills.Count; i++)
             {
-                DpdServicesParamsV1.Session.Packages.Parcels.Add(new ParcelsXml(CallTypes.LABEL, waybills[i]));
+                DpdServicesParamsV1.Session.PackagesObj.Parcels.Add(new ParcelsObjXml(CallTypes.LABEL, waybills[i]));
             }
         }
         

@@ -16,7 +16,7 @@ public class GenerateInternationalPackageNumbersV1: ISoapBody, IAuthData {
     {
         AuthDataV1 = new AuthDataV1();
         InternationalOpenUMLFeV1 = new InternationalOpenUMLFeV1();
-        InternationalOpenUMLFeV1.Packages.Services.pudoReturn = new object();
+        InternationalOpenUMLFeV1.PackagesObj.Services.pudoReturn = new object();
     }
 
     public override string ToString()
@@ -59,11 +59,11 @@ public class GenerateInternationalPackageNumbersV1: ISoapBody, IAuthData {
 public class InternationalOpenUMLFeV1 { 
 
     [XmlElement(ElementName="packages", Namespace="")] 
-    public PackagesXml Packages { get; set; } = new PackagesXml();
+    public PackagesObjXml PackagesObj { get; set; } = new PackagesObjXml();
 
     public InternationalOpenUMLFeV1()
     {
-        Packages = new PackagesXml();
-        Packages.Sender.CountryCode = "DE";
+        PackagesObj = new PackagesObjXml();
+        PackagesObj.Sender.CountryCode = "DE";
     }
 }

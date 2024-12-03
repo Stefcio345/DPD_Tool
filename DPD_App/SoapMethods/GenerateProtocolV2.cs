@@ -31,12 +31,12 @@ public class GenerateProtocolV2: ISoapBody, IAuthData {
     {
         DpdServicesParamsV1 = new DpdServicesParamsV1();
         DpdServicesParamsV1.PickupAddress = new PickupAddress().MapAddressData(package.Sender);
-        if (DpdServicesParamsV1.Session.Packages.Parcels != null)
+        if (DpdServicesParamsV1.Session.PackagesObj.Parcels != null)
         {
-            DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
+            DpdServicesParamsV1.Session.PackagesObj.Parcels = new List<ParcelsObjXml>();
             for (var i = 0; i < waybills.Count; i++)
             {
-                DpdServicesParamsV1.Session.Packages.Parcels.Add(new ParcelsXml()
+                DpdServicesParamsV1.Session.PackagesObj.Parcels.Add(new ParcelsObjXml()
                 {
                     Waybill = waybills[i]
                 });

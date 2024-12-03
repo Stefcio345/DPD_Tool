@@ -10,62 +10,67 @@
 
     <!-- My Pudo API Key -->
     <MudItem xs="6">
-        <MudTextField Immediate="true" Value="key" T="string" Label="MyPudoAPI Key" Required="true" RequiredError="Key is required!" Variant="Variant.Outlined" TextChanged="OnKeyChanged" />
-        <!-- Filtering select -->
-        <MudForm>
-            <MudRadioGroup Value="SelectedFiltering" T="string" ValueChanged="ChangedFilter">
-                <MudRadio Value="@("Country")" Color="Color.Primary">Country</MudRadio>
-                <MudRadio Value="@("Point ID")" Color="Color.Primary">Point ID</MudRadio>
-                <MudRadio Value="@("Address")" Color="Color.Primary">Address</MudRadio>
-                <MudRadio Value="@("Geolocation")" Color="Color.Primary">Geolocation</MudRadio>
-            </MudRadioGroup>
-        </MudForm>
+        <MudPanel Margin="mb-4">
+            <MudTextField Immediate="true" Value="key" T="string" Label="MyPudoAPI Key" Required="true" RequiredError="Key is required!" Variant="Variant.Outlined" TextChanged="OnKeyChanged"/>
+        </MudPanel>
+        
+        <MudPanel>
+            <!-- Filtering select -->
+            <MudForm>
+                <MudRadioGroup Value="SelectedFiltering" T="string" ValueChanged="ChangedFilter">
+                    <MudRadio Value="@("Country")" Color="Color.Primary">Country</MudRadio>
+                    <MudRadio Value="@("Point ID")" Color="Color.Primary">Point ID</MudRadio>
+                    <MudRadio Value="@("Address")" Color="Color.Primary">Address</MudRadio>
+                    <MudRadio Value="@("Geolocation")" Color="Color.Primary">Geolocation</MudRadio>
+                </MudRadioGroup>
+            </MudForm>
+            
+            <MudStack>
+                @switch (SelectedFiltering)
+                {
+                    case "Country":
+                        <MudItem xs="6">
+                            <MudSelect T="Country" Value="SelectedCountry" Label="Select country" ValueChanged="OnCountrySelect" Variant="Variant.Outlined">
+                                @foreach (Country item in Globals.Countries)
+                                {
+                                    <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        break;
 
-        <MudStack>
-            @switch (SelectedFiltering)
-            {
-            case "Country":
-            <MudItem xs="6">
-                <MudSelect T="Country" Value="SelectedCountry" Label="Select country" ValueChanged="OnCountrySelect" Variant="Variant.Outlined">
-                    @foreach (Country item in Globals.Countries)
-                    {
-                    <MudSelectItem Value="@item">@item.Name</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            break;
+                    case "Point ID":
+                        <MudItem xs="6">
+                            <MudTextField Immediate="true" T="string" Value="@PointID" Label="Point ID" Variant="Variant.Outlined" ValueChanged="OnPointIDSelect"/>
+                        </MudItem>
+                        break;
 
-            case "Point ID":
-            <MudItem xs="6">
-                <MudTextField Immediate="true" T="string" Value="@PointID" Label="Point ID" Variant="Variant.Outlined" ValueChanged="OnPointIDSelect" />
-            </MudItem>
-            break;
+                    case "Address":
+                        <MudItem xs="6">
+                            <MudTextField Immediate="true" T="string" Value="City" Label="City" Variant="Variant.Outlined" ValueChanged="OnAddressSelectCity"/>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudTextField Immediate="true" T="string" Value="ZipCode" Label="Zip Code" Variant="Variant.Outlined" ValueChanged="OnAddressSelectZipCode"/>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudSlider Immediate="true" T="int" Size="Size.Large" Value="MaxPudoNumberValue" Min="1" Max="25" Step="1" Color="Color.Primary" ValueChanged="MaxPudoNumberValueChanged">Value: @MaxPudoNumberValue.ToString()</MudSlider>
+                        </MudItem>
+                        break;
 
-            case "Address":
-            <MudItem xs="6">
-                <MudTextField Immediate="true" T="string" Value="City" Label="City" Variant="Variant.Outlined" ValueChanged="OnAddressSelectCity"/>
-            </MudItem>
-            <MudItem xs="6">
-                <MudTextField Immediate="true" T="string" Value="ZipCode" Label="Zip Code" Variant="Variant.Outlined" ValueChanged="OnAddressSelectZipCode"/>
-            </MudItem>
-            <MudItem xs="6">
-                <MudSlider Immediate="true" T="int" Size="Size.Large" Value="MaxPudoNumberValue" Min="1" Max="25" Step="1" Color="Color.Primary" ValueChanged="MaxPudoNumberValueChanged">Value: @MaxPudoNumberValue.ToString()</MudSlider>
-            </MudItem>
-            break;
-
-            case "Geolocation":
-            <MudItem xs="6">
-                <MudTextField Immediate="true" T="string" Value="Latitude" Label="Latitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLatitude"/>
-            </MudItem>
-            <MudItem xs="6">
-                <MudTextField Immediate="true" T="string" Value="Longitude" Label="Longitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLongitude"/>
-            </MudItem>
-            <MudItem xs="6">
-                <MudSlider Immediate="true" T="decimal" Size="Size.Large" Value="Distance" Min="100" Max="50000" Color="Color.Primary" ValueChanged="OnGeolocationSelectDistance">Value: @Distance.ToString()</MudSlider>
-            </MudItem>
-            break;
-            }
-        </MudStack>
+                    case "Geolocation":
+                        <MudItem xs="6">
+                            <MudTextField Immediate="true" T="string" Value="Latitude" Label="Latitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLatitude"/>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudTextField Immediate="true" T="string" Value="Longitude" Label="Longitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLongitude"/>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudSlider Immediate="true" T="decimal" Size="Size.Large" Value="Distance" Min="100" Max="50000" Color="Color.Primary" ValueChanged="OnGeolocationSelectDistance">Value: @Distance.ToString()</MudSlider>
+                        </MudItem>
+                        break;
+                }
+            </MudStack>
+        </MudPanel>
     </MudItem>
 
     <!-- Filters -->

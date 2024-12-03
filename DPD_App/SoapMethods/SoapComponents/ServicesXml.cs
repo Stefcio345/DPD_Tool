@@ -4,168 +4,168 @@ namespace DPD_App;
 
 public class ServicesXml
 {
-    public DeclaredValue? declaredValue { get; set; }
-    public Cod? cod { get; set; }
-    public Duty? duty { get; set; }
-    public DpdPickup? dpdPickup { get; set; }
-    public SelfCol? selfCol { get; set; }
-    public DpdFood? dpdFood { get; set; }
-    public Guarantee? guarantee { get; set; }
+    public DeclaredValueXml? DeclaredValue { get; set; }
+    public CodXml? Cod { get; set; }
+    public DutyXml? Duty { get; set; }
+    public DpdPickupXml? DpdPickup { get; set; }
+    public SelfColXml? SelfCol { get; set; }
+    public DpdFoodXml? DpdFood { get; set; }
+    public GuaranteeXml? Guarantee { get; set; }
 
-    public object? cud { get; set; }
-    public object? rod { get; set; }
-    public object? inPers { get; set; }
-    public object? privPers { get; set; }
-    public object? dpdExpress { get; set; }
-    public object? pallet { get; set; }
-    public object? dox { get; set; }
-    public object? dpdLQ { get; set; }
-    public object? tires { get; set; }
-    public object? tiresExport { get; set; }
-    public object? digitalLabel { get; set; }
-    public object? pudoToSend { get; set; }
-    public object? carryIn { get; set; }
-    public object? pudoReturn { get; set; }
+    public object? Cud { get; set; }
+    public object? Rod { get; set; }
+    public object? InPers { get; set; }
+    public object? PrivPers { get; set; }
+    public object? DpdExpress { get; set; }
+    public object? Pallet { get; set; }
+    public object? Dox { get; set; }
+    public object? DpdLQ { get; set; }
+    public object? Tires { get; set; }
+    public object? TiresExport { get; set; }
+    public object? DigitalLabel { get; set; }
+    public object? PudoToSend { get; set; }
+    public object? CarryIn { get; set; }
+    public object? PudoReturn { get; set; }
     
     public ServicesXml MapServices(Services services)
     {
         //Bool services
-        if (services.cud) cud = new object();
-        if (services.rod) rod = new object();
-        if (services.inPers) inPers = new object();
-        if (services.privPers) privPers = new object();
-        if (services.dpdExpress) dpdExpress = new object();
-        if (services.pallet) pallet = new object();
-        if (services.dox) dox = new object();
-        if (services.dpdLQ) dpdLQ = new object();
-        if (services.tires) tires = new object();
-        if (services.tiresExport) tiresExport = new object();
-        if (services.digitalLabel) digitalLabel = new object();
-        if (services.pudoToSend) pudoToSend = new object();
-        if (services.carryIn) carryIn = new object();
-        if (services.pudoReturn) pudoReturn = new object();
+        if (services.cud) Cud = new object();
+        if (services.rod) Rod = new object();
+        if (services.inPers) InPers = new object();
+        if (services.privPers) PrivPers = new object();
+        if (services.dpdExpress) DpdExpress = new object();
+        if (services.pallet) Pallet = new object();
+        if (services.dox) Dox = new object();
+        if (services.dpdLQ) DpdLQ = new object();
+        if (services.tires) Tires = new object();
+        if (services.tiresExport) TiresExport = new object();
+        if (services.digitalLabel) DigitalLabel = new object();
+        if (services.pudoToSend) PudoToSend = new object();
+        if (services.carryIn) CarryIn = new object();
+        if (services.pudoReturn) PudoReturn = new object();
         
         //Advanced services
-        if (services.declaredValue) declaredValue = new DeclaredValue(services.DeclaredValue.amount, services.DeclaredValue.currency.IsoCodeA3);
-        if (services.cod) cod = new Cod(services.Cod.amount, services.Cod.currency.IsoCodeA3);
-        if (services.dpdPickup) dpdPickup = new DpdPickup(services.DpdPickup.pudo);
-        if (services.duty) duty = new Duty(services.Duty.amount, services.Duty.currency.IsoCodeA3);
-        if (services.selfCol) selfCol = new SelfCol(services.SelfCol.receiver);
-        if (services.dpdFood) dpdFood = new DpdFood(services.DpdFood.limitDate);
-        if (services.guarantee) guarantee = new Guarantee(services.Guarantee.type, services.Guarantee.value);
+        if (services.declaredValue) DeclaredValue = new DeclaredValueXml(services.DeclaredValue.amount, services.DeclaredValue.currency.IsoCodeA3);
+        if (services.cod) Cod = new CodXml(services.Cod.amount, services.Cod.currency.IsoCodeA3);
+        if (services.dpdPickup) DpdPickup = new DpdPickupXml(services.DpdPickup.pudo);
+        if (services.duty) Duty = new DutyXml(services.Duty.amount, services.Duty.currency.IsoCodeA3);
+        if (services.selfCol) SelfCol = new SelfColXml(services.SelfCol.receiver);
+        if (services.dpdFood) DpdFood = new DpdFoodXml(services.DpdFood.limitDate);
+        if (services.guarantee) Guarantee = new GuaranteeXml(services.Guarantee.type, services.Guarantee.value);
         
         return this;
     }
 
 }
 
-public class DeclaredValue
+public class DeclaredValueXml
 {
-    public decimal amount { get; set; }
-    public string currency { get; set; }
+    public decimal Amount { get; set; }
+    public string Currency { get; set; }
 
-    public DeclaredValue()
+    public DeclaredValueXml()
     {
-        this.amount = 0;
-        this.currency = "PLN";
+        this.Amount = 0;
+        this.Currency = "PLN";
     }
-    public DeclaredValue(decimal amount, string currency)
+    public DeclaredValueXml(decimal amount, string currency)
     {
-        this.amount = amount;
-        this.currency = currency;
+        this.Amount = amount;
+        this.Currency = currency;
     }
 }
 
-public class Cod
+public class CodXml
 {
-    public decimal amount { get; set; }
-    public string currency { get; set; }
+    public decimal Amount { get; set; }
+    public string Currency { get; set; }
     
-    public Cod()
+    public CodXml()
     {
-        this.amount = 0;
-        this.currency = "PLN";
+        this.Amount = 0;
+        this.Currency = "PLN";
     }
-    public Cod(decimal amount, string currency)
+    public CodXml(decimal amount, string currency)
     {
-        this.amount = amount;
-        this.currency = currency;
+        this.Amount = amount;
+        this.Currency = currency;
     }
 }
 
-public class DpdPickup
+public class DpdPickupXml
 {
-    public string pudo { get; set; }
+    public string Pudo { get; set; }
 
-    public DpdPickup()
+    public DpdPickupXml()
     {
-        this.pudo = "PL16738";
+        this.Pudo = "PL16738";
     }
-    public DpdPickup(string pudo)
+    public DpdPickupXml(string pudo)
     {
-        this.pudo = pudo;
+        this.Pudo = pudo;
     }
 }
 
-public class DpdFood
+public class DpdFoodXml
 {
     //TODO Datetime ord strink
-    public string limitDate { get; set; }
+    public string LimitDate { get; set; }
 
-    public DpdFood()
+    public DpdFoodXml()
     {
-        this.limitDate = DateTime.Now.ToString("yyyy-MM-dd");
+        this.LimitDate = DateTime.Now.ToString("yyyy-MM-dd");
     }
-    public DpdFood(DateTime limitDate)
+    public DpdFoodXml(DateTime limitDate)
     {
-        this.limitDate = limitDate.ToString("yyyy-MM-dd");
-    }
-}
-
-public class Guarantee
-{
-    public string? type { get; set; }
-    public string? value { get; set; }
-
-    public Guarantee()
-    {
-        this.type = null;
-        this.value = null;
-    }
-    public Guarantee(string type, string? value)
-    {
-        this.type = type;
-        this.value = value;
+        this.LimitDate = limitDate.ToString("yyyy-MM-dd");
     }
 }
 
-public class Duty
+public class GuaranteeXml
 {
-    public decimal amount;
-    public string currency;
+    public string? Type { get; set; }
+    public string? Value { get; set; }
+
+    public GuaranteeXml()
+    {
+        this.Type = null;
+        this.Value = null;
+    }
+    public GuaranteeXml(string type, string? value)
+    {
+        this.Type = type;
+        this.Value = value;
+    }
+}
+
+public class DutyXml
+{
+    public decimal Amount;
+    public string Currency;
     
-    public Duty()
+    public DutyXml()
     {
-        this.amount = 0;
-        this.currency = "PLN";
+        this.Amount = 0;
+        this.Currency = "PLN";
     }
-    public Duty(decimal amount, string? currency)
+    public DutyXml(decimal amount, string? currency)
     {
-        this.amount = amount;
-        this.currency = currency;
+        this.Amount = amount;
+        this.Currency = currency;
     }
 }
 
-public class SelfCol
+public class SelfColXml
 {
-    public string receiver;
+    public string Receiver;
 
-    public SelfCol()
+    public SelfColXml()
     {
-        this.receiver = "PRIV";
+        this.Receiver = "PRIV";
     }
-    public SelfCol(string receiver)
+    public SelfColXml(string receiver)
     {
-        this.receiver = receiver;
+        this.Receiver = receiver;
     }
 }

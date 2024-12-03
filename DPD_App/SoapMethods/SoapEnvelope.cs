@@ -58,6 +58,10 @@ public class Body
     [XmlElement(ElementName="packagesPickupCallV4", Namespace="http://dpdservices.dpd.com.pl/")] 
     public PackagesPickupCallV4? PackagesPickupCallV4 { get; set; } 
     
+    //APP Services
+    [XmlElement(ElementName="importPackagesXV1", Namespace="http://cr.dpdappservices.dpd.com.pl/")] 
+    public ImportPackagesXV1 ImportPackagesXV1 { get; set; } 
+    
     [XmlElement(ElementName="Fault")] 
     public Fault? Fault { get; set; } 
 }

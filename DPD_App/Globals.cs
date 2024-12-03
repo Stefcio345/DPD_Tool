@@ -216,7 +216,7 @@ public class SoapApiMethods
         new SoapApiMethod( "MarkEventsAsProcesses", SOAP_API_METHODS.MarkEventsAsProcesses, API_SYSTEM.INFO_SERVICES),
         new SoapApiMethod( "GetEventsForWaybill", SOAP_API_METHODS.GetEventsForWaybill, API_SYSTEM.INFO_SERVICES),
         
-        new SoapApiMethod( "ImportPackages", SOAP_API_METHODS.ImportPackagesCRIN, API_SYSTEM.APP_SERVICES),
+        new SoapApiMethod( "ImportPackages", SOAP_API_METHODS.ImportPackages, API_SYSTEM.APP_SERVICES, ["CR-IN", "CR-OUT"]),
         
         new SoapApiMethod("Empty", SOAP_API_METHODS.EMPTY, API_SYSTEM.EMPTY)
     };
@@ -244,8 +244,7 @@ public enum SOAP_API_METHODS
     MarkEventsAsProcesses,
     GetEventsForWaybill,
     
-    ImportPackagesCRIN,
-    ImportPackagesCROUT,
+    ImportPackages,
     
     EMPTY
 }

@@ -45,7 +45,7 @@ public class ParcelsAppend
     public PackagesearchCriteria PackagesearchCriteria { get; set; } = new PackagesearchCriteria();
 
     [XmlElement(ElementName = "parcels", Namespace = "")]
-    public List<ParcelsXml> Parcels { get; set; } = [new ParcelsXml()];
+    public List<ParcelsObjXml> Parcels { get; set; } = [new ParcelsObjXml()];
 }
 
 [XmlRoot(ElementName="packagesearchCriteria", Namespace="")]

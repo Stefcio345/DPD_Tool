@@ -10,16 +10,21 @@
 </Style>
 
 <PageTitle>Compare Text</PageTitle>
+
 <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mb-4">
     <h1 class="pa-1 pb-3">Compare Text</h1>
-    <MudStack Row="true" Spacing="5">
-        <MudIconButton Class="mb-2 px-2" Icon="@Icons.Material.Filled.SwapHoriz" Color="Color.Primary" OnClick="SwapText" Variant="Variant.Filled" Size="Size.Large"/>
-        <MudIconButton Disabled="@_refreshing" Class="mb-2 px-2" Icon="@Icons.Material.Filled.Refresh" Color="Color.Error" OnClick="RefreshData" Variant="Variant.Filled" Size="Size.Large"/>
-    </MudStack>
+    
+    <MudPanel>
+        <MudStack Row="true" Spacing="5">
+            <MudIconButton Class="px-2" Icon="@Icons.Material.Filled.SwapHoriz" Color="Color.Primary" OnClick="SwapText" Variant="Variant.Filled" Size="Size.Large"/>
+            <MudIconButton Disabled="@_refreshing" Class="px-2" Icon="@Icons.Material.Filled.Refresh" Color="Color.Error" OnClick="RefreshData" Variant="Variant.Filled" Size="Size.Large"/>
+        </MudStack>
+    </MudPanel>
 </MudStack>
 
-<StandaloneDiffEditor @ref="_diffEditor" CssClass="my-comparer-class" Id="sample-diff-editor-123" ConstructionOptions="DiffEditorConstructionOptions" OnDidInit="EditorOnDidInit"/>
-
+<MudPanel>
+    <StandaloneDiffEditor @ref="_diffEditor" CssClass="my-comparer-class" Id="sample-diff-editor-123" ConstructionOptions="DiffEditorConstructionOptions" OnDidInit="EditorOnDidInit"/>
+</MudPanel>
 @code {
     private StandaloneDiffEditor _diffEditor = null!;
     private bool _refreshing;

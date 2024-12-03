@@ -71,21 +71,21 @@ public class PackageService
         newPackage.PkgNumsGenerationPolicyV1 = "ALL_OR_NOTHING";
         
         //Set Package Data
-        newPackage.OpenUMLFeV11.Packages.Parcels = new List<ParcelsXml>();
+        newPackage.OpenUMLFeV11.PackagesObj.Parcels = new List<ParcelsObjXml>();
         foreach (var parcel in package.Parcels)
         {
-            newPackage.OpenUMLFeV11.Packages.Parcels.Add(new ParcelsXml().MapParcel(parcel));
+            newPackage.OpenUMLFeV11.PackagesObj.Parcels.Add(new ParcelsObjXml().MapParcel(parcel));
         }
-        newPackage.OpenUMLFeV11.Packages.Receiver = new ReceiverXml().MapAddressData(package.Receiver);
-        newPackage.OpenUMLFeV11.Packages.Sender = new SenderXml().MapAddressData(package.Sender);
+        newPackage.OpenUMLFeV11.PackagesObj.Receiver = new ReceiverObjXml().MapAddressData(package.Receiver);
+        newPackage.OpenUMLFeV11.PackagesObj.Sender = new SenderObjXml().MapAddressData(package.Sender);
         //Map services
-        newPackage.OpenUMLFeV11.Packages.Services = new ServicesXml().MapServices(package.Services);
+        newPackage.OpenUMLFeV11.PackagesObj.Services = new ServicesObjXml().MapServices(package.Services);
         
-        newPackage.OpenUMLFeV11.Packages.Ref1 = package.Ref1;
-        newPackage.OpenUMLFeV11.Packages.Ref2 = package.Ref2;
-        newPackage.OpenUMLFeV11.Packages.Ref3 = package.Ref3;
-        newPackage.OpenUMLFeV11.Packages.PayerType = package.PayerType;
-        newPackage.OpenUMLFeV11.Packages.ThirdPartyFID = package.ThirdPartyFID;
+        newPackage.OpenUMLFeV11.PackagesObj.Ref1 = package.Ref1;
+        newPackage.OpenUMLFeV11.PackagesObj.Ref2 = package.Ref2;
+        newPackage.OpenUMLFeV11.PackagesObj.Ref3 = package.Ref3;
+        newPackage.OpenUMLFeV11.PackagesObj.PayerType = package.PayerType;
+        newPackage.OpenUMLFeV11.PackagesObj.ThirdPartyFID = package.ThirdPartyFID;
 
         return newPackage;
     }

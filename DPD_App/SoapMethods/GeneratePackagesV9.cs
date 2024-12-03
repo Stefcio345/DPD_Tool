@@ -6,7 +6,7 @@ namespace DPD_App;
 public class OpenUMLFeV11
 {
 	[XmlElement(ElementName = "packages", Namespace = "")]
-	public PackagesXml Packages { get; set; } = new PackagesXml();
+	public PackagesObjXml PackagesObj { get; set; } = new PackagesObjXml();
 }
 
 [XmlRoot(ElementName="generatePackagesNumbersV9", Namespace="http://dpdservices.dpd.com.pl/")]

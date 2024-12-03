@@ -1,10 +1,5 @@
-﻿@using System.Collections.Specialized
-@using System.ComponentModel.Design
-@using System.Xml.Serialization
-@using DPD_App.Components.Pages
+﻿@using System.Xml.Serialization
 @using DPD_App.Models
-@using Microsoft.Extensions.Logging.Console
-@using MouseEvent = MudBlazor.MouseEvent
 @inject ISnackbar Snackbar
 
 <Style>
@@ -40,7 +35,7 @@
                     {
                         <MudButton Variant="Variant.Filled" Size="Size.Large" Color="Color.Error" OnClick="() => { _open = !_open;}">Select API Method</MudButton>
                         <MudPopover Open="_open" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
-                            <ChooseSoapMethod Data="Data" Parent="this" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
+                            <ChooseSoapMethod Data="Data" Parent="this" Hover="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
                         </MudPopover>
                     }
                     else
@@ -133,7 +128,8 @@
     async Task SendRequest()
     {
         _processing = true;
-        var response = await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.GetAddress(CurrentMethod.System), Request);
+        //Encode Base64 If needed
+        var response = await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.GetAddress(CurrentMethod.System), EncodeRequest());
         
         //Deserialize repsonse
         Envelope result;
@@ -177,6 +173,7 @@
             DocumentData = result.Body.GenerateReturnLabelV1Response.Return.DocumentData;
         }
 
+        response = LoggingService.DecodeBase64InString(response, "return");
         Response = XMLService.Prettify(response);
         _responseEditor?.SetValue(LoggingService.ShortenDocumentData(Response));
         _processing = false;
@@ -223,11 +220,11 @@
                 var spedLabelsV4 = new GenerateSpedLabelsV4();
                 spedLabelsV4.DpdServicesParamsV1.Session.SessionId = SessionData.SessionId;
                 spedLabelsV4.DpdServicesParamsV1.Session.SessionType = SessionData.SessionType.ToString();
-                spedLabelsV4.DpdServicesParamsV1.Session.Packages.PackageId = SessionData.Packages.PackageId;
-                if (SessionData.SessionId is not null) spedLabelsV4.DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
+                spedLabelsV4.DpdServicesParamsV1.Session.PackagesObj.PackageId = SessionData.Packages.PackageId;
+                if (SessionData.SessionId is not null) spedLabelsV4.DpdServicesParamsV1.Session.PackagesObj.Parcels = new List<ParcelsObjXml>();
                 foreach (var parcelData in SessionData.Packages.Parcels)
                 {
-                    spedLabelsV4.DpdServicesParamsV1.Session.Packages.Parcels.Add(new ParcelsXml(CallTypes.LABEL, parcelData.Waybill)); 
+                    spedLabelsV4.DpdServicesParamsV1.Session.PackagesObj.Parcels.Add(new ParcelsObjXml(CallTypes.LABEL, parcelData.Waybill)); 
                 }
                 spedLabelsV4.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = spedLabelsV4.CreateSoapEnvelope();
@@ -236,11 +233,11 @@
                 var generateProtocolV2 = new GenerateProtocolV2();
                 generateProtocolV2.DpdServicesParamsV1.Session.SessionId = SessionData.SessionId;
                 generateProtocolV2.DpdServicesParamsV1.Session.SessionType = SessionData.SessionType.ToString();
-                generateProtocolV2.DpdServicesParamsV1.Session.Packages.PackageId = SessionData.Packages.PackageId;
-                if (SessionData is not null) generateProtocolV2.DpdServicesParamsV1.Session.Packages.Parcels = new List<ParcelsXml>();
+                generateProtocolV2.DpdServicesParamsV1.Session.PackagesObj.PackageId = SessionData.Packages.PackageId;
+                if (SessionData is not null) generateProtocolV2.DpdServicesParamsV1.Session.PackagesObj.Parcels = new List<ParcelsObjXml>();
                 foreach (var parcelData in SessionData.Packages.Parcels)
                 {
-                    generateProtocolV2.DpdServicesParamsV1.Session.Packages.Parcels.Add(new ParcelsXml(CallTypes.LABEL, parcelData.Waybill)); 
+                    generateProtocolV2.DpdServicesParamsV1.Session.PackagesObj.Parcels.Add(new ParcelsObjXml(CallTypes.LABEL, parcelData.Waybill)); 
                 }
                 generateProtocolV2.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
                 Request = generateProtocolV2.CreateSoapEnvelope();
@@ -271,33 +268,51 @@
                 Request = generateDomesticReturnLabel.CreateSoapEnvelope();
                 break;
             case SOAP_API_METHODS.GenerateReturnLabel:
-                var GenerateReturnLabelV1 = new GenerateReturnLabelV1();
-                if (SessionData.Packages.Parcels.Count > 0) GenerateReturnLabelV1.ReturnedWaybillsV1.Waybill = new List<string>();
+                var generateReturnLabelV1 = new GenerateReturnLabelV1();
+                if (SessionData.Packages.Parcels.Count > 0) generateReturnLabelV1.ReturnedWaybillsV1.Waybill = new List<string>();
                 foreach (var parcelData in SessionData.Packages.Parcels)
                 {
-                    GenerateReturnLabelV1.ReturnedWaybillsV1.Waybill.Add(parcelData.Waybill); 
+                    generateReturnLabelV1.ReturnedWaybillsV1.Waybill.Add(parcelData.Waybill); 
                 }
-                GenerateReturnLabelV1.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
-                Request = GenerateReturnLabelV1.CreateSoapEnvelope();
+                generateReturnLabelV1.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
+                Request = generateReturnLabelV1.CreateSoapEnvelope();
                 break;
             case SOAP_API_METHODS.AppendParcelsToPackage:
-                var AppendParcelsToPackageV2 = new AppendParcelsToPackageV2();
+                var appendParcelsToPackageV2 = new AppendParcelsToPackageV2();
                 //If package was generated add to this method
-                if (SessionData.Packages.Parcels.Count > 0) AppendParcelsToPackageV2.ParcelsAppend.PackagesearchCriteria.Waybill = SessionData.Packages.Parcels.First().Waybill;
-                AppendParcelsToPackageV2.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
-                Request = AppendParcelsToPackageV2.CreateSoapEnvelope();
+                if (SessionData.Packages.Parcels.Count > 0) appendParcelsToPackageV2.ParcelsAppend.PackagesearchCriteria.Waybill = SessionData.Packages.Parcels.First().Waybill;
+                appendParcelsToPackageV2.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
+                Request = appendParcelsToPackageV2.CreateSoapEnvelope();
                 break;
             case SOAP_API_METHODS.PackagesPickupCall:
-                PackagesPickupCallV4 PackagesPickupCallV4 = CurrentMethod.SelectedVariant switch
+                var packagesPickupCallV4 = CurrentMethod.SelectedVariant switch
                 {
                     "UPDATE" => new PackagesPickupCallV4(PICKUP_OPERATION_TYPES.UPDATE),
                     "CANCEL" => new PackagesPickupCallV4(PICKUP_OPERATION_TYPES.CANCEL),
                     "INSERT" => new PackagesPickupCallV4(PICKUP_OPERATION_TYPES.INSERT),
                     _ => new PackagesPickupCallV4(PICKUP_OPERATION_TYPES.INSERT)
                 };
-                PackagesPickupCallV4.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
-                Request = PackagesPickupCallV4.CreateSoapEnvelope();
+                packagesPickupCallV4.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
+                Request = packagesPickupCallV4.CreateSoapEnvelope();
                 break;
+            case SOAP_API_METHODS.GetEventsForCustomer:
+            case SOAP_API_METHODS.MarkEventsAsProcesses:
+            case SOAP_API_METHODS.GetEventsForWaybill:
+            case SOAP_API_METHODS.ImportPackages:
+                var importPackagesCRIN = new ImportPackagesXV1();
+                switch (CurrentMethod.SelectedVariant)
+                {
+                    case "CR-IN":
+                        break;
+                    case "CR-OUT":
+                        importPackagesCRIN.OpenUMLFXV2.Packages.Package[0].Sender.CountryCode = "CZ";
+                        importPackagesCRIN.OpenUMLFXV2.Packages.Package[0].Sender.PostalCode = "10000";
+                        break;
+                }
+                importPackagesCRIN.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.MasterFid);
+                Request = importPackagesCRIN.CreateDecodedSoapEnvelope();
+                break;
+            case SOAP_API_METHODS.EMPTY:
             default:
                 Request = "Method currently not implemented";
                 break; 
@@ -426,13 +441,18 @@
         
         if (requestDeserialized.Body.GeneratePackagesNumbersV9 is not null)
         {
-            return requestDeserialized.Body.GeneratePackagesNumbersV9.OpenUMLFeV11.Packages.Receiver.CountryCode != requestDeserialized.Body.GeneratePackagesNumbersV9.OpenUMLFeV11.Packages.Sender.CountryCode ? SESSION_TYPE.INTERNATIONAL : SESSION_TYPE.DOMESTIC;
+            return requestDeserialized.Body.GeneratePackagesNumbersV9.OpenUMLFeV11.PackagesObj.Receiver.CountryCode != requestDeserialized.Body.GeneratePackagesNumbersV9.OpenUMLFeV11.PackagesObj.Sender.CountryCode ? SESSION_TYPE.INTERNATIONAL : SESSION_TYPE.DOMESTIC;
         }
         else if (requestDeserialized.Body.GenerateInternationalPackageNumbersV1 is not null)
         {
-            return requestDeserialized.Body.GenerateInternationalPackageNumbersV1.InternationalOpenUMLFeV1.Packages.Receiver.CountryCode != requestDeserialized.Body.GenerateInternationalPackageNumbersV1.InternationalOpenUMLFeV1.Packages.Sender.CountryCode ? SESSION_TYPE.INTERNATIONAL : SESSION_TYPE.DOMESTIC;
+            return requestDeserialized.Body.GenerateInternationalPackageNumbersV1.InternationalOpenUMLFeV1.PackagesObj.Receiver.CountryCode != requestDeserialized.Body.GenerateInternationalPackageNumbersV1.InternationalOpenUMLFeV1.PackagesObj.Sender.CountryCode ? SESSION_TYPE.INTERNATIONAL : SESSION_TYPE.DOMESTIC;
         }
         return SESSION_TYPE.DOMESTIC;
+    }
+    
+    private string EncodeRequest()
+    {
+        return LoggingService.EncodeBase64InString(LoggingService.RemoveNewLinesAndSpaces(Request), "openUMLFXV2");
     }
 
 }

@@ -8,7 +8,7 @@ public class GenerateDomesticReturnLabelV1: ISoapBody, IAuthData
     public ReturnedWaybillsV1 ReturnedWaybillsV1 { get; set; } = new ReturnedWaybillsV1();
 
     [XmlElement(ElementName = "receiver", Namespace = "")]
-    public ReceiverXml Receiver { get; set; } = new ReceiverXml();
+    public ReceiverObjXml ReceiverObj { get; set; } = new ReceiverObjXml();
 
     [XmlElement(ElementName = "outputDocFormatV1", Namespace = "")]
     public string OutputDocFormatV1 { get; set; } = "PDF";

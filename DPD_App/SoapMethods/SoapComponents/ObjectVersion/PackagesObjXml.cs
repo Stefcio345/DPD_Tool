@@ -3,16 +3,16 @@ using System.Xml.Serialization;
 using DPD_App;
 
 [XmlRoot(ElementName="packages", Namespace="")]
-public class PackagesXml { 
+public class PackagesObjXml { 
     
     [XmlElement(ElementName="Package")] 
-    public PackageXml? Package { get; set; }
+    public PackageObjXml? Package { get; set; }
     
     [XmlElement(ElementName="packageId")] 
     public string? PackageId { get; set; }
     
     [XmlElement("parcels")]
-    public List<ParcelsXml>? Parcels { get; set; }
+    public List<ParcelsObjXml>? Parcels { get; set; }
 
     [XmlElement(ElementName = "payerType", Namespace = "")]
     public string? PayerType { get; set; }
@@ -21,10 +21,10 @@ public class PackagesXml {
     public string? ThirdPartyFID { get; set; }
 
     [XmlElement(ElementName = "receiver", Namespace = "")]
-    public ReceiverXml? Receiver { get; set; }
+    public ReceiverObjXml? Receiver { get; set; }
 
     [XmlElement(ElementName = "sender", Namespace = "")]
-    public SenderXml? Sender { get; set; }
+    public SenderObjXml? Sender { get; set; }
 
     [XmlElement(ElementName = "ref1", Namespace = "")]
     public string? Ref1 { get; set; }
@@ -36,9 +36,9 @@ public class PackagesXml {
     public string? Ref3 { get; set; }
 
     [XmlElement(ElementName = "services", Namespace = "")]
-    public ServicesXml? Services { get; set; }
+    public ServicesObjXml? Services { get; set; }
     
-    public PackagesXml()
+    public PackagesObjXml()
     {
         Package = null;
         PayerType = "THIRD_PARTY";
@@ -46,13 +46,13 @@ public class PackagesXml {
         Ref1 = "ref1_abc";
         Ref2 = "ref2_def";
         Ref3 = "ref3_ghi";
-        Sender = new SenderXml();
-        Receiver = new ReceiverXml();
-        Services = new ServicesXml();
-        Parcels = [new ParcelsXml()];
+        Sender = new SenderObjXml();
+        Receiver = new ReceiverObjXml();
+        Services = new ServicesObjXml();
+        Parcels = [new ParcelsObjXml()];
     }
 
-    public PackagesXml(CallTypes type)
+    public PackagesObjXml(CallTypes type)
     {
         switch (type)
         {
@@ -66,11 +66,27 @@ public class PackagesXml {
                 Sender = null;
                 Receiver = null;
                 Services = null;
-                Parcels = [new ParcelsXml(CallTypes.LABEL, "XXXXXXXXXXXXXU")];
+                Parcels = [new ParcelsObjXml(CallTypes.LABEL, "XXXXXXXXXXXXXU")];
                 break;
             default:
                 break;
         }
         
     }
+}
+
+[XmlRoot(ElementName="Package")]
+public class PackageObjXml { 
+
+    [XmlElement(ElementName="Status")] 
+    public string? Status { get; set; } 
+    
+    [XmlElement(ElementName="ValidationDetails", Namespace="")] 
+    public ValidationDetails? ValidationDetails { get; set; } 
+
+    [XmlElement(ElementName="PackageId")] 
+    public string PackageId { get; set; } 
+
+    [XmlElement(ElementName="Parcels")] 
+    public ParcelsObjXml? Parcels { get; set; } 
 }

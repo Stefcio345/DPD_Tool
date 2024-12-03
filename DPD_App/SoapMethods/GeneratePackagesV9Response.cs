@@ -12,14 +12,14 @@ public class Return {
     public string? SessionId { get; set; } 
 
     [XmlElement(ElementName="Packages", Namespace="")] 
-    public PackagesXml? Packages { get; set; } 
+    public PackagesObjXml? Packages { get; set; } 
     
     [XmlElement(ElementName="documentData", Namespace="")] 
     public string? DocumentData { get; set; } 
     
     //Needed for append parcels to package
     [XmlElement(ElementName="parcels", Namespace="")] 
-    public List<ParcelXml>? Parcels { get; set; } 
+    public List<ParcelObjXml>? Parcels { get; set; } 
 
     [XmlElement(ElementName="session", Namespace="")] 
     public Session? Session { get; set; } 
