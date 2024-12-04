@@ -5,8 +5,8 @@
 
 <Style>
     .resize-handle {
-        width: 5px;
-        background-color: #222222;
+        width: 10px;
+        background-color: #00000000;
         position: relative;
         cursor: col-resize;
     }
@@ -45,10 +45,10 @@
     </MudItem>
 </MudGrid>
 
-<MudPaper Class="pa-0" Elevation="3" Square="true" Id="MainContainer">
+<div Id="MainContainer">
     <MudStack Row="true" Class="pa-0" Spacing="0">
         <MudPaper Class="py-0" Width="@(size + "%")">
-            <MudPaper Class="pa-4" Square="true" Height="100%">
+            <MudPaper Class="pa-4" Elevation="3" Height="100%">
                 <MudText Typo="Typo.h4" Class="pa-1">Tabs</MudText>
                 <MudStack>
                     @foreach (var tab in Tabs)
@@ -67,12 +67,12 @@
                             </MudStack>
                         </MudButton>
                     }
-                    <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Small" OnClick="@(() => { AddNewTab(); })">Add new tab</MudButton>
+                    <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Class="py-2" Color="Color.Success" Size="Size.Small" OnClick="@(() => { AddNewTab(); })">Add new tab</MudButton>
                 </MudStack>
             </MudPaper>
         </MudPaper>
-        <MudPaper Id="ResizeHandle" class="resize-handle" />
-        <MudPaper Elevation="0" Class="pa-0" Width="@(100 - size + "%")">
+        <div Id="ResizeHandle" class="resize-handle"></div>
+        <MudPaper Elevation="0"  Class="pa-0 mud-background" Width="@(100 - size + "%")">
             @if (ActiveTab is not null)
             {
                 <CascadingValue Value="CurrentProfile">
@@ -89,7 +89,7 @@
             }
         </MudPaper>
     </MudStack>
-</MudPaper>
+</div>
 
 @code {
     

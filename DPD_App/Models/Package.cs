@@ -55,18 +55,9 @@ public class Package
        await PackageService.GenerateWaybills(this, profile);
     }
     
-    public async Task GenerateWaybills(string login, string password, string masterFid, WsdlAddress address)
-    {
-        await PackageService.GenerateWaybills(this, new Profile("", login, password, masterFid, "", address));
-    }
-    
     public async Task GenerateProtocol(Profile profile)
     {
         await PackageService.GenerateProtocol(this, profile);
     }
     
-    public async Task GenerateProtocol(string login, string password, string masterFid, WsdlAddress address)
-    {
-        await PackageService.GenerateProtocol(this, new Profile("", login, password, masterFid, "", address));
-    }
 }

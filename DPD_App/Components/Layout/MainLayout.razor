@@ -6,7 +6,7 @@
 @inject AppState AppState
 
 <MudPopoverProvider/>
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" DefaultScrollbar="false" Theme="_themeManager.Theme"/>
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" DefaultScrollbar="false" Theme="new StandardTheme()"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
@@ -79,7 +79,21 @@
         if (firstRender)
         {
             _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-            BlazorMonaco.Editor.Global.SetTheme(jsRuntime, _isDarkMode ? "vs-dark" : "vs");
+            
+            //TODO Fix This
+            BlazorMonaco.Editor.Global.DefineTheme(jsRuntime, "my_theme", new StandaloneThemeData
+                {
+                    Inherit = true,
+                    Base = "vs",
+                    Colors = new Dictionary<string, string>
+                    {
+                        { "background", "#594ae2" },
+                        { "foreground", "#594ae2" }
+                    }
+                }
+            );
+            
+            BlazorMonaco.Editor.Global.SetTheme(jsRuntime, _isDarkMode ? "vs-dark" : "my_theme");
             StateHasChanged();
         }
 
@@ -127,34 +141,8 @@
     {
         _isDarkMode = !_isDarkMode;
         //Set Editor theme
-        BlazorMonaco.Editor.Global.SetTheme(jsRuntime, _isDarkMode ? "vs-dark" : "vs");
+        BlazorMonaco.Editor.Global.SetTheme(jsRuntime, _isDarkMode ? "vs-dark" : "my_theme");
         StateHasChanged();
     }
-    
-    MudTheme DefaultTheme = new MudTheme()
-    {
-        PaletteLight = new PaletteLight()
-        {
-            Primary = new MudColor(245, 74, 74, 1),
-            Secondary = Colors.Green.Accent4,
-            AppbarBackground = new MudColor(245, 74, 74, 1),
-            Background = new MudColor(239, 239, 239, 1),
-            DrawerBackground = new MudColor(255, 141, 141, 1)
-        },
-        
-        PaletteDark = new PaletteDark()
-        {
-            Primary = Colors.Blue.Lighten1
-        },
-
-        LayoutProperties = new LayoutProperties()
-        {
-            DefaultBorderRadius = "7px",
-        },
-        Shadows =
-        {
-            
-        }
-    };
 
 }

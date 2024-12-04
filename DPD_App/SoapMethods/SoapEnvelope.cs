@@ -62,6 +62,10 @@ public class Body
     [XmlElement(ElementName="importPackagesXV1", Namespace="http://cr.dpdappservices.dpd.com.pl/")] 
     public ImportPackagesXV1 ImportPackagesXV1 { get; set; } 
     
+    //INFO SERVICES
+    [XmlElement(ElementName="getEventsForCustomerV4", Namespace="http://events.dpdinfoservices.dpd.com.pl/")] 
+    public GetEventsForCustomerV4 GetEventsForCustomerV4 { get; set; } 
+    
     [XmlElement(ElementName="Fault")] 
     public Fault? Fault { get; set; } 
 }

@@ -75,7 +75,7 @@ public class Globals
     
     public static List<Profile> Profiles = new List<Profile>
     {
-        new Profile("Default Test", "test", "thetu4Ee", "1495","1495", WsdlAddresses.Single(a => a.Name == "DEMO"),"", "", true),
+        new Profile("Default Test", "test", "thetu4Ee", "1495", "1495","1495", WsdlAddresses.Single(a => a.Name == "DEMO"),"", "", true),
     };
 
     public static void SaveState()
@@ -394,6 +394,7 @@ public class Profile: ICloneable
     public string Login { get; set; }
     public string Password { get; set; }
     public string MasterFid { get; set; }
+    public string Channel { get; set; }
     public string FID { get; set; }
     public string WidgetKey { get; set; }
     public string PudoKey { get; set; }
@@ -407,18 +408,20 @@ public class Profile: ICloneable
         Login = "";
         Password = "";
         MasterFid = "";
+        Channel = "";
         FID = "";
         WidgetKey = "";
         PudoKey = "";
-        WsdlAddress = null;
+        WsdlAddress = Globals.WsdlAddresses.Single(a => a.Name == "DEMO");
     }
 
-    public Profile(string profileName, string login, string password, string masterFid, string fid, WsdlAddress wsdlAddress, string widgetKey = "", string pudoKey ="", bool isChoosen=false)
+    public Profile(string profileName, string login, string password, string masterFid, string channel, string fid, WsdlAddress wsdlAddress, string widgetKey = "", string pudoKey ="", bool isChoosen=false)
     {
         ProfileName = profileName;
         Login = login;
         Password = password;
         MasterFid = masterFid;
+        Channel = channel;
         FID = fid;
         WidgetKey = widgetKey;
         PudoKey = pudoKey;

@@ -8,10 +8,10 @@
     }
 </Style>
 
-<MudGrid>
+<MudGrid Spacing="7">
     <!-- BUTTONS -->
     <MudItem xs="12">
-        <MudPaper Elevation="5" Class="mb-2 pa-2">
+        <MudPaper Elevation="3" Class="mb-2 pa-3">
             <MudGrid Justify="Justify.Center">
                 <MudItem xs="2" Class="d-flex justify-start flex-grow-1 gap-4">
                     <MudStack Row="true">
@@ -63,7 +63,7 @@
     
     <!-- EDITORS -->
     <MudItem xs="12">
-        <MudPaper Height="800px" Class="px-3 pb-3 pt-0">
+        <MudPaper Height="800px" Elevation="3" Class="px-3 pb-3 pt-0">
             <MudGrid Style="height: 100%">
                 <MudItem xs="6" Class="pt-2 pr-2" Style="height: 100%">
                     <StandaloneCodeEditor @ref="_requestEditor" CssClass="my-editor-class" ConstructionOptions="EditorConstructionOptionsRequest" OnDidChangeModelContent="RequestChanged"/>
@@ -128,6 +128,7 @@
     async Task SendRequest()
     {
         _processing = true;
+        DocumentData = null;
         //Encode Base64 If needed
         var response = await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.GetAddress(CurrentMethod.System), EncodeRequest());
         
@@ -296,6 +297,10 @@
                 Request = packagesPickupCallV4.CreateSoapEnvelope();
                 break;
             case SOAP_API_METHODS.GetEventsForCustomer:
+                var getEventsForCustomerV4 = new GetEventsForCustomerV4();
+                getEventsForCustomerV4.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.Channel);
+                Request = getEventsForCustomerV4.CreateSoapEnvelope();
+                break;
             case SOAP_API_METHODS.MarkEventsAsProcesses:
             case SOAP_API_METHODS.GetEventsForWaybill:
             case SOAP_API_METHODS.ImportPackages:
@@ -454,5 +459,7 @@
     {
         return LoggingService.EncodeBase64InString(LoggingService.RemoveNewLinesAndSpaces(Request), "openUMLFXV2");
     }
-
+    
+    //TODO add handling of order number and checksum to Packages pickup call
+    //TODO add settings regarding coding decoding Base64
 }

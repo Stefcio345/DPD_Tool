@@ -41,29 +41,12 @@
         </MudStack>
     </TitleContent>
     <DialogContent>
-        <MudPaper Class="pa-4">
-            <MudForm @bind-IsValid="@success" @bind-Errors="@errors">
-                <MudStack Spacing="5">
-                    <MudTextField T="string" @bind-Value="profileToEdit.ProfileName" Label="Profile name" Required="true" RequiredError="Profile name is required!"/>
-
+        <MudForm @bind-IsValid="@success" @bind-Errors="@errors">
+            <MudStack Spacing="5">
+                
+                <MudPanel>
                     <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" @bind-Value="profileToEdit.Login" Label="Login" Required="true" RequiredError="Login is required!"/>
-                        <MudTextField T="string" @bind-Value="profileToEdit.Password" Label="Password"
-                                      InputType="InputType.Password" Required="true"
-                                      RequiredError="Password is required!"/>
-                    </MudStack>
-
-                    <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" @bind-Value="profileToEdit.MasterFid" Label="MasterFid"/>
-                        <MudTextField T="string" @bind-Value="profileToEdit.FID" Label="Fid" Required="true" RequiredError="Fid is required!"/>
-                    </MudStack>
-
-                    <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" @bind-Value="profileToEdit.WidgetKey" Label="Widget Key"/>
-                        <MudTextField T="string" @bind-Value="profileToEdit.PudoKey" Label="PUDO Key"/>
-                    </MudStack>
-
-                    <MudStack Row="true" Spacing="8">
+                        <MudTextField T="string" @bind-Value="profileToEdit.ProfileName" Label="Profile name" Required="true" RequiredError="Profile name is required!"/>
                         <MudSelect T="WsdlAddress" @bind-Value="profileToEdit.WsdlAddress" Label="Environment" Required="true">
                             @foreach (var wsdlAddres in Globals.WsdlAddresses)
                             {
@@ -71,18 +54,41 @@
                             }
                         </MudSelect>
                     </MudStack>
+                </MudPanel>
 
-                </MudStack>
+                <MudPanel>
+                    <MudStack Row="true" Spacing="8">
+                        <MudTextField T="string" @bind-Value="profileToEdit.Login" Label="Login" Required="true" RequiredError="Login is required!"/>
+                        <MudTextField T="string" @bind-Value="profileToEdit.Password" Label="Password"
+                                      InputType="InputType.Password" Required="true"
+                                      RequiredError="Password is required!"/>
+                    </MudStack>
+                </MudPanel>
 
-                <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mt-6">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteProfile">Delete</MudButton>
-                    <div>
-                        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel" OnClick="() => { _profileSettingsVisible = false; }">Cancel</MudButton>
-                        <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(!success)" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveChangesToProfile">Save</MudButton>
-                    </div>
-                </MudStack>
-            </MudForm>
-        </MudPaper>
+                <MudPanel>
+                    <MudStack Row="true" Spacing="8">
+                        <MudTextField T="string" @bind-Value="profileToEdit.MasterFid" Label="MasterFid"/>
+                        <MudTextField T="string" @bind-Value="profileToEdit.FID" Label="Fid" Required="true" RequiredError="Fid is required!"/>
+                    </MudStack>
+                </MudPanel>
+
+                <MudPanel>
+                    <MudStack Row="true" Spacing="8">
+                        <MudTextField T="string" @bind-Value="profileToEdit.WidgetKey" Label="Widget Key"/>
+                        <MudTextField T="string" @bind-Value="profileToEdit.PudoKey" Label="PUDO Key"/>
+                    </MudStack>
+                </MudPanel>
+
+            </MudStack>
+
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mt-6">
+                <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteProfile">Delete</MudButton>
+                <div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel" OnClick="() => { _profileSettingsVisible = false; }">Cancel</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(!success)" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveChangesToProfile">Save</MudButton>
+                </div>
+            </MudStack>
+        </MudForm>
     </DialogContent>
     <DialogActions>
     </DialogActions>
@@ -96,7 +102,7 @@
         </MudStack>
     </TitleContent>
     <DialogContent>
-        <MudPaper Class="pa-4">
+        <MudPaper Class="pa-4" Elevation="3">
             <MudForm @bind-IsValid="@success" @bind-Errors="@errors">
                 <MudStack Spacing="5">
                     <MudTextField T="string" @bind-Value="NewProfile.ProfileName" Label="Profile name" Required="true" RequiredError="Profile name is required!"/>
@@ -211,7 +217,7 @@
 
     private void AddNewProfile(MouseEventArgs obj)
     {
-        NewProfile = new Profile("", "", "", "", "", Globals.WsdlAddresses.Single(a => a.Name == "DEMO"));
+        NewProfile = new Profile();
         _newProfileVisible = true;
         StateHasChanged();
     }
