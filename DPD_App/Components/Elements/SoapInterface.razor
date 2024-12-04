@@ -302,7 +302,15 @@
                 Request = getEventsForCustomerV4.CreateSoapEnvelope();
                 break;
             case SOAP_API_METHODS.MarkEventsAsProcesses:
+                var markEventsAsProcessedV1 = new MarkEventsAsProcessedV1();
+                markEventsAsProcessedV1.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.Channel);
+                Request = markEventsAsProcessedV1.CreateSoapEnvelope();
+                break;
             case SOAP_API_METHODS.GetEventsForWaybill:
+                var getEventsForWaybillV1 = new GetEventsForWaybillV1();
+                getEventsForWaybillV1.UpdateAuthData(CurrentProfile.Login, CurrentProfile.Password, CurrentProfile.Channel);
+                Request = getEventsForWaybillV1.CreateSoapEnvelope();
+                break;
             case SOAP_API_METHODS.ImportPackages:
                 var importPackagesCRIN = new ImportPackagesXV1();
                 switch (CurrentMethod.SelectedVariant)

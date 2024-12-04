@@ -10,73 +10,75 @@
 
     <!-- My Pudo API Key -->
     <MudItem xs="6">
-        <MudPanel Margin="mb-4">
-            <MudTextField Immediate="true" Value="key" T="string" Label="MyPudoAPI Key" Required="true" RequiredError="Key is required!" Variant="Variant.Outlined" TextChanged="OnKeyChanged"/>
-        </MudPanel>
-        
-        <MudPanel>
-            <!-- Filtering select -->
-            <MudForm>
-                <MudRadioGroup Value="SelectedFiltering" T="string" ValueChanged="ChangedFilter">
-                    <MudRadio Value="@("Country")" Color="Color.Primary">Country</MudRadio>
-                    <MudRadio Value="@("Point ID")" Color="Color.Primary">Point ID</MudRadio>
-                    <MudRadio Value="@("Address")" Color="Color.Primary">Address</MudRadio>
-                    <MudRadio Value="@("Geolocation")" Color="Color.Primary">Geolocation</MudRadio>
-                </MudRadioGroup>
-            </MudForm>
-            
-            <MudStack>
-                @switch (SelectedFiltering)
-                {
-                    case "Country":
-                        <MudItem xs="6">
-                            <MudSelect T="Country" Value="SelectedCountry" Label="Select country" ValueChanged="OnCountrySelect" Variant="Variant.Outlined">
-                                @foreach (Country item in Globals.Countries)
-                                {
-                                    <MudSelectItem Value="@item">@item.Name</MudSelectItem>
-                                }
-                            </MudSelect>
-                        </MudItem>
-                        break;
+        <MudStack Justify="Justify.SpaceBetween" Style="height: 100%">
+            <MudPanel>
+                <MudTextField Immediate="true" Value="key" T="string" Label="MyPudoAPI Key" Required="true" RequiredError="Key is required!" Variant="Variant.Outlined" TextChanged="OnKeyChanged"/>
+            </MudPanel>
 
-                    case "Point ID":
-                        <MudItem xs="6">
-                            <MudTextField Immediate="true" T="string" Value="@PointID" Label="Point ID" Variant="Variant.Outlined" ValueChanged="OnPointIDSelect"/>
-                        </MudItem>
-                        break;
+            <MudPanel>
+                <!-- Filtering select -->
+                <MudForm>
+                    <MudRadioGroup Value="SelectedFiltering" T="string" ValueChanged="ChangedFilter">
+                        <MudRadio Value="@("Country")" Color="Color.Primary">Country</MudRadio>
+                        <MudRadio Value="@("Point ID")" Color="Color.Primary">Point ID</MudRadio>
+                        <MudRadio Value="@("Address")" Color="Color.Primary">Address</MudRadio>
+                        <MudRadio Value="@("Geolocation")" Color="Color.Primary">Geolocation</MudRadio>
+                    </MudRadioGroup>
+                </MudForm>
 
-                    case "Address":
-                        <MudItem xs="6">
-                            <MudTextField Immediate="true" T="string" Value="City" Label="City" Variant="Variant.Outlined" ValueChanged="OnAddressSelectCity"/>
-                        </MudItem>
-                        <MudItem xs="6">
-                            <MudTextField Immediate="true" T="string" Value="ZipCode" Label="Zip Code" Variant="Variant.Outlined" ValueChanged="OnAddressSelectZipCode"/>
-                        </MudItem>
-                        <MudItem xs="6">
-                            <MudSlider Immediate="true" T="int" Size="Size.Large" Value="MaxPudoNumberValue" Min="1" Max="25" Step="1" Color="Color.Primary" ValueChanged="MaxPudoNumberValueChanged">Value: @MaxPudoNumberValue.ToString()</MudSlider>
-                        </MudItem>
-                        break;
+                <MudStack>
+                    @switch (SelectedFiltering)
+                    {
+                        case "Country":
+                            <MudItem xs="6">
+                                <MudSelect T="Country" Value="SelectedCountry" Label="Select country" ValueChanged="OnCountrySelect" Variant="Variant.Outlined">
+                                    @foreach (Country item in Globals.Countries)
+                                    {
+                                        <MudSelectItem Value="@item">@item.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            break;
 
-                    case "Geolocation":
-                        <MudItem xs="6">
-                            <MudTextField Immediate="true" T="string" Value="Latitude" Label="Latitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLatitude"/>
-                        </MudItem>
-                        <MudItem xs="6">
-                            <MudTextField Immediate="true" T="string" Value="Longitude" Label="Longitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLongitude"/>
-                        </MudItem>
-                        <MudItem xs="6">
-                            <MudSlider Immediate="true" T="decimal" Size="Size.Large" Value="Distance" Min="100" Max="50000" Color="Color.Primary" ValueChanged="OnGeolocationSelectDistance">Value: @Distance.ToString()</MudSlider>
-                        </MudItem>
-                        break;
-                }
-            </MudStack>
-        </MudPanel>
+                        case "Point ID":
+                            <MudItem xs="6">
+                                <MudTextField Immediate="true" T="string" Value="@PointID" Label="Point ID" Variant="Variant.Outlined" ValueChanged="OnPointIDSelect"/>
+                            </MudItem>
+                            break;
+
+                        case "Address":
+                            <MudItem xs="6">
+                                <MudTextField Immediate="true" T="string" Value="City" Label="City" Variant="Variant.Outlined" ValueChanged="OnAddressSelectCity"/>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudTextField Immediate="true" T="string" Value="ZipCode" Label="Zip Code" Variant="Variant.Outlined" ValueChanged="OnAddressSelectZipCode"/>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudSlider Immediate="true" T="int" Size="Size.Large" Value="MaxPudoNumberValue" Min="1" Max="25" Step="1" Color="Color.Primary" ValueChanged="MaxPudoNumberValueChanged">Value: @MaxPudoNumberValue.ToString()</MudSlider>
+                            </MudItem>
+                            break;
+
+                        case "Geolocation":
+                            <MudItem xs="6">
+                                <MudTextField Immediate="true" T="string" Value="Latitude" Label="Latitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLatitude"/>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudTextField Immediate="true" T="string" Value="Longitude" Label="Longitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLongitude"/>
+                            </MudItem>
+                            <MudItem xs="6">
+                                <MudSlider Immediate="true" T="decimal" Size="Size.Large" Value="Distance" Min="100" Max="50000" Color="Color.Primary" ValueChanged="OnGeolocationSelectDistance">Value: @Distance.ToString()</MudSlider>
+                            </MudItem>
+                            break;
+                    }
+                </MudStack>
+            </MudPanel>
+        </MudStack>
     </MudItem>
 
     <!-- Filters -->
     <MudItem xs="6">
         <MudStack>
-            <MudPaper Class="pa-3">
+            <MudPanel>
                 <MudGrid Justify="Justify.SpaceBetween">
                     <MudItem>
                         <MudSwitch T="bool" Value="DateFrom" ThumbIcon="@(DateFrom == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(DateFrom == true ? Color.Success : Color.Error)" ValueChanged="DateFromChanged">Date from</MudSwitch>
@@ -88,9 +90,9 @@
                         }
                     </MudItem>
                 </MudGrid>
-            </MudPaper>
+            </MudPanel>
 
-            <MudPaper Class="pa-3">
+            <MudPanel>
                 <MudGrid Justify="Justify.SpaceBetween">
                     <MudItem>
                         <MudSwitch T="bool" Value="HolidayTolerant" ThumbIcon="@(HolidayTolerant == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(HolidayTolerant == true ? Color.Success : Color.Error)" ValueChanged="HolidayTolerantChanged">Holiday</MudSwitch>
@@ -107,17 +109,17 @@
                     }
                     </MudItem>
                 </MudGrid>
-            </MudPaper>
+            </MudPanel>
 
-            <MudPaper Class="pa-3">
+            <MudPanel>
                 <MudGrid Justify="Justify.SpaceBetween">
                     <MudItem>
                         <MudSwitch T="bool" Value="ServicePudoDisplay" ThumbIcon="@(ServicePudoDisplay == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(ServicePudoDisplay == true ? Color.Success : Color.Error)" ValueChanged="ServicePudoDisplayChanged">Display service codes</MudSwitch>
                     </MudItem>
                 </MudGrid>
-            </MudPaper>
+            </MudPanel>
 
-            <MudPaper Class="pa-3">
+            <MudPanel>
                 <MudGrid Justify="Justify.SpaceBetween">
                     <MudItem>
                         <MudSwitch T="bool" Value="Partner" ThumbIcon="@(Partner == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(Partner == true ? Color.Success : Color.Error)" ValueChanged="PartnerChanged">Partner</MudSwitch>
@@ -129,7 +131,7 @@
                         }
                     </MudItem>
                 </MudGrid>
-            </MudPaper>
+            </MudPanel>
             
         </MudStack>
     </MudItem>
@@ -137,22 +139,23 @@
     <!-- Query text -->
     
     <MudItem xs="12">
-        <MudDivider DividerType="DividerType.Middle" Class="my-6"/>
-        <MudStack Row="true">
-        <MudButton Disabled="CanSend()" Class="px-8 mb-1 mt-2" Size="Size.Large" IconSize="Size.Large" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
-            @if (_processing)
-            {
-            <MudProgressCircular Class="ms-n1" Size="Size.Medium" Indeterminate="true"/>
-            <MudText Typo="Typo.h5" Class="ms-2">Processing</MudText>
-            }
-            else
-            {
-            <MudText Typo="Typo.h5">Send</MudText>
-            }
-        </MudButton>
-        <MudTextField @ref="Query" T="string" Value="PudoLink" Label="Query" Variant="Variant.Outlined"
-                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => Query.SelectAsync())"/>
-        </MudStack>
+        <MudPanel Margin="mt-4">
+            <MudStack Row="true">
+                <MudButton Disabled="CanSend()" Class="px-8 mb-1 mt-2" Size="Size.Large" IconSize="Size.Large" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
+                    @if (_processing)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Medium" Indeterminate="true"/>
+                        <MudText Typo="Typo.h5" Class="ms-2">Processing</MudText>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h5">Send</MudText>
+                    }
+                </MudButton>
+                <MudTextField @ref="Query" T="string" Value="PudoLink" Label="Query" Variant="Variant.Outlined"
+                              Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => Query.SelectAsync())"/>
+            </MudStack>
+        </MudPanel>
     </MudItem>
     
     

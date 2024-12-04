@@ -18,17 +18,21 @@
     <MudAppBar Elevation="7">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
         
-        <MudPaper Elevation="6" Class="mx-4">
+        <MudPaper Class="mx-4 py-1">
             <MudText Class="mx-4" Typo="Typo.h4"><b>DPD App</b></MudText>
         </MudPaper>
         
         <MudSpacer />
         
-        <CascadingValue Value="AppState.Settings">
-            <ProfileMenu />
-        </CascadingValue>
+        <MudPaper Class="px-3 py-1">
+            <MudStack Row="true" Spacing="1">
+                <CascadingValue Value="AppState.Settings">
+                    <ProfileMenu/>
+                </CascadingValue>
 
-        <MudText Class="mx-4" Typo="Typo.h5">Current Profile: @AppState.CurrentProfile.ProfileName</MudText>
+                <MudText Class="mx-2" Typo="Typo.h4">Current Profile: @AppState.CurrentProfile.ProfileName</MudText>
+            </MudStack>
+        </MudPaper>
         
         <MudSpacer />
 

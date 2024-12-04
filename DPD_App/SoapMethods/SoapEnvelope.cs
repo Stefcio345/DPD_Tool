@@ -64,7 +64,13 @@ public class Body
     
     //INFO SERVICES
     [XmlElement(ElementName="getEventsForCustomerV4", Namespace="http://events.dpdinfoservices.dpd.com.pl/")] 
-    public GetEventsForCustomerV4 GetEventsForCustomerV4 { get; set; } 
+    public GetEventsForCustomerV4 GetEventsForCustomerV4 { get; set; }
+    
+    [XmlElement(ElementName="getEventsForWaybillV1")] 
+    public GetEventsForWaybillV1 GetEventsForWaybillV1 { get; set; } 
+    
+    [XmlElement(ElementName="markEventsAsProcessedV1")] 
+    public MarkEventsAsProcessedV1 MarkEventsAsProcessedV1 { get; set; } 
     
     [XmlElement(ElementName="Fault")] 
     public Fault? Fault { get; set; } 
