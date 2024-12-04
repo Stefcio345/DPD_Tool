@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Xml.Serialization;
 using DPD_App;
 using DPD_App.Components;
@@ -34,6 +35,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+if (app.Environment.IsProduction())
+{
+    var url = "http://localhost:5000"; // Change this to match your production URL if necessary.
+    Task.Run(() => OpenBrowser(url));
+}
+
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
@@ -45,3 +52,19 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+static void OpenBrowser(string url)
+{
+    try
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = url,
+            UseShellExecute = true
+        });
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Could not launch browser: {ex.Message}");
+    }
+}
