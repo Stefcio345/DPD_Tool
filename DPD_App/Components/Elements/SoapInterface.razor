@@ -26,7 +26,7 @@
                                 <MudText>Send</MudText>
                             }
                         </MudButton>
-                        <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify</MudButton>
+                        <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify/Decode</MudButton>
                     </MudStack>
                 </MudItem>
                 
@@ -146,11 +146,11 @@
         }
         if (result.Body.AppendParcelsToPackageV2Response is not null)
         {
-            SavePackageDetails(result.Body.AppendParcelsToPackageV2Response, GetSessionType(Request));
+            AddParcelToSavedDetails(result.Body.AppendParcelsToPackageV2Response);
         }
         if (result.Body.GenerateInternationalPackageNumbersV1Response is not null)
         {
-            AddParcelToSavedDetails(result.Body.GenerateInternationalPackageNumbersV1Response);
+            SavePackageDetails(result.Body.GenerateInternationalPackageNumbersV1Response, GetSessionType(Request));
         }
 
         //If has document data save it in variable
@@ -181,12 +181,16 @@
         StateHasChanged();
     }
 
-    Task Prettify()
+    private void Prettify()
     {
+        Request = LoggingService.DecodeBase64InString(Request.Replace("\n", ""), "openUMLFXV2");
         Request = XMLService.Prettify(Request);
+        _requestEditor?.SetValue(LoggingService.ShortenDocumentData(Request));
+        
+        Response = LoggingService.DecodeBase64InString(Response.Replace("\n", ""), "return");
         Response = XMLService.Prettify(Response);
+        _responseEditor?.SetValue(LoggingService.ShortenDocumentData(Response));
         StateHasChanged();
-        return Task.CompletedTask;
     }
     
     private void DownloadData()

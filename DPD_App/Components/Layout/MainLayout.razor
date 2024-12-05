@@ -14,39 +14,47 @@
 
     <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
     <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
-    
+
     <MudAppBar Elevation="7">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
         
-        <MudPaper Class="mx-4 py-1">
-            <MudText Class="mx-4" Typo="Typo.h4"><b>DPD App</b></MudText>
-        </MudPaper>
-        
-        <MudSpacer />
-        
-        <MudPaper Class="px-3 py-1">
-            <MudStack Row="true" Spacing="1">
-                <CascadingValue Value="AppState.Settings">
-                    <ProfileMenu/>
-                </CascadingValue>
+        <MudGrid Justify="Justify.Center">
+            <!-- Left Section -->
+            <MudItem xs="5" Class="d-flex justify-start flex-grow-1 gap-4">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
+                <MudPaper Class="py-1">
+                    <MudText Class="mx-4" Typo="Typo.h4"><b>DPD API Integration Tool</b></MudText>
+                </MudPaper>
+                @if (AppState.CurrentPage is not null)
+                {
+                    <MudPaper Class="py-1">
+                        <MudText Class="mx-2" Typo="Typo.h5">@AppState.CurrentPage</MudText>
+                    </MudPaper>
+                }
+            </MudItem>
 
-                <MudText Class="mx-2" Typo="Typo.h4">Current Profile: @AppState.CurrentProfile.ProfileName</MudText>
-            </MudStack>
-        </MudPaper>
-        
-        <MudSpacer />
+            <!-- Center Section -->
+            <MudItem xs="2" Class="d-flex justify-center flex-grow-1 gap-4">
+                <MudPaper Class="px-3 py-1">
+                    <MudStack Row="true" Spacing="1">
+                        <CascadingValue Value="AppState.Settings">
+                            <ProfileMenu Parent="@this"/>
+                        </CascadingValue>
 
-        <MudStack Row="true">
+                        <MudText Class="mx-2" Typo="Typo.h4" Style="max-width: 400px; overflow-wrap: break-word;white-space: nowrap;overflow: hidden;"><b>Profile: @AppState.CurrentProfile.ProfileName</b></MudText>
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
 
-            <MudToggleIconButton Toggled="_isDarkMode" ToggledChanged="ChangedTheme"
-                                 Icon="@Icons.Material.Filled.LightMode" Color="Color.Primary"
-                                 ToggledIcon="@Icons.Material.Filled.ModeNight" ToggledColor="Color.Default"
-                                 title="Motyw strony" Variant="Variant.Filled" Size="Size.Large"/>
-
-            <MudIconButton Icon="@Icons.Material.Filled.Settings" Variant="Variant.Filled" Size="Size.Large" OnClick="@ToggleSettings"/>
-            
-        </MudStack>
-
+            <!-- Right Section -->
+            <MudItem  xs="5" Class="d-flex justify-end flex-grow-1 gap-4">
+                <MudToggleIconButton Toggled="_isDarkMode" ToggledChanged="ChangedTheme"
+                                     Icon="@Icons.Material.Filled.LightMode" Color="Color.Primary"
+                                     ToggledIcon="@Icons.Material.Filled.ModeNight" ToggledColor="Color.Default"
+                                     title="Motyw strony" Variant="Variant.Filled" Size="Size.Large"/>
+                
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" Variant="Variant.Filled" Size="Size.Large" OnClick="@ToggleSettings"/>
+            </MudItem>
+        </MudGrid>
     </MudAppBar>
 
     <CascadingValue Value="AppState.Settings">
@@ -65,7 +73,7 @@
     </MudDrawer>
     
     <CascadingValue Value="AppState.CurrentProfile">
-        <MudMainContent Class="pt-20 px-8">
+        <MudMainContent Class="pt-20 px-8 mt-5">
             @Body
         </MudMainContent>
     </CascadingValue>

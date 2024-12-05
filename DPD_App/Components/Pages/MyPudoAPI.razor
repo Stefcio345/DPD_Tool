@@ -5,7 +5,6 @@
 
 <PageTitle>MyPudoAPI</PageTitle>
 
-<h1 class="pa-1 pb-3">My Pudo API</h1>
 <MudGrid>
 
     <!-- My Pudo API Key -->
@@ -379,6 +378,7 @@
     {
         SelectedCountry = Globals.Countries[0];
         key = CurrentProfile.PudoKey;
+        AppState.CurrentPage = "MyPudoAPI";
         return base.OnInitializedAsync();
     }
 
@@ -497,18 +497,23 @@
         Response = await NetworkService.SendHttpRequest(PudoLink);
         //repsonseShow = new MarkupString(response);
         var myDeserializedClass = JsonSerializer.Deserialize<Root>(Response);
-        
         //If data is available load data
         if(myDeserializedClass.code is not null)
         {
             Errors.Add(new SoapError("Error code: " + myDeserializedClass.code, myDeserializedClass.message));
+        }
+        else if (myDeserializedClass.errors.Count > 0)
+        {
+            foreach (var error in myDeserializedClass.errors)
+            {
+                Errors.Add(new SoapError("Error code: " + error.subcode, error.userMessage));
+            }
         }
         else
         {
             PudoItems = myDeserializedClass.pudoItems;
             DataGrid.ReloadServerData();
         }
-
         _processing = false;
         StateHasChanged();
     }

@@ -4,8 +4,6 @@
 
 <PageTitle>PudoFinder</PageTitle>
 
-<h1 class="pa-1 pb-3">PudoFinder</h1>
-
 <MudGrid Style="align-items: center;">
     
     <MudItem xs="3" Class="justify-center">
@@ -79,6 +77,7 @@
     protected override Task OnInitializedAsync()
     {
         key = CurrentProfile.WidgetKey;
+        AppState.CurrentPage = "PudoFinder";
         return base.OnInitializedAsync();
     }
 

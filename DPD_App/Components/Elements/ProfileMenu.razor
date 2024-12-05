@@ -48,7 +48,7 @@
                 
                 <MudPanel Margin="mt-1">
                     <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.ProfileName" Label="Profile name" Required="true" RequiredError="Profile name is required!"/>
+                        <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.ProfileName" Label="Profile name" Required="true" RequiredError="Profile name is required!"/>
                         <MudSelect T="WsdlAddress" Variant="Variant.Outlined" @bind-Value="profileToEdit.WsdlAddress" Label="Environment" Required="true">
                             @foreach (var wsdlAddres in Globals.WsdlAddresses)
                             {
@@ -60,24 +60,24 @@
 
                 <MudPanel>
                     <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.Login" Label="Login" Required="true" RequiredError="Login is required!"/>
-                        <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.Password" Label="Password"
+                        <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.Login" Label="Login" Required="true" RequiredError="Login is required!"/>
+                        <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.Password" Label="Password"
                                       InputType="InputType.Password" Required="true"
                                       RequiredError="Password is required!"/>
                     </MudStack>
                     <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.MasterFid" Label="MasterFid"/>
-                        <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.Channel" Label="Channel"/>
+                        <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.MasterFid" Label="MasterFid"/>
+                        <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.Channel" Label="Channel"/>
                     </MudStack>
                     <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.FID" Label="Fid" Required="true" RequiredError="Fid is required!"/>
+                        <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.FID" Label="Fid" Required="true" RequiredError="Fid is required!"/>
                     </MudStack>
                 </MudPanel>
 
                 <MudPanel>
                     <MudStack Row="true" Spacing="8">
-                        <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.WidgetKey" Label="Widget Key"/>
-                        <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.PudoKey" Label="PUDO Key"/>
+                        <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.WidgetKey" Label="Widget Key"/>
+                        <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="profileToEdit.PudoKey" Label="PUDO Key"/>
                     </MudStack>
                 </MudPanel>
 
@@ -112,7 +112,7 @@
 
                     <MudPanel Margin="mt-1">
                         <MudStack Row="true" Spacing="8">
-                            <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.ProfileName" Label="Profile name" Required="true" RequiredError="Profile name is required!"/>
+                            <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.ProfileName" Label="Profile name" Required="true" RequiredError="Profile name is required!"/>
                             <MudSelect T="WsdlAddress" Variant="Variant.Outlined" @bind-Value="NewProfile.WsdlAddress" Label="Environment" Required="true">
                                 @foreach (var wsdlAddres in Globals.WsdlAddresses)
                                 {
@@ -124,24 +124,24 @@
 
                     <MudPanel>
                         <MudStack Row="true" Spacing="8">
-                            <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.Login" Label="Login" Required="true" RequiredError="Login is required!"/>
-                            <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.Password" Label="Password"
+                            <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.Login" Label="Login" Required="true" RequiredError="Login is required!"/>
+                            <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.Password" Label="Password"
                                           InputType="InputType.Password" Required="true"
                                           RequiredError="Password is required!"/>
                         </MudStack>
                         <MudStack Row="true" Spacing="8">
-                            <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.MasterFid" Label="MasterFid"/>
-                            <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.Channel" Label="Channel"/>
+                            <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.MasterFid" Label="MasterFid"/>
+                            <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.Channel" Label="Channel"/>
                         </MudStack>
                         <MudStack Row="true" Spacing="8">
-                            <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.FID" Label="Fid" Required="true" RequiredError="Fid is required!"/>
+                            <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.FID" Label="Fid" Required="true" RequiredError="Fid is required!"/>
                         </MudStack>
                     </MudPanel>
 
                     <MudPanel>
                         <MudStack Row="true" Spacing="8">
-                            <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.WidgetKey" Label="Widget Key"/>
-                            <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.PudoKey" Label="PUDO Key"/>
+                            <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.WidgetKey" Label="Widget Key"/>
+                            <MudTextField Immediate="true" T="string" Variant="Variant.Outlined" @bind-Value="NewProfile.PudoKey" Label="PUDO Key"/>
                         </MudStack>
                     </MudPanel>
 
@@ -163,6 +163,7 @@
 {
     //Profiles
     [CascadingParameter] public AppSettings settings { get; set; }
+    [Parameter] public MainLayout Parent { get; set; }
     private bool _profileSettingsVisible;
     private bool _profileMenuVisible;
     private bool _newProfileVisible;
@@ -209,6 +210,7 @@
         CurrentylEdited.WsdlAddress = profileToEdit.WsdlAddress;
         
         Globals.SaveState();
+        Parent.Refresh();
         Snackbar.Add("Changes saved successfully", Severity.Success);
         _profileSettingsVisible = false;
         StateHasChanged();

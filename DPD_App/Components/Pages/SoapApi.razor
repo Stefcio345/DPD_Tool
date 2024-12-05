@@ -39,11 +39,6 @@
 </script>
 
 <PageTitle>SoapAPI</PageTitle>
-<MudGrid>
-    <MudItem xs="2">
-        <h1 class="pa-1 pb-3">Soap API</h1>
-    </MudItem>
-</MudGrid>
 
 <div Id="MainContainer">
     <MudStack Row="true" Class="pa-0" Spacing="0">
@@ -126,6 +121,8 @@
             ActiveTab = Tabs.FirstOrDefault(t => t.IsActive);
             ActiveTab.Data.Update = true;
         }
+
+        AppState.CurrentPage = "Soap Interface";
     }
     
     private void ActivateTab(TabItem tab)

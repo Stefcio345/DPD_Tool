@@ -28,6 +28,8 @@ public class AppState
         }
     }
 
+    public string? CurrentPage = null;
+
     public SoapApiState SoapApiData { get; set; } = new SoapApiState();
     public PudoFinderState PudoFinderState { get; set; } = new PudoFinderState();
     public MyPudoApiState MyPudoApiState { get; set; } = new MyPudoApiState();

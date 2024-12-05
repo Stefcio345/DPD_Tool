@@ -36,6 +36,13 @@ public class PudoItem
     public bool? handicape { get; set; }
 }
 
+public class Error
+{
+    public string code { get; set; }
+    public string subcode { get; set; }
+    public string userMessage { get; set; }
+}
+
 public class Root
 {
     public int quality { get; set; }
@@ -43,4 +50,5 @@ public class Root
     public List<PudoItem> pudoItems { get; set; }
     public string? code { get; set; }
     public string? message { get; set; }
+    public List<Error> errors { get; set; } = new List<Error>();
 }

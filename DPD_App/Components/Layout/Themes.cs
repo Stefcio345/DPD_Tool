@@ -15,7 +15,7 @@ public class StandardTheme : MudTheme
 
         PaletteDark = new PaletteDark()
         {
-            Primary = "#fc3f3fff",
+            Primary = "#fc3f3fff"
         };
 
         LayoutProperties = new LayoutProperties()
