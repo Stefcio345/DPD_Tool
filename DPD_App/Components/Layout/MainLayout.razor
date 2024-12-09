@@ -1,7 +1,5 @@
-﻿@using System.ComponentModel
-@using MudBlazor.Utilities
-@inherits LayoutComponentBase
-@inject IJSRuntime jsRuntime
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JsRuntime
 @inject ISnackbar Snackbar
 @inject AppState AppState
 
@@ -12,8 +10,8 @@
 
 <MudLayout>
 
-    <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
-    <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
+    <MudThemeManagerButton OnClick="@(() => OpenThemeManager(true))" />
+    <MudThemeManager Open="ThemeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
 
     <MudAppBar Elevation="7">
         
@@ -22,11 +20,12 @@
             <MudItem xs="5" Class="d-flex justify-start flex-grow-1 gap-4">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
                 <MudPaper Class="py-1">
-                    <MudText Class="mx-4" Typo="Typo.h4"><b>DPD API Integration Tool</b></MudText>
+                    <MudText Class="mx-4"  Typo="Typo.h4" Style="white-space: nowrap"><b>DPD API Integration Tool</b></MudText>
                 </MudPaper>
                 @if (AppState.CurrentPage is not null)
                 {
-                    <MudPaper Class="py-1">
+                    <MudIcon Icon="@Icons.Material.Filled.ArrowForwardIos" Class="mt-3"/>
+                    <MudPaper Class="py-1" Style="align-content: center" >
                         <MudText Class="mx-2" Typo="Typo.h5">@AppState.CurrentPage</MudText>
                     </MudPaper>
                 }
@@ -34,31 +33,34 @@
 
             <!-- Center Section -->
             <MudItem xs="2" Class="d-flex justify-center flex-grow-1 gap-4">
-                <MudPaper Class="px-3 py-1">
-                    <MudStack Row="true" Spacing="1">
-                        <CascadingValue Value="AppState.Settings">
-                            <ProfileMenu Parent="@this"/>
-                        </CascadingValue>
-
-                        <MudText Class="mx-2" Typo="Typo.h4" Style="max-width: 400px; overflow-wrap: break-word;white-space: nowrap;overflow: hidden;"><b>Profile: @AppState.CurrentProfile.ProfileName</b></MudText>
-                    </MudStack>
-                </MudPaper>
+                
             </MudItem>
 
             <!-- Right Section -->
-            <MudItem  xs="5" Class="d-flex justify-end flex-grow-1 gap-4">
-                <MudToggleIconButton Toggled="_isDarkMode" ToggledChanged="ChangedTheme"
+            <MudItem xs="5" Class="d-flex justify-end flex-grow-1 gap-4">
+                
+                <MudPaper Class="px-3 py-1">
+                    <MudStack Row="true" Spacing="1">
+                        <MudText Class="mx-2" Typo="Typo.h4" Style="max-width: 400px; overflow-wrap: break-word;white-space: nowrap;overflow: hidden;"><b>Profile: @AppState.CurrentProfile.ProfileName</b></MudText>
+                    </MudStack>
+                </MudPaper>
+
+                <CascadingValue Value="AppState.Settings">
+                    <ProfileMenu Parent="@this"/>
+                </CascadingValue>
+                
+                <MudToggleIconButton Class="px-2" Toggled="_isDarkMode" ToggledChanged="ChangedTheme"
                                      Icon="@Icons.Material.Filled.LightMode" Color="Color.Primary"
                                      ToggledIcon="@Icons.Material.Filled.ModeNight" ToggledColor="Color.Default"
                                      title="Motyw strony" Variant="Variant.Filled" Size="Size.Large"/>
-                
-                <MudIconButton Icon="@Icons.Material.Filled.Settings" Variant="Variant.Filled" Size="Size.Large" OnClick="@ToggleSettings"/>
+
+                <MudIconButton Class="px-2" Icon="@Icons.Material.Filled.Settings" Variant="Variant.Filled" Size="Size.Large" OnClick="@ToggleSettings"/>
             </MudItem>
         </MudGrid>
     </MudAppBar>
 
     <CascadingValue Value="AppState.Settings">
-        <MudDrawer @bind-Open="@_openSettings" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary">
+        <MudDrawer @bind-Open="@_openSettings" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary" Width="300px">
             <Settings/>
         </MudDrawer>
     </CascadingValue>
@@ -82,8 +84,9 @@
 
 @code{
     private bool _isDarkMode;
-    private bool _open = false;
-    private bool _openSettings = false;
+    private bool _open;
+    private bool _openSettings;
+    private MudMessageBox _mudMessageBox;
     private MudThemeProvider _mudThemeProvider = new MudThemeProvider();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -93,7 +96,7 @@
             _isDarkMode = await _mudThemeProvider.GetSystemPreference();
             
             //TODO Fix This
-            BlazorMonaco.Editor.Global.DefineTheme(jsRuntime, "my_theme", new StandaloneThemeData
+            _ = BlazorMonaco.Editor.Global.DefineTheme(JsRuntime, "my_theme", new StandaloneThemeData
                 {
                     Inherit = true,
                     Base = "vs",
@@ -105,7 +108,7 @@
                 }
             );
             
-            BlazorMonaco.Editor.Global.SetTheme(jsRuntime, _isDarkMode ? "vs-dark" : "my_theme");
+            _ = BlazorMonaco.Editor.Global.SetTheme(JsRuntime, _isDarkMode ? "vs-dark" : "my_theme");
             StateHasChanged();
         }
 
@@ -131,11 +134,11 @@
     }
 
     private ThemeManagerTheme _themeManager = new ThemeManagerTheme();
-    public bool _themeManagerOpen = false;
+    public bool ThemeManagerOpen;
 
     void OpenThemeManager(bool value)
     {
-        _themeManagerOpen = value;
+        ThemeManagerOpen = value;
     }
 
     void UpdateTheme(ThemeManagerTheme value)
@@ -153,7 +156,13 @@
     {
         _isDarkMode = !_isDarkMode;
         //Set Editor theme
-        BlazorMonaco.Editor.Global.SetTheme(jsRuntime, _isDarkMode ? "vs-dark" : "my_theme");
+        BlazorMonaco.Editor.Global.SetTheme(JsRuntime, _isDarkMode ? "vs-dark" : "my_theme");
+        StateHasChanged();
+    }
+    
+    private async Task OnButtonClickedAsync()
+    {
+        await _mudMessageBox.ShowAsync();
         StateHasChanged();
     }
 

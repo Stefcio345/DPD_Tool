@@ -1,8 +1,26 @@
-﻿<MudNavMenu Bordered="true" Color="Color.Success">
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" >Home page</MudNavLink>
+﻿@inject AppState AppState
+
+<MudNavMenu Bordered="true" Color="Color.Success">
     <MudNavLink Href="/GenerateLabels" Icon="@Icons.Material.Filled.Label">Generate Labels</MudNavLink>
     <MudNavLink Href="/MyPudoAPI" Icon="@Icons.Material.Filled.DataObject">MyPudoAPI</MudNavLink>
     <MudNavLink Href="/PudoFinder" Icon="@Icons.Material.Filled.Map">PudoFinder</MudNavLink>
     <MudNavLink Href="/SoapAPI" Icon="@Icons.Material.Filled.Api">Soap API</MudNavLink>
     <MudNavLink Href="/Compare" Icon="@Icons.Material.Filled.CompareArrows">Compare</MudNavLink>
+    <MudNavGroup Title="Notes" Icon="@Icons.Material.Filled.Notes" Expanded="true">
+        @foreach (var file in NotesService.GetNotes())
+        {
+            <MudNavLink Href=@($"/Notes/{file}")>@file</MudNavLink>
+        }
+        <MudIconButton Size="Size.Small" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="SaveNote"/>
+    </MudNavGroup>
 </MudNavMenu>
+
+@code
+{
+    int number = 0;
+    void SaveNote()
+    {
+        NotesService.CreateNewNote(number.ToString());
+        number += 1;
+    }
+}

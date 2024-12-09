@@ -1,0 +1,54 @@
+﻿@page "/Notes/{FileName}"
+@inject AppState AppState
+@inject ISnackbar Snackbar
+
+<PageTitle>Home</PageTitle>
+
+<MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Info" Size="Size.Medium" OnClick="EditNote"/>
+<MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" OnClick="RemoveNote"/>
+
+@if (CurrentylEditing)
+{
+        <MudTextField Value="FileContent" Lines="100" Variant="Variant.Outlined" TextChanged="TextUpdated"/>
+}
+else
+{
+        <MudMarkdown Value="@FileContent" /> 
+}
+
+@code
+{
+        [Parameter] public string FileName { get; set; }
+        public string FileContent;
+        public bool CurrentylEditing;
+
+        protected override Task OnInitializedAsync()
+        {
+                AppState.CurrentPage = "Notes";
+                return base.OnInitializedAsync();
+        }
+
+        protected override void OnParametersSet()
+        {
+                FileContent = NotesService.GetNoteContent(FileName);
+                base.OnParametersSet();
+        }
+
+        public void RemoveNote()
+        {
+                Snackbar.Add("Note has been removed", Severity.Error);
+        }
+
+        public void EditNote()
+        {
+                CurrentylEditing = !CurrentylEditing;
+                StateHasChanged();
+        }
+
+        private void TextUpdated(string str)
+        {
+                FileContent = str;
+                NotesService.SaveNoteToFile(FileContent, FileName);
+                StateHasChanged();
+        }
+}

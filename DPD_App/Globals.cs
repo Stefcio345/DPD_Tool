@@ -88,7 +88,6 @@ public class Globals
         if (File.Exists(Globals.SaveLocation + "Profiles.json"))
         {
             Globals.Profiles = SaveKeeper.LoadFromFile<List<Profile>>("Profiles.json");
-            //TODO Add remembering choosen profile
         }
         else
         {
@@ -120,6 +119,9 @@ public class AppSettings
     public bool AddressDetailsVertical { get; set; } = false;
 
     public SoapApiMethod? DefaultSoapMethod { get; set; }
+    
+    public bool ImpossibleServiceCombinationsEnabled { get; set; }
+    public string NoteSaveLocation { get; set; } = "Notes";
 
 
     public void LoadFromFile()
@@ -141,6 +143,8 @@ public class AppSettings
             AddressDetailsVertical = temp.AddressDetailsVertical;
             SoapDownloadLocation = temp.SoapDownloadLocation;
             DefaultSoapMethod = temp.DefaultSoapMethod;
+            ImpossibleServiceCombinationsEnabled = temp.ImpossibleServiceCombinationsEnabled;
+            NoteSaveLocation = temp.NoteSaveLocation;
         }
         else
         {

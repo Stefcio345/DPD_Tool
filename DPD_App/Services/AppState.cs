@@ -58,5 +58,6 @@ public class AppState
         LoggingService.Settings = Settings;
         FileService.Settings = Settings;
         SoapData.Settings = Settings;
+        NotesService.Settings = Settings;
     }
 }

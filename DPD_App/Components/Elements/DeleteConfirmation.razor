@@ -1,0 +1,31 @@
+﻿<MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="OnButtonClickedAsync">Delete</MudButton>
+
+<MudMessageBox @ref="_mudMessageBox" Title="Warning" CancelText="Cancel">
+    <MessageContent>
+        Deleting can <b>not</b> be undone!
+    </MessageContent>
+    <YesButton>
+        <MudButton OnClick="DeleteFunc" Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteForever">Delete!</MudButton>
+    </YesButton>
+    <CancelButton>
+        <MudButton Class="mr-10" OnClick="Close" Variant="Variant.Filled" Color="Color.Info">Cancel</MudButton>
+    </CancelButton>
+</MudMessageBox>
+
+@code
+{
+    private MudMessageBox _mudMessageBox;
+    [Parameter] public Action DeleteFunc { get; set; }
+
+    private async Task OnButtonClickedAsync()
+    {
+        await _mudMessageBox.ShowAsync();
+        StateHasChanged();
+    }
+    
+    private void Close()
+    {
+        _mudMessageBox.Close();
+        StateHasChanged();
+    }
+}

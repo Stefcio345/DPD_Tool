@@ -2,7 +2,7 @@
 @inject ISnackbar Snackbar
 @inject AppState AppState
 
-<MudIconButton OnClick="OpenProfilesSettings" Icon="@Icons.Material.Filled.AccountCircle" Variant="Variant.Filled" Size="Size.Large" />
+<MudIconButton Class="px-2" OnClick="OpenProfilesSettings" Icon="@Icons.Material.Filled.AccountCircle" Variant="Variant.Filled" Size="Size.Large" />
 
 <!-- Profiles -->
 <MudDialog @bind-Visible="_profileMenuVisible" Options="_dialogOptions">
@@ -84,7 +84,7 @@
             </MudStack>
 
             <MudStack Row="true" Justify="Justify.SpaceBetween" Class="mt-6">
-                <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteProfile">Delete</MudButton>
+                <DeleteConfirmation DeleteFunc="DeleteProfile" />
                 <div>
                     <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Cancel" OnClick="() => { _profileSettingsVisible = false; }">Cancel</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Success" Disabled="@(!success)" StartIcon="@Icons.Material.Filled.Save" OnClick="SaveChangesToProfile">Save</MudButton>
@@ -164,6 +164,7 @@
     //Profiles
     [CascadingParameter] public AppSettings settings { get; set; }
     [Parameter] public MainLayout Parent { get; set; }
+    private MudMessageBox _mudMessageBox;
     private bool _profileSettingsVisible;
     private bool _profileMenuVisible;
     private bool _newProfileVisible;
@@ -216,7 +217,7 @@
         StateHasChanged();
     }
 
-    private void DeleteProfile(MouseEventArgs obj)
+    private void DeleteProfile()
     {
         Globals.Profiles.Remove(CurrentylEdited);
         _profileSettingsVisible = false;
@@ -243,5 +244,11 @@
         Globals.SaveState();
         Snackbar.Add("Profile created successfully", Severity.Success);
         _newProfileVisible = false;
+    }
+    
+    private async Task ShowDeleteConfirmation()
+    {
+        await _mudMessageBox.ShowAsync();
+        StateHasChanged();
     }
 }

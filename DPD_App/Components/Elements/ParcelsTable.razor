@@ -2,8 +2,8 @@
 @inject ISnackbar Snackbar
 
 <style>
-    .mud-table-cell:last-of-type .mud-tooltip-root:nth-of-type(1) .mud-svg-icon { fill: green; font-size: 1.5rem;}
-    .mud-table-cell:last-of-type .mud-tooltip-root:nth-of-type(2) .mud-svg-icon { fill: red; font-size: 1.5rem;}
+    .mud-table-cell:last-of-type .mud-tooltip-root:nth-of-type(1) .mud-svg-icon { fill: var(--mud-palette-success); font-size: 1.5rem;}
+    .mud-table-cell:last-of-type .mud-tooltip-root:nth-of-type(2) .mud-svg-icon { fill: #fc3f3f; font-size: 1.5rem;}
 </style>
 
 <MudTable Items="@Parcels" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" Bordered="true" CanCancelEdit="true" 
@@ -13,7 +13,7 @@
           RowEditCancel="ResetItemToOriginalValues">
     <ColGroup>
         <col style="width: 5%;" />
-        @if (dpdLQ)
+        @if (DpdLq)
         {
         <col style="width: 5%;"/>
         }
@@ -27,7 +27,7 @@
     </ColGroup>
     <HeaderContent>
         <MudTh>Weight</MudTh>
-        @if (dpdLQ)
+        @if (DpdLq)
         {
             <MudTh>Adr Weight</MudTh>
         }
@@ -44,7 +44,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Weight">@context.Weight</MudTd>
-        @if (dpdLQ)
+        @if (DpdLq)
         {
             <MudTd DataLabel="Adr Weight">@context.AdrWeight</MudTd>
         }
@@ -60,7 +60,7 @@
         <MudTd DataLabel="Weight">
             <MudTextField @bind-Value="@context.Weight"/>
         </MudTd>
-        @if (dpdLQ)
+        @if (DpdLq)
         {
         <MudTd DataLabel="Adr Weight">
             <MudTextField @bind-Value="@context.AdrWeight"/>
@@ -91,15 +91,15 @@
     <EditButtonContent Context="button">
         <MudStack Justify="Justify.SpaceBetween" Row="true">
             <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Info" Size="Size.Medium" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled"/>
-            <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" OnClick="@((b) => { RemovePackage(button.Item); Snackbar.Add("An Item has been removed", Severity.Error); StateHasChanged(); })"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" OnClick="@(() => { if (button.Item != null) { RemovePackage(button.Item); } Snackbar.Add("An Item has been removed", Severity.Error); StateHasChanged(); })"/>
         </MudStack>
     </EditButtonContent>
 </MudTable>
     
 @code {
-    [CascadingParameter] public List<Parcel> Parcels { get; set; }
-    [CascadingParameter] public bool dpdLQ { get; set; }
-    private Parcel ParcelBeforeEdit;
+    [CascadingParameter] public required List<Parcel> Parcels { get; set; }
+    [CascadingParameter] public bool DpdLq { get; set; }
+    private Parcel? _parcelBeforeEdit;
     
     //TODO Make edit buttons nice
     
@@ -116,7 +116,7 @@
     
     private void BackupItem(object element)
     {
-        ParcelBeforeEdit = new Parcel()
+        _parcelBeforeEdit = new Parcel()
         {
             Weight = ((Parcel)element).Weight,
             SizeX = ((Parcel)element).SizeX,
@@ -131,13 +131,13 @@
     
     private void ResetItemToOriginalValues(object element)
     {
-        ((Parcel)element).Weight = ParcelBeforeEdit.Weight;
-        ((Parcel)element).SizeX = ParcelBeforeEdit.SizeX;
-        ((Parcel)element).SizeY = ParcelBeforeEdit.SizeY;
-        ((Parcel)element).SizeZ = ParcelBeforeEdit.SizeZ;
-        ((Parcel)element).Content = ParcelBeforeEdit.Content;
-        ((Parcel)element).CustomerData1 = ParcelBeforeEdit.CustomerData1;
-        ((Parcel)element).CustomerData2 = ParcelBeforeEdit.CustomerData2;
-        ((Parcel)element).CustomerData3 = ParcelBeforeEdit.CustomerData3;
+        ((Parcel)element).Weight = _parcelBeforeEdit!.Weight;
+        ((Parcel)element).SizeX = _parcelBeforeEdit.SizeX;
+        ((Parcel)element).SizeY = _parcelBeforeEdit.SizeY;
+        ((Parcel)element).SizeZ = _parcelBeforeEdit.SizeZ;
+        ((Parcel)element).Content = _parcelBeforeEdit.Content;
+        ((Parcel)element).CustomerData1 = _parcelBeforeEdit.CustomerData1;
+        ((Parcel)element).CustomerData2 = _parcelBeforeEdit.CustomerData2;
+        ((Parcel)element).CustomerData3 = _parcelBeforeEdit.CustomerData3;
     }
 }
