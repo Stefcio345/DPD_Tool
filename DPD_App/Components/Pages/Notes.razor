@@ -13,7 +13,27 @@
 }
 else
 {
-        <MudMarkdown Value="@FileContent" /> 
+        <div class="col-md-12">
+                <MarkdownEditor @bind-Value="@FileContent" 
+                                ValueHTMLChanged="@OnMarkdownValueHTMLChanged" />
+
+                <hr />
+
+                <h3>Result</h3>
+                @((MarkupString)markdownHtml)
+        </div>
+}
+
+@code{
+        
+        string markdownHtml;
+
+        Task OnMarkdownValueHTMLChanged(string value)
+        {
+                markdownHtml = value;
+                return Task.CompletedTask;
+        }
+
 }
 
 @code

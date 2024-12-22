@@ -17,7 +17,6 @@ builder.Services.AddSingleton<AppState>();
 builder.Services.AddScoped<AppState>();
 
 builder.Services.AddMudServices();
-builder.Services.AddMudMarkdownServices();
 builder.WebHost.UseStaticWebAssets();
 
 // Add services to the container.
