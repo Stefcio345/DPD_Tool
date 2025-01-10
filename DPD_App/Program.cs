@@ -54,13 +54,26 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.Use((ctx, next) =>
+{
+    ctx.Request.Scheme = "https";
+    return next();
+});
 
 SaveKeeper.SaveState(SaveType.DEFAULT);
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+//Test site
 app.MapGet("/Test", () => "Hello, World!");
+
+//Log rountes
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Request: {context.Request.Path}");
+    await next();
+});
 
 app.Run();
 

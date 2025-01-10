@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
 	<PublishTrimmed>true</PublishTrimmed>
 	<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+	<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </PropertyGroup>
 
     <ItemGroup>
