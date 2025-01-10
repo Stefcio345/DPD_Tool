@@ -7,7 +7,6 @@ public class LoggingService
     public static AppSettings Settings { get; set; }
     public static void Log(LoggingType type, string content)
     {
-        //TODO Add logging to a file
         //Dont log if settings turned off
         if (!Settings.LogRequests) return;
         

@@ -24,6 +24,8 @@ builder.Services.AddRazorComponents()
 
 var app = builder.Build();
 
+app.UseMiddleware<RequestCaptureMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -35,8 +37,15 @@ if (!app.Environment.IsDevelopment())
 
 if (app.Environment.IsProduction())
 {
-    var url = "http://localhost:5000"; // Change this to match your production URL if necessary.
-    Task.Run(() => OpenBrowser(url));
+    try
+    {
+        var url = "http://localhost:5000"; // Change this to match your production URL if necessary.
+        Task.Run(() => OpenBrowser(url));
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
 }
 
 app.UseHttpsRedirection();
