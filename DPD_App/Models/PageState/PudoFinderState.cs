@@ -2,5 +2,5 @@
 
 public class PudoFinderState
 {
-    public Country? SelectedCountry { get; set; } = Globals.Countries.First(c => c.IsoCodeA2 == "PL");
+    public Country? SelectedCountry { get; set; } = Countries.GetDefault();
 }

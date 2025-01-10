@@ -119,16 +119,20 @@
                 <MudSwitch T="bool" Value="settings.ImpossibleServiceCombinationsEnabled" ThumbIcon="@(settings.ImpossibleServiceCombinationsEnabled == true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(settings.ImpossibleServiceCombinationsEnabled == true ? Color.Success : Color.Error)" ValueChanged="(b) => { settings.ImpossibleServiceCombinationsEnabled = b; settings.SaveToFile(); StateHasChanged(); }">Impossible Services Combinations Enabled</MudSwitch>
             </MudPaper>
         }
-
-        <MudTextField Class="mx-2" T="string" Label="Notes Save Location" Value="settings.NoteSaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => { settings.NoteSaveLocation = b; settings.SaveToFile(); StateHasChanged(); }"></MudTextField>
-
+        
     </MudPaper>
+    
+    <!-- Notes Settings -->
+    <MudTextField Class="mx-2" T="string" Label="Notes Save Location" Value="settings.NoteSaveLocation" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="(b) => { settings.NoteSaveLocation = b; settings.SaveToFile(); StateHasChanged(); }"></MudTextField>
+
+    <!-- Countries settings -->
+    <CountriesMenu/>
+    
 </MudStack>
 
 @code
 {
-    [CascadingParameter]
-    public AppSettings settings { get; set; }
+    [Parameter] public AppSettings settings { get; set; }
 
     private bool _displayGeneral = false;
     private bool _displaySoapAPI = false;

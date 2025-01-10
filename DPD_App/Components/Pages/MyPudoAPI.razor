@@ -1,5 +1,6 @@
 ﻿@page "/MyPudoAPI"
 @using System.Text.Json
+@using DPD_App.Models
 @using DPD_App.Json
 @inject AppState AppState
 
@@ -31,7 +32,7 @@
                         case "Country":
                             <MudItem xs="6">
                                 <MudSelect T="Country" Value="SelectedCountry" Label="Select country" ValueChanged="OnCountrySelect" Variant="Variant.Outlined">
-                                    @foreach (Country item in Globals.Countries)
+                                    @foreach (Country item in Countries.List)
                                     {
                                         <MudSelectItem Value="@item">@item.Name</MudSelectItem>
                                     }
@@ -376,7 +377,7 @@
     
     protected override Task OnInitializedAsync()
     {
-        SelectedCountry = Globals.Countries[0];
+        SelectedCountry = Countries.GetDefault();
         key = CurrentProfile.PudoKey;
         AppState.CurrentPage = "MyPudoAPI";
         return base.OnInitializedAsync();

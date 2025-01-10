@@ -1,14 +1,13 @@
 using System.Diagnostics;
-using System.Xml.Serialization;
 using DPD_App;
 using DPD_App.Components;
-using MudBlazor;
+using DPD_App.Models;
 using MudBlazor.Services;
 
 //Create necessary directories
 
 Directory.CreateDirectory(Globals.SaveLocation);
-Globals.LoadState();
+SaveKeeper.LoadState();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +44,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-Globals.SaveState();
+SaveKeeper.SaveState(SaveType.ALL);
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

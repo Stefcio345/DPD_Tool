@@ -1,4 +1,5 @@
 ﻿@using DPD_App.Components.Layout
+@using DPD_App.Models
 @inject ISnackbar Snackbar
 @inject AppState AppState
 
@@ -14,7 +15,7 @@
     </TitleContent>
     <DialogContent>
         <MudList Padding="true" T="Profile" SelectedValue="AppState.CurrentProfile" SelectionMode="SelectionMode.SingleSelection" SelectedValueChanged="OnProfileChange">
-            @foreach (Profile profile in Globals.Profiles)
+            @foreach (Profile profile in Profiles.List)
             {
                 <MudListItem Class="pa-1 my-2" Value="@profile">
                     <MudStack Justify="Justify.SpaceBetween" Row="true">
@@ -183,10 +184,10 @@
 
     private void OnProfileChange(Profile obj)
     {
-        AppState.CurrentProfile.IsChoosen = false;
+        AppState.CurrentProfile.IsChosen = false;
         AppState.CurrentProfile = obj;
-        AppState.CurrentProfile.IsChoosen = true;
-        Globals.SaveState();
+        AppState.CurrentProfile.IsChosen = true;
+        SaveKeeper.SaveState(SaveType.PROFILES);
         StateHasChanged();
     }
 
@@ -210,7 +211,7 @@
         CurrentylEdited.FID = profileToEdit.FID;
         CurrentylEdited.WsdlAddress = profileToEdit.WsdlAddress;
         
-        Globals.SaveState();
+        SaveKeeper.SaveState(SaveType.PROFILES);
         Parent.Refresh();
         Snackbar.Add("Changes saved successfully", Severity.Success);
         _profileSettingsVisible = false;
@@ -219,14 +220,14 @@
 
     private void DeleteProfile()
     {
-        Globals.Profiles.Remove(CurrentylEdited);
+        Profiles.List.Remove(CurrentylEdited);
         _profileSettingsVisible = false;
         if (AppState.CurrentProfile == CurrentylEdited)
         {
             AppState.CurrentProfile = new Profile();
         }
 
-        Globals.SaveState();
+        SaveKeeper.SaveState(SaveType.PROFILES);
         Snackbar.Add("Profile deleted successfully", Severity.Info);
         StateHasChanged();
     }
@@ -240,8 +241,8 @@
 
     private void CreateNewProfile(MouseEventArgs obj)
     {
-        Globals.Profiles.Add(NewProfile);
-        Globals.SaveState();
+        Profiles.List.Add(NewProfile);
+        SaveKeeper.SaveState(SaveType.PROFILES);
         Snackbar.Add("Profile created successfully", Severity.Success);
         _newProfileVisible = false;
     }

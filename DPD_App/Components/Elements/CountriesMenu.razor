@@ -1,0 +1,50 @@
+﻿@using DPD_App.Components.Layout
+@inject ISnackbar Snackbar
+@inject AppState AppState
+
+<style>
+    .mud-dialog-width-full {
+        max-width: 800px;
+        max-height: 80%;
+    }
+</style>
+
+<MudButton Class="pb-2" OnClick="OpenProfilesSettings" Variant="Variant.Filled" Color="Color.Info">Edit Countries</MudButton>
+
+<!-- Profiles -->
+<MudDialog @bind-Visible="_profileMenuVisible" Options="_dialogOptions" Style="width: 800px;" Class="mud-background" TitleClass="mud-primary">
+    <TitleContent>
+        <MudStack Row="true" Justify="Justify.Center">
+            <MudPaper Class="pa-2">
+                <MudText Typo="Typo.h4"><b>Countries</b></MudText>
+            </MudPaper>
+        </MudStack>
+    </TitleContent>
+    <DialogContent>
+        <CountriesTable/>
+    </DialogContent>
+</MudDialog>
+
+@code
+{
+    //Profiles
+    [CascadingParameter] public AppSettings settings { get; set; }
+    [Parameter] public MainLayout Parent { get; set; }
+    private MudMessageBox _mudMessageBox;
+    private bool _profileSettingsVisible;
+    private bool _profileMenuVisible;
+    private bool _newProfileVisible;
+    private readonly DialogOptions _dialogOptions = new() { FullWidth = true };
+    
+
+    void OpenProfilesSettings()
+    {
+        _profileMenuVisible = true;
+    }
+    
+    private async Task ShowDeleteConfirmation()
+    {
+        await _mudMessageBox.ShowAsync();
+        StateHasChanged();
+    }
+}

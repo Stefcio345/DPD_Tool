@@ -1,0 +1,97 @@
+﻿@using DPD_App.Models
+@inject ISnackbar Snackbar
+
+<style>
+    .mud-table-cell:last-of-type .mud-tooltip-root:nth-of-type(1) .mud-svg-icon { fill: var(--mud-palette-success); font-size: 1.5rem;}
+    .mud-table-cell:last-of-type .mud-tooltip-root:nth-of-type(2) .mud-svg-icon { fill: #fc3f3f; font-size: 1.5rem;}
+</style>
+
+<MudTable Items="@Countries.List" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" Bordered="true" CanCancelEdit="true" 
+          EditTrigger="TableEditTrigger.EditButton"
+          RowEditPreview="BackupItem"
+          OnCommitEditClick="@(() => { Snackbar.Add("Changes have been saved", Severity.Success); SaveKeeper.SaveState(SaveType.COUNTRIES); })"
+          RowEditCancel="ResetItemToOriginalValues">
+    <ColGroup>
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>ISO Alpha-2 Code</MudTh>
+        <MudTh>ISO Alpha-3 Code</MudTh>
+        <MudTh>Currency</MudTh>
+        <MudTh>Default postal code</MudTh>
+        <MudTh>Is default</MudTh>
+        <MudTh>
+            <MudIconButton Class="px-9" Icon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Success" Size="Size.Medium" OnClick="AddCountry"/>
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="ISO Alpha-2 Code">@context.IsoCodeA2</MudTd>
+        <MudTd DataLabel="ISO Alpha-3 Code">@context.IsoCodeA3</MudTd>
+        <MudTd DataLabel="Currency">@context.Currency</MudTd>
+        <MudTd DataLabel="Default postal code">@context.DefaultPostalCode</MudTd>
+        <MudTd DataLabel="Is default">
+            <MudCheckBox @bind-Value="@context.IsDefault" Disabled="true"/>
+        </MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Name"/>
+        </MudTd>
+        <MudTd DataLabel="ISO Alpha-2 Code">
+            <MudTextField @bind-Value="@context.IsoCodeA2"/>
+        </MudTd>
+        <MudTd DataLabel="ISO Alpha-3 Code">
+            <MudTextField @bind-Value="@context.IsoCodeA3"/>
+        </MudTd>
+        <MudTd DataLabel="Currency">
+            <MudSelect @bind-Value="@context.Currency">
+                @foreach (var currency in Globals.Currencies)
+                {
+                    <MudSelectItem Value="@currency">@currency</MudSelectItem>
+                }
+            </MudSelect>
+        </MudTd>
+        <MudTd DataLabel="Default postal code">
+            <MudTextField @bind-Value="@context.DefaultPostalCode"/>
+        </MudTd>
+        <MudTd DataLabel="Default postal code">
+            <MudCheckBox @bind-Value="@context.IsDefault"/>
+        </MudTd>
+    </RowEditingTemplate>
+    <EditButtonContent Context="button">
+        <MudStack Justify="Justify.SpaceBetween" Row="true">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Info" Size="Size.Medium" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" OnClick="@(() => { if (button.Item != null) { RemoveCountry(button.Item); } Snackbar.Add("An Item has been removed", Severity.Error); StateHasChanged(); })"/>
+        </MudStack>
+    </EditButtonContent>
+</MudTable>
+    
+@code {
+    private Country? _countryBeforeEdit;
+    
+    private void AddCountry()
+    {
+        Countries.List.Add(new Country());
+        SaveKeeper.SaveState(SaveType.COUNTRIES);
+        StateHasChanged();
+    }
+    
+    private void RemoveCountry(object currentParcel)
+    {
+        var country = (Country)currentParcel;
+        Countries.List.Remove(country);
+        SaveKeeper.SaveState(SaveType.COUNTRIES);
+        StateHasChanged();
+    }
+    
+    private void BackupItem(object element)
+    {
+        _countryBeforeEdit = new Country((Country)element);
+    }
+    
+    private void ResetItemToOriginalValues(object element)
+    {
+        if (_countryBeforeEdit != null) ((Country)element).UpdateFields(_countryBeforeEdit);
+    }
+}

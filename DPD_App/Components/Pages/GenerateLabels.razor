@@ -407,7 +407,13 @@
         get => AppState.GenerateLabelsState.package;
         set => AppState.GenerateLabelsState.package = value;
     }
-    
+
+    protected override Task OnInitializedAsync()
+    {
+        AppState.CurrentPage = "Generate Labels";
+        return base.OnInitializedAsync();
+    }
+
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

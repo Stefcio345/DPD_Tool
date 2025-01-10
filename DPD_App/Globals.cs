@@ -1,12 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
-using System.Security.Cryptography;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
-using System.Xml;
-using System.Xml.Serialization;
-using MudBlazor;
+﻿using System.Text.Json.Serialization;
+using DPD_App.Models;
 
 namespace DPD_App;
 
@@ -42,16 +35,6 @@ public class Globals
         new Currency("UAH","Ukrainian hryvnia", isDuty:true),
     };
     
-    public static List<Country> Countries = new List<Country>
-    {
-        new Country("Poland", "PL", "POL", Currencies.First(c => c.IsoCodeA3 == "PLN"), "02274"),
-        new Country("Belgium", "BE", "BEL",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "1000"),
-        new Country("Croatia", "HR", "HRV",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "10000"),
-        new Country("Czech Republic", "CZ", "CZE",  Currencies.First(c => c.IsoCodeA3 == "CZK"), "10000"),
-        new Country("Estonia", "EE", "EST",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "49604"),
-        new Country("France", "FR", "FRA",  Currencies.First(c => c.IsoCodeA3 == "EUR"), "78000"),
-    };
-    
     public static List<MapFilter> MapFilters = new List<MapFilter>
     {
         new MapFilter("Open late", "open_late"),
@@ -73,27 +56,6 @@ public class Globals
         new MapFilter("Parcel machines", "swip_box"),
     };
     
-    public static List<Profile> Profiles = new List<Profile>
-    {
-        new Profile("Default Test", "test", "thetu4Ee", "1495", "1495","1495", WsdlAddresses.Single(a => a.Name == "DEMO"),"", "", true),
-    };
-
-    public static void SaveState()
-    {
-        SaveKeeper.SaveToFile(Globals.Profiles, "Profiles.json");
-    }
-
-    public static void LoadState()
-    {
-        if (File.Exists(Globals.SaveLocation + "Profiles.json"))
-        {
-            Globals.Profiles = SaveKeeper.LoadFromFile<List<Profile>>("Profiles.json");
-        }
-        else
-        {
-            SaveKeeper.SaveToFile(Globals.Profiles, "Profiles.json");
-        }
-    }
 }
 
 public class AppSettings
@@ -155,20 +117,6 @@ public class AppSettings
     public void SaveToFile()
     {
         SaveKeeper.SaveToFile(this, "Settings.json");
-    }
-}
-
-public class SaveKeeper()
-{
-    public static void SaveToFile<T>(T objectToSave, string filename)
-    {
-        var jsonString = JsonSerializer.Serialize(objectToSave, new JsonSerializerOptions{WriteIndented = true});
-        File.WriteAllText(Globals.SaveLocation + filename, jsonString);
-    }
-    public static T LoadFromFile<T>(string filename)
-    {
-        var jsonString = File.ReadAllText(Globals.SaveLocation + filename);
-        return JsonSerializer.Deserialize<T>(jsonString);
     }
 }
 
@@ -280,29 +228,6 @@ public enum PrintType
 }
 
 
-public class Country
-{
-    public string IsoCodeA2 { get; set; }
-    public string IsoCodeA3 { get; set; }
-    public string Name { get; set; }
-    public Currency? Currency { get; set; }
-    public string? DefaultPostalCode { get; set; }
-
-    public Country(string name, string isoCodeA2, string isoCodeA3, Currency currency = null, string defaultPostalCode = "")
-    {
-        IsoCodeA2 = isoCodeA2;
-        IsoCodeA3 = isoCodeA3;
-        Name = name;
-        Currency = currency;
-        DefaultPostalCode = defaultPostalCode;
-    }
-
-    public override string ToString()
-    {
-        return Name;
-    }
-}
-
 public class Currency
 {
     public string IsoCodeA3 { get; set; }
@@ -312,6 +237,11 @@ public class Currency
     public bool IsDeclaredAmount = false;
     public bool IsDuty = false;
 
+    public Currency()
+    {
+        IsoCodeA3 = "PLN";
+        Name = "Polish Złoty";
+    }
     public Currency(string isoCodeA3, string name)
     {
         IsoCodeA3 = isoCodeA3;
@@ -329,7 +259,7 @@ public class Currency
 
     public override string ToString()
     {
-        return Name;
+        return $"({IsoCodeA3}) {Name}";
     }
 }
 
@@ -354,11 +284,8 @@ public class MapFilter
 
 public class WsdlAddress
 {
-    [JsonInclude]
     private string DpdServicesAddress { get; set; }
-    [JsonInclude]
     private string InfoServicesAddress { get; set; }
-    [JsonInclude]
     private string AppServicesAddress { get; set; }
     public string Name { get; set; }
 
@@ -390,57 +317,6 @@ public class WsdlAddress
     public override string ToString()
     {
         return Name;
-    }
-}
-
-public class Profile: ICloneable
-{
-    public string Login { get; set; }
-    public string Password { get; set; }
-    public string MasterFid { get; set; }
-    public string Channel { get; set; }
-    public string FID { get; set; }
-    public string WidgetKey { get; set; }
-    public string PudoKey { get; set; }
-    public string ProfileName { get; set; }
-    public bool IsChoosen { get; set; }
-    public WsdlAddress WsdlAddress { get; set; }
-
-    public Profile()
-    {
-        ProfileName = "";
-        Login = "";
-        Password = "";
-        MasterFid = "";
-        Channel = "";
-        FID = "";
-        WidgetKey = "";
-        PudoKey = "";
-        WsdlAddress = Globals.WsdlAddresses.Single(a => a.Name == "DEMO");
-    }
-
-    public Profile(string profileName, string login, string password, string masterFid, string channel, string fid, WsdlAddress wsdlAddress, string widgetKey = "", string pudoKey ="", bool isChoosen=false)
-    {
-        ProfileName = profileName;
-        Login = login;
-        Password = password;
-        MasterFid = masterFid;
-        Channel = channel;
-        FID = fid;
-        WidgetKey = widgetKey;
-        PudoKey = pudoKey;
-        IsChoosen = isChoosen;
-        WsdlAddress = wsdlAddress;
-    }
-
-    public override string ToString()
-    {
-        return this.ProfileName;
-    }
-
-    public object Clone()
-    {
-        return this.MemberwiseClone();
     }
 }
 
