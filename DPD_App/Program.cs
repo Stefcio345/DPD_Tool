@@ -11,6 +11,8 @@ SaveKeeper.LoadState();
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
+
 // Add mudBlazor services
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddScoped<AppState>();
@@ -57,6 +59,8 @@ SaveKeeper.SaveState(SaveType.DEFAULT);
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapGet("/Test", () => "Hello, World!");
 
 app.Run();
 
