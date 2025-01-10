@@ -78,7 +78,7 @@ public class Countries
     
     public static void SaveState()
     {
-        SaveKeeper.SaveToFile(List, "Countries.json");
+        SaveKeeper.SaveToFile(List, "Countries.json", SaveType.COUNTRIES);
     }
 
     public static void LoadState()
@@ -89,7 +89,7 @@ public class Countries
         }
         else
         {
-            SaveKeeper.SaveToFile(List, "Countries.json");
+            SaveKeeper.SaveToFile(List, "Countries.json", SaveType.COUNTRIES);
         }
     }
 

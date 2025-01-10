@@ -44,7 +44,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-SaveKeeper.SaveState(SaveType.ALL);
+SaveKeeper.SaveState(SaveType.DEFAULT);
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

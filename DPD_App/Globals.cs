@@ -110,13 +110,13 @@ public class AppSettings
         }
         else
         {
-            SaveKeeper.SaveToFile(this, "Settings.json");
+            SaveKeeper.SaveToFile(this, "Settings.json", SaveType.DEFAULT);
         }
     }
 
     public void SaveToFile()
     {
-        SaveKeeper.SaveToFile(this, "Settings.json");
+        SaveKeeper.SaveToFile(this, "Settings.json", SaveType.DEFAULT);
     }
 }
 
@@ -284,9 +284,9 @@ public class MapFilter
 
 public class WsdlAddress
 {
-    private string DpdServicesAddress { get; set; }
-    private string InfoServicesAddress { get; set; }
-    private string AppServicesAddress { get; set; }
+    public string DpdServicesAddress { get; set; }
+    public string InfoServicesAddress { get; set; }
+    public string AppServicesAddress { get; set; }
     public string Name { get; set; }
 
     public WsdlAddress()

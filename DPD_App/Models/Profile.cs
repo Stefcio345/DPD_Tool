@@ -65,7 +65,7 @@ public class Profiles
     
     public static void SaveState()
     {
-        SaveKeeper.SaveToFile(List, "Profiles.json");
+        SaveKeeper.SaveToFile(List, "Profiles.json", SaveType.PROFILES);
     }
 
     public static void LoadState()
@@ -76,7 +76,7 @@ public class Profiles
         }
         else
         {
-            SaveKeeper.SaveToFile(List, "Profiles.json");
+            SaveKeeper.SaveToFile(List, "Profiles.json", SaveType.PROFILES);
         }
     }
 }

@@ -8,15 +8,25 @@ namespace DPD_App.Models;
 [JsonSerializable(typeof(List<Country>))]
 [JsonSerializable(typeof(AppState))]
 [JsonSourceGenerationOptions(WriteIndented = true)]
-internal partial class YourJsonContext : JsonSerializerContext
+internal partial class JsonContext : JsonSerializerContext
 {
 }
 
 public class SaveKeeper()
 {
-    public static void SaveToFile<T>(T objectToSave, string filename)
+    public static void SaveToFile<T>(T objectToSave, string filename, SaveType saveType)
     {
-        var jsonString = JsonSerializer.Serialize(objectToSave, new JsonSerializerOptions{WriteIndented = true});
+        string jsonString = saveType switch
+        {
+            SaveType.DEFAULT => JsonSerializer.Serialize(objectToSave,
+                new JsonSerializerOptions { WriteIndented = true }),
+            SaveType.PROFILES => JsonSerializer.Serialize(objectToSave,
+                JsonContext.Default.ListProfile),
+            SaveType.COUNTRIES => JsonSerializer.Serialize(objectToSave,
+                JsonContext.Default.ListCountry),
+            _ => throw new ArgumentOutOfRangeException(nameof(saveType), saveType, null)
+        };
+
         File.WriteAllText(Globals.SaveLocation + filename, jsonString);
     }
     public static T LoadFromFile<T>(string filename)
@@ -29,7 +39,7 @@ public class SaveKeeper()
     {
         switch (saveType)
         {
-            case SaveType.ALL:
+            case SaveType.DEFAULT:
                 Profiles.SaveState();
                 Countries.SaveState();
                 break;
@@ -53,7 +63,7 @@ public class SaveKeeper()
 
 public enum SaveType
 {
-    ALL,
+    DEFAULT,
     PROFILES,
     COUNTRIES
 }
