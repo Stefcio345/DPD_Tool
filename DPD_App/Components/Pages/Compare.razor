@@ -40,6 +40,12 @@
         get => AppState.CompareState.ModifiedModel;
         set => AppState.CompareState.ModifiedModel = value;
     }
+    
+    protected override Task OnInitializedAsync()
+    {
+        AppState.CurrentPage = "Compare Text";
+        return base.OnInitializedAsync();
+    }
 
     private StandaloneDiffEditorConstructionOptions DiffEditorConstructionOptions(StandaloneDiffEditor editor)
     {

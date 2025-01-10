@@ -1,5 +1,5 @@
 ﻿@page "/SoapAPI"
-@using MudBlazor.Extensions
+@using DPD_App.Models
 @inject IJSRuntime JS
 @inject AppState AppState
 
@@ -91,13 +91,6 @@
     [CascadingParameter]
     public Profile CurrentProfile { get; set; }
     private DotNetObjectReference<SoapApi>? dotNetRef;
-    
-    public class TabItem
-    {
-        public string Title { get; set; }
-        public SoapData Data;
-        public bool IsActive { get; set; }
-    }
 
     public List<TabItem> Tabs
     {

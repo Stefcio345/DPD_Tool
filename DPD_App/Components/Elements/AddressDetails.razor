@@ -21,7 +21,7 @@
                         <MudTextField Margin="Margin.Dense" @bind-Value="package.Sender.Address" Label="Address" Variant="Variant.Outlined"/>
                         <MudTextField Margin="Margin.Dense" @bind-Value="package.Sender.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
                         <MudSelect Margin="Margin.Dense" T="string" @bind-Value="package.Sender.CountryCode" Label="CountryCode" Variant="Variant.Outlined">
-                            @foreach (var country in Globals.Countries)
+                            @foreach (var country in Countries.List)
                             {
                                 <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
                             }
@@ -36,10 +36,10 @@
         <MudItem xs="6">
             <MudStack Row="true" Class="mb-4" Spacing="2">
                 <MudText Typo="Typo.h5">Receiver details</MudText>
-                <MudToggleIconButton Size="Size.Small" @bind-Toggled="recieverOn"
+                <MudToggleIconButton Size="Size.Small" @bind-Toggled="ReceiverOn"
                                      Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
             </MudStack>
-            @if (recieverOn)
+            @if (ReceiverOn)
             {
                 <MudPanel>
                     <MudStack Row="false" Wrap="Wrap.Wrap" Spacing="1">
@@ -48,7 +48,7 @@
                         <MudTextField Margin="Margin.Dense" @bind-Value="package.Receiver.Address" Label="Address" Variant="Variant.Outlined"/>
                         <MudTextField Margin="Margin.Dense" @bind-Value="package.Receiver.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
                         <MudSelect Margin="Margin.Dense" T="Country" Value="_receiverCountry" Label="CountryCode" Variant="Variant.Outlined" ValueChanged="ReceiverCountryChanged">
-                            @foreach (var country in Globals.Countries)
+                            @foreach (var country in Countries.List)
                             {
                                 <MudSelectItem Value="@country">@country.Name</MudSelectItem>
                             }
@@ -79,7 +79,7 @@ else
                 <MudTextField @bind-Value="package.Sender.Address" Label="Address" Variant="Variant.Outlined"/>
                 <MudTextField @bind-Value="package.Sender.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
                 <MudSelect T="string" @bind-Value="package.Sender.CountryCode" Label="CountryCode" Variant="Variant.Outlined">
-                    @foreach (var country in Globals.Countries)
+                    @foreach (var country in Countries.List)
                     {
                         <MudSelectItem Value="@country.IsoCodeA2">@country.Name</MudSelectItem>
                     }
@@ -94,10 +94,10 @@ else
     <MudDivider Class="my-6"/>
     <MudStack Row="true" Class="mb-4" Spacing="2">
         <MudText Typo="Typo.h5">Receiver details</MudText>
-        <MudToggleIconButton Size="Size.Small" @bind-Toggled="recieverOn"
+        <MudToggleIconButton Size="Size.Small" @bind-Toggled="ReceiverOn"
                              Icon="@Icons.Material.Filled.ArrowDownward" ToggledIcon="@Icons.Material.Filled.ArrowUpward"/>
     </MudStack>
-    @if (recieverOn)
+    @if (ReceiverOn)
     {
         <MudPanel>
             <MudStack Row="true" Wrap="Wrap.Wrap">
@@ -106,7 +106,7 @@ else
                 <MudTextField @bind-Value="package.Receiver.Address" Label="Address" Variant="Variant.Outlined"/>
                 <MudTextField @bind-Value="package.Receiver.PostalCode" Label="PostalCode" Variant="Variant.Outlined"/>
                 <MudSelect T="Country" Value="_receiverCountry" Label="CountryCode" Variant="Variant.Outlined" ValueChanged="ReceiverCountryChanged">
-                    @foreach (var country in Globals.Countries)
+                    @foreach (var country in Countries.List)
                     {
                         <MudSelectItem Value="@country">@country.Name</MudSelectItem>
                     }
@@ -123,14 +123,14 @@ else
 {
     [CascadingParameter]
     public GenerateLabels _Parent { get; set; }
-    public bool recieverOn = true;
+    public bool ReceiverOn = true;
     public bool senderOn = true;
-    Country _receiverCountry;
+    private Country _receiverCountry;
     [Parameter] public Package package { get; set; }
 
     protected override Task OnInitializedAsync()
     {
-        _receiverCountry = Globals.Countries.Single(c => c.IsoCodeA2 == package.Receiver.CountryCode);
+        _receiverCountry = Countries.GetByIsoAlpha2(package.Receiver.CountryCode);
         return base.OnInitializedAsync();
     }
 

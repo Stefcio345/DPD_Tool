@@ -6,13 +6,13 @@
     <MudNavLink Href="/PudoFinder" Icon="@Icons.Material.Filled.Map">PudoFinder</MudNavLink>
     <MudNavLink Href="/SoapAPI" Icon="@Icons.Material.Filled.Api">Soap API</MudNavLink>
     <MudNavLink Href="/Compare" Icon="@Icons.Material.Filled.CompareArrows">Compare</MudNavLink>
-    <MudNavGroup Title="Notes" Icon="@Icons.Material.Filled.Notes" Expanded="true">
+    <!-- <MudNavGroup Title="Notes" Icon="@Icons.Material.Filled.Notes" Expanded="true">
         @foreach (var file in NotesService.GetNotes())
         {
             <MudNavLink Href=@($"/Notes/{file}")>@file</MudNavLink>
         }
         <MudIconButton Size="Size.Small" Variant="Variant.Filled" Icon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="SaveNote"/>
-    </MudNavGroup>
+    </MudNavGroup> -->
 </MudNavMenu>
 
 @code

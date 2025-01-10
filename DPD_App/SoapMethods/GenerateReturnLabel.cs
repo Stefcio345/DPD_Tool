@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using DPD_App;
+using DPD_App.Models;
 
 [XmlRoot(ElementName="generateReturnLabelV1", Namespace="http://dpdservices.dpd.com.pl/")]
 public class GenerateReturnLabelV1: ISoapBody, IAuthData

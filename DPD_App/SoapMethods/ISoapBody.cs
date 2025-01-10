@@ -1,4 +1,6 @@
-﻿namespace DPD_App;
+﻿using DPD_App.Models;
+
+namespace DPD_App;
 
 public interface ISoapBody
 {

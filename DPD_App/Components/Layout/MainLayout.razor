@@ -58,12 +58,10 @@
             </MudItem>
         </MudGrid>
     </MudAppBar>
-
-    <CascadingValue Value="AppState.Settings">
-        <MudDrawer @bind-Open="@_openSettings" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary" Width="300px">
-            <Settings/>
-        </MudDrawer>
-    </CascadingValue>
+    
+    <MudDrawer @bind-Open="@_openSettings" Anchor="Anchor.End" Elevation="1" Variant="DrawerVariant.Temporary" Width="300px">
+        <Settings settings="AppState.Settings"/>
+    </MudDrawer>
 
     <MudDrawer @bind-Open="@_open" ClipMode="DrawerClipMode.Docked" Variant="AppState.Settings.MiniDrawer?DrawerVariant.Mini:DrawerVariant.Responsive" Elevation="_themeManager.DrawerElevation">
         <NavMenu/>
@@ -86,7 +84,6 @@
     private bool _isDarkMode;
     private bool _open;
     private bool _openSettings;
-    private MudMessageBox _mudMessageBox;
     private MudThemeProvider _mudThemeProvider = new MudThemeProvider();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -118,8 +115,7 @@
     protected override Task OnInitializedAsync()
     {
         AppState.OnChange += StateHasChanged;
-        AppState.LoadProfile();
-        AppState.LoadSettings();
+        AppState.InitializeAppState();
         return base.OnInitializedAsync();
     }
 
@@ -157,12 +153,6 @@
         _isDarkMode = !_isDarkMode;
         //Set Editor theme
         BlazorMonaco.Editor.Global.SetTheme(JsRuntime, _isDarkMode ? "vs-dark" : "my_theme");
-        StateHasChanged();
-    }
-    
-    private async Task OnButtonClickedAsync()
-    {
-        await _mudMessageBox.ShowAsync();
         StateHasChanged();
     }
 

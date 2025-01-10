@@ -29,8 +29,8 @@ public class Package
         Parcels = [new Parcel()];
         PayerType = "THIRD_PARTY";
         ThirdPartyFID = "1495";
-        Receiver = new AddressData();
-        Sender = new AddressData();
+        Receiver = new AddressData(AddressTemplate.RECEIVER);
+        Sender = new AddressData(AddressTemplate.SENDER);
         Ref1 = "REF1_ABC";
         Ref2 = "REF2_DEF";
         Ref3 = "REF3_GHI";

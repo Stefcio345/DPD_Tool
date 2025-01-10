@@ -1,5 +1,5 @@
 ﻿@page "/PudoFinder"
-@using MudBlazor.Interfaces
+@using DPD_App.Models
 @inject AppState AppState
 
 <PageTitle>PudoFinder</PageTitle>
@@ -10,11 +10,11 @@
         <MudPanel>
             <MudStack>
                 <!-- Key input -->
-                <MudTextField Immediate="true" Value="key" T="string" Label="Widget Key" Variant="Variant.Outlined" TextChanged="OnKeyChanged"/>
+                <MudTextField Immediate="true" Value="_key" T="string" Label="Widget Key" Variant="Variant.Outlined" TextChanged="OnKeyChanged"/>
 
                 <!-- Country select -->
                 <MudSelect T="Country" Value="SelectedCountry" Variant="Variant.Outlined" Label="Select country" ValueChanged="OnCountrySelect">
-                    @foreach (Country item in Globals.Countries)
+                    @foreach (var item in Countries.List)
                     {
                         <MudSelectItem Value="@item">@item.Name</MudSelectItem>
                     }
@@ -29,7 +29,7 @@
                 @foreach (var filter in Globals.MapFilters)
                 {
                     <MudPaper Class="pr-3" Elevation="2">
-                        <MudCheckBox T="bool" Value="@filter.IsActive" Label="@filter.Name"ValueChanged="b => { filter.IsActive = b; updateQuery(); StateHasChanged(); }"/>
+                        <MudCheckBox T="bool" Value="@filter.IsActive" Label="@filter.Name"ValueChanged="b => { filter.IsActive = b; UpdateQuery(); StateHasChanged(); }"/>
                     </MudPaper>
                 }
             </MudStack>
@@ -39,8 +39,8 @@
     <!-- Query text -->
     <MudItem xs="12">
         <MudPanel>
-            <MudTextField @ref="QueryBox" @bind-Value="Query" Label="Query" Variant="Variant.Outlined"
-                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => QueryBox?.SelectAsync())"/>
+            <MudTextField @ref="_queryBox" @bind-Value="Query" Label="Query" Variant="Variant.Outlined"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Api" OnAdornmentClick="@(() => _queryBox?.SelectAsync())"/>
         </MudPanel>
     </MudItem>
     
@@ -48,7 +48,7 @@
         @if (Query is not null)
         {
             <MudPanel Height="750px">
-                <iframe width="100%" height="100%" src="@Query" frameborder="0" allow="geolocation *"></iframe>
+                <iframe width="100%" height="100%" src="@Query" allow="geolocation *"></iframe>
             </MudPanel>
         }
         else
@@ -62,7 +62,7 @@
 
 @code {
     [CascadingParameter] public Profile CurrentProfile { get; set; }
-    private MudTextField<string>? QueryBox;
+    private MudTextField<string>? _queryBox;
 
     public Country? SelectedCountry
     {
@@ -72,11 +72,11 @@
 
     public string? Query { get; set; }
     
-    private string? key;
+    private string? _key;
 
     protected override Task OnInitializedAsync()
     {
-        key = CurrentProfile.WidgetKey;
+        _key = CurrentProfile.WidgetKey;
         AppState.CurrentPage = "PudoFinder";
         return base.OnInitializedAsync();
     }
@@ -84,22 +84,22 @@
     private void OnCountrySelect(Country obj)
     {
         SelectedCountry = obj;
-        updateQuery();
+        UpdateQuery();
     }
     
     private void OnKeyChanged(string obj)
     {
-        key = obj;
-        updateQuery();
+        _key = obj;
+        UpdateQuery();
     }
 
-    public void updateQuery()
+    public void UpdateQuery()
     {
         string query = $"//pudofinder.dpd.com.pl/widget?";
         
-        if (key is not null)
+        if (_key is not null)
         {
-            query += $"key={key}";
+            query += $"key={_key}";
         }
 
         if (SelectedCountry is not null)
