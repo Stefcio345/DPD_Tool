@@ -196,7 +196,7 @@
     private void DownloadData()
     {
         var name = "";
-        if (SessionData is not null) name = SessionData.Packages.Parcels[0].Waybill; 
+        if (SessionData is not null) name = SessionData.Packages.Parcels.First().Waybill; 
         var filename = FileService.SaveBase64ToPDF(DocumentData, PrintType.Custom, name);
         Snackbar.Add(builder =>
             {
