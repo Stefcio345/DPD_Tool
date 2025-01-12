@@ -5,19 +5,17 @@ using DPD_App.Models;
 using MudBlazor.Services;
 
 //Create necessary directories
-
 Directory.CreateDirectory(Globals.SaveLocation);
 SaveKeeper.LoadState();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://0.0.0.0:5000");
+// Add MudBlazor services
+builder.Services.AddMudServices();
 
-// Add mudBlazor services
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddScoped<AppState>();
 
-builder.Services.AddMudServices();
 builder.WebHost.UseStaticWebAssets();
 
 // Add services to the container.
@@ -26,54 +24,23 @@ builder.Services.AddRazorComponents()
 
 var app = builder.Build();
 
-app.UseMiddleware<RequestCaptureMiddleware>();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to chang
-    // e this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-}
-
-if (app.Environment.IsProduction())
-{
-    try
-    {
-        var url = "http://localhost:5000"; // Change this to match your production URL if necessary.
-        Task.Run(() => OpenBrowser(url));
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine(e);
-    }
 }
 
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-app.Use((ctx, next) =>
-{
-    ctx.Request.Scheme = "https";
-    return next();
-});
-
-SaveKeeper.SaveState(SaveType.DEFAULT);
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-//Test site
-app.MapGet("/Test", () => "Hello, World!");
-
-//Log rountes
-app.Use(async (context, next) =>
-{
-    Console.WriteLine($"Request: {context.Request.Path}");
-    await next();
-});
+SaveKeeper.SaveState(SaveType.DEFAULT);
 
 app.Run();
 
