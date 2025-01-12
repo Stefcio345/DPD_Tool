@@ -4,9 +4,6 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-	<PublishTrimmed>true</PublishTrimmed>
-	<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
-	<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,10 +23,6 @@
     <ItemGroup>
       <Folder Include="Data\" />
       <Folder Include="wwwroot\pdfs\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Include="wwwroot\pdfs\16-10-2024_143708_Custom.pdf" />
     </ItemGroup>
 
 </Project>
