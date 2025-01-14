@@ -31,6 +31,7 @@ public class FileService
             stream.Write(byteArray, 0, byteArray.Length);
         }
         
+        Directory.CreateDirectory("./wwwroot/pdfs");
         //Save to wwwroot
         using (FileStream stream = File.Create(Path.Combine("wwwroot/pdfs", filename)))
         {
