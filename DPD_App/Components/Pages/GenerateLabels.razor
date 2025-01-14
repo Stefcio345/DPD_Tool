@@ -26,7 +26,7 @@
             <MudTextField T="string" Value="profileFromTextBoxes.Login" Label="Login" Variant="Variant.Outlined" Margin="Margin.Dense" ValueChanged="LoginChanged" Immediate="true"></MudTextField>
             <MudTextField @bind-Value="profileFromTextBoxes.Password" T="string" Label="Password" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             <MudTextField @bind-Value="profileFromTextBoxes.MasterFid" T="string" Label="MasterFid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-            <MudTextField @bind-Value="package.ThirdPartyFID" T="string" Label="Fid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+            <MudTextField @bind-Value="profileFromTextBoxes.FID" T="string" Label="Fid" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
             <MudSelect @ref="EnviromentField" @bind-Value="profileFromTextBoxes.WsdlAddress" T="WsdlAddress" Label="Select enviroment">
                 @foreach (var wsdlAddres in Globals.WsdlAddresses)
                 {
@@ -433,6 +433,7 @@
 
         try
         {
+            package.ThirdPartyFID = profileFromTextBoxes.FID;
             await package.GenerateWaybills(profileFromTextBoxes);
         }
         catch (SoapException e)
@@ -476,13 +477,14 @@
         _processingProtocol = false;
     }
 
+    //Infer masterfid/fid from login
     private void LoginChanged(string login)
     {
         if (Regex.IsMatch(login, "01$"))
         {
             var fid = login[..^2];
             profileFromTextBoxes.MasterFid = fid;
-            package.ThirdPartyFID = fid;
+            profileFromTextBoxes.FID = fid;
         }
         profileFromTextBoxes.Login = login;
         StateHasChanged();
@@ -493,6 +495,7 @@
         profileFromTextBoxes.Login = profile.Login;
         profileFromTextBoxes.Password = profile.Password;
         profileFromTextBoxes.MasterFid = profile.MasterFid;
+        profileFromTextBoxes.FID = profile.FID;
         profileFromTextBoxes.WsdlAddress = profile.WsdlAddress;
         if (EnviromentField != null) EnviromentField.Value = profileFromTextBoxes.WsdlAddress;
         StateHasChanged();

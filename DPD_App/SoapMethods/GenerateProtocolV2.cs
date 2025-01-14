@@ -89,7 +89,7 @@ public class PickupAddress
 {
 
     [XmlElement(ElementName = "fid", Namespace = "")]
-    public string? Fid { get; set; } = "1495";
+    public string? Fid { get; set; }
     
     [XmlElement(ElementName="company", Namespace="")] 
     public string Company { get; set; } = "firma nadawcy";

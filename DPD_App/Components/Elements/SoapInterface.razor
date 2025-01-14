@@ -15,32 +15,33 @@
             <MudGrid Justify="Justify.Center">
                 <MudItem xs="2" Class="d-flex justify-start flex-grow-1 gap-4">
                     <MudStack Row="true">
-                        <MudButton Size="Size.Large" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="SendRequest">
-                            @if (_processing)
-                            {
-                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
-                                <MudText Class="ms-2">Processing</MudText>
-                            }
-                            else
-                            {
-                                <MudText>Send</MudText>
-                            }
-                        </MudButton>
+                        <MudTooltip Disabled="@(CurrentMethod.System != API_SYSTEM.EMPTY)" Text="Please Select API Method/System First" Color="Color.Info">
+                            <MudButton Size="Size.Large" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary" Disabled="@(CurrentMethod.System == API_SYSTEM.EMPTY)" OnClick="SendRequest">
+                                @if (_processing)
+                                {
+                                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true"/>
+                                    <MudText Class="ms-2">Processing</MudText>
+                                }
+                                else
+                                {
+                                    <MudText>Send</MudText>
+                                }
+                            </MudButton>
+                        </MudTooltip>
                         <MudButton Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" OnClick="Prettify">Prettify/Decode</MudButton>
                     </MudStack>
                 </MudItem>
                 
                 <MudItem xs="8" Class="d-flex justify-center flex-grow-1 gap-4 px-0">
-                    @if (Data.CurrentMethod.Type == SOAP_API_METHODS.EMPTY)
+                    @if (Data.CurrentMethod.System == API_SYSTEM.EMPTY)
                     {
-                        <MudButton Variant="Variant.Filled" Size="Size.Large" Color="Color.Error" OnClick="() => { _open = !_open;}">Select API Method</MudButton>
-                        <MudPopover Open="_open" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+                        <MudMenu @ref="SelectEnvironment" Label="Select Environment" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
                             <ChooseSoapMethod Data="Data" Parent="this" Hover="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
-                        </MudPopover>
+                        </MudMenu>
                     }
                     else
                     {
-                        <ChooseSoapMethod Data="Data" Parent="this" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
+                        <ChooseSoapMethod Data="Data" Parent="this" Hover="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
                     }
                 </MudItem>
                 
@@ -87,6 +88,7 @@
 
     private StandaloneCodeEditor? _requestEditor;
     private StandaloneCodeEditor? _responseEditor;
+    public MudMenu SelectEnvironment;
     
     [CascadingParameter] public Profile CurrentProfile { get; set; }
     [Parameter] public SoapData Data { get; set; }
@@ -129,8 +131,9 @@
     {
         _processing = true;
         DocumentData = null;
+        
         //Encode Base64 If needed
-        var response = await DPD_App.NetworkService.SendSoapRequest(WsdlAddress.GetAddress(CurrentMethod.System), EncodeRequest());
+        var response = await NetworkService.SendSoapRequest(WsdlAddress.GetAddress(CurrentMethod.System), EncodeRequest());
         
         //Deserialize repsonse
         Envelope result;
@@ -183,11 +186,11 @@
 
     private void Prettify()
     {
-        Request = LoggingService.DecodeBase64InString(Request.Replace("\n", ""), "openUMLFXV2");
+        Request = LoggingService.DecodeBase64InString(Request, "openUMLFXV2");
         Request = XMLService.Prettify(Request);
         _requestEditor?.SetValue(LoggingService.ShortenDocumentData(Request));
         
-        Response = LoggingService.DecodeBase64InString(Response.Replace("\n", ""), "return");
+        Response = LoggingService.DecodeBase64InString(Response, "return");
         Response = XMLService.Prettify(Response);
         _responseEditor?.SetValue(LoggingService.ShortenDocumentData(Response));
         StateHasChanged();
@@ -389,16 +392,13 @@
     // This method is called when parameters are set or updated
     protected override async void OnParametersSet()
     {
-        await base.OnParametersSetAsync();
-        if (Data.Update)
-        {
-            // Ensure editors are updated when Data changes
-            if(_requestEditor is not null) await _requestEditor.SetValue(XMLService.Prettify(Request));
-            if(_responseEditor is not null) await _responseEditor.SetValue(XMLService.Prettify(Response));
-            if(Request.Length < 1) UpdateRequest();
-            Data.Update = false;
-            _open = false;
-        }
+        if (!Data.Update) return;
+        // Ensure editors are updated when Data changes
+        if(_requestEditor is not null) await _requestEditor.SetValue(XMLService.Prettify(Request));
+        if(_responseEditor is not null) await _responseEditor.SetValue(XMLService.Prettify(Response));
+        if(Request.Length < 1) UpdateRequest();
+        Data.Update = false;
+        _open = false;
     }
 
     private void RefreshData(MouseEventArgs obj)

@@ -9,7 +9,9 @@ public class XMLService
     public static string Prettify(string str)
     {
         var sb = new StringBuilder();
-        str = str.Replace("\n", "");
+        
+        str = str.Replace(Environment.NewLine, "").Replace("\n", "");
+        
         var settings = new XmlWriterSettings
         {
             Indent = true,

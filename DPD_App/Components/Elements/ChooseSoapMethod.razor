@@ -2,23 +2,46 @@
 
 <!-- Method choose -->
 <MudButtonGroup DropShadow="true" Color="Color.Primary" Size="Size.Large" Variant="Variant.Filled" OverrideStyles="false">
-    <MudMenu @ref="DPDServicesMenu" ActivationEvent="@(Hover ? MouseEvent.MouseOver : MouseEvent.LeftClick)" DropShadow="true" Label="DPD Services" Variant="Variant.Filled" Color="@GetButtonColor(API_SYSTEM.DPD_SERVICES)" Size="Size.Large" TransformOrigin="@TransformOrigin" AnchorOrigin="@AnchorOrigin">
-        @foreach (var method in SoapApiMethods.Methods.Where(m => m.System == API_SYSTEM.DPD_SERVICES))
-        {
-            <MethodButtonAdvanced Data="Data" Parent="Parent" Method="@method" ParentMenu="DPDServicesMenu"/>
-        }
+    <MudMenu @ref="DPDServicesMenu" ActivationEvent="@(Hover ? MouseEvent.MouseOver : MouseEvent.LeftClick)" DropShadow="true" TransformOrigin="@TransformOrigin" AnchorOrigin="@AnchorOrigin">
+        <ActivatorContent>
+            <MudButton OnClick="() => ChangeSystem(API_SYSTEM.DPD_SERVICES)" Color="@GetButtonColor(API_SYSTEM.DPD_SERVICES)" Variant="Variant.Filled" Size="Size.Large">
+                DPD Services
+            </MudButton>
+        </ActivatorContent>
+        <ChildContent>
+            @foreach (var method in SoapApiMethods.Methods.Where(m => m.System == API_SYSTEM.DPD_SERVICES))
+            {
+                <MethodButtonAdvanced Data="Data" Parent="Parent" Method="@method" ParentMenu="DPDServicesMenu"/>
+            }
+        </ChildContent>
     </MudMenu>
-    <MudMenu @ref="InfoServicesMenu" ActivationEvent="@(Hover ? MouseEvent.MouseOver : MouseEvent.LeftClick)" DropShadow="true" Label="Info Services" Variant="Variant.Filled" Color="@GetButtonColor(API_SYSTEM.INFO_SERVICES)" Size="Size.Large" TransformOrigin="@TransformOrigin" AnchorOrigin="@AnchorOrigin" Disabled="@(Data.WsdlAddress?.Name == "DEMO")">
-        @foreach (var method in SoapApiMethods.Methods.Where(m => m.System == API_SYSTEM.INFO_SERVICES))
-        {
-            <MethodButtonAdvanced Data="Data" Parent="Parent" Method="@method" ParentMenu="InfoServicesMenu"/>
-        }
-    </MudMenu>
-    <MudMenu @ref="APPServicesMenu" ActivationEvent="@(Hover ? MouseEvent.MouseOver : MouseEvent.LeftClick)" DropShadow="true" Label="APP Services" Variant="Variant.Filled" Color="@GetButtonColor(API_SYSTEM.APP_SERVICES)" Size="Size.Large" TransformOrigin="@TransformOrigin" AnchorOrigin="@AnchorOrigin">
-        @foreach (var method in SoapApiMethods.Methods.Where(m => m.System == API_SYSTEM.APP_SERVICES))
-        {
-            <MethodButtonAdvanced Data="Data" Parent="Parent" Method="@method" ParentMenu="APPServicesMenu"/>
-        }
+    <MudTooltip Text="Unavailable on Demo" Color="Color.Info" Disabled="@(Data.WsdlAddress.Name != "DEMO")">
+        <MudMenu @ref="InfoServicesMenu" ActivationEvent="@(Hover ? MouseEvent.MouseOver : MouseEvent.LeftClick)" DropShadow="true" TransformOrigin="@TransformOrigin" AnchorOrigin="@AnchorOrigin" Disabled="@(Data.WsdlAddress.Name == "DEMO")">
+            <ActivatorContent>
+                <MudButton OnClick="() => ChangeSystem(API_SYSTEM.INFO_SERVICES)" Color="@GetButtonColor(API_SYSTEM.INFO_SERVICES)" Variant="Variant.Filled" Size="Size.Large" Disabled="@(Data.WsdlAddress?.Name == "DEMO")">
+                    Info Services
+                </MudButton>
+            </ActivatorContent>
+            <ChildContent>
+                @foreach (var method in SoapApiMethods.Methods.Where(m => m.System == API_SYSTEM.INFO_SERVICES))
+                {
+                    <MethodButtonAdvanced Data="Data" Parent="Parent" Method="@method" ParentMenu="InfoServicesMenu"/>
+                }
+            </ChildContent>
+        </MudMenu>
+    </MudTooltip>
+    <MudMenu @ref="APPServicesMenu" ActivationEvent="@(Hover ? MouseEvent.MouseOver : MouseEvent.LeftClick)" DropShadow="true" TransformOrigin="@TransformOrigin" AnchorOrigin="@AnchorOrigin">
+        <ActivatorContent>
+            <MudButton OnClick="() => ChangeSystem(API_SYSTEM.APP_SERVICES)" Color="@GetButtonColor(API_SYSTEM.APP_SERVICES)" Variant="Variant.Filled" Size="Size.Large">
+                APP Services
+            </MudButton>
+        </ActivatorContent>
+        <ChildContent>
+            @foreach (var method in SoapApiMethods.Methods.Where(m => m.System == API_SYSTEM.APP_SERVICES))
+            {
+                <MethodButtonAdvanced Data="Data" Parent="Parent" Method="@method" ParentMenu="APPServicesMenu"/>
+            }
+        </ChildContent>
     </MudMenu>
 </MudButtonGroup>
 
@@ -39,5 +62,13 @@
     {
         return currentSystem == Data.CurrentMethod.System ? Color.Primary : Color.Default;
     }
-    
+
+
+    private void ChangeSystem(API_SYSTEM apiSystem)
+    {
+        Data.CurrentMethod.System = apiSystem;
+        Parent.SelectEnvironment.CloseMenuAsync();
+        Parent.UpdateRequest();
+        StateHasChanged();
+    }
 }

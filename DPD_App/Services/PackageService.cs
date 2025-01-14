@@ -151,6 +151,10 @@ public class PackageService
         //If status ok Return
         if (response.Return.Status == "OK") return true;
     
+        //Check FID Errors
+        if (response.Return.Status != "ERROR")
+            throw new SoapException("Login error", new SoapError("Incorrect Fid value", response.Return.Status!));
+        
         //Check packages Errors
         if (response.Return.Status == "UNSPECIFIED_ERROR") throw new SoapException("GeneratePackagesNumbersV9 - Error", new SoapError(response.Return.Status, "Unspecified error occured"));
         if (response.Return.Packages.Package!.ValidationDetails is not null)

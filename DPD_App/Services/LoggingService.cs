@@ -59,14 +59,17 @@ public class LoggingService
     
     public static string DecodeBase64InString(string str, string tagName)
     {
-        var match = Regex.Match(str, @$"<\s*{tagName}\b[^>]*>(.*?)<\/{tagName}>");
+        str = str.Replace(Environment.NewLine, "");
         
+        var match = Regex.Match(str, @$"<\s*{tagName}\b[^>]*>(.*?)<\/{tagName}>");
+
+        if (match.Groups.Count <= 1) return str;
         try
         {
             // Try decoding the string and check if it converts back successfully
             byte[] data = Convert.FromBase64String(match.Groups[1].Value);
             var DecodedData = System.Text.Encoding.UTF8.GetString(data);
-        
+
             //Swap Base64 with decoded version
             return str.Remove(match.Groups[1].Index, match.Groups[1].Length)
                 .Insert(match.Groups[1].Index, DecodedData);
