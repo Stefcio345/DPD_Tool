@@ -29,7 +29,7 @@
                 @foreach (var filter in Globals.MapFilters)
                 {
                     <MudPaper Class="pr-3" Elevation="2">
-                        <MudCheckBox T="bool" Value="@filter.IsActive" Label="@filter.Name"ValueChanged="b => { filter.IsActive = b; UpdateQuery(); StateHasChanged(); }"/>
+                        <MudCheckBox T="bool" Value="@filter.IsActive" Label="@filter.Name"ValueChanged="b => { filter.IsActive = b; CreateQuery(); StateHasChanged(); }"/>
                     </MudPaper>
                 }
             </MudStack>
@@ -84,16 +84,16 @@
     private void OnCountrySelect(Country obj)
     {
         SelectedCountry = obj;
-        UpdateQuery();
+        CreateQuery();
     }
     
     private void OnKeyChanged(string obj)
     {
         _key = obj;
-        UpdateQuery();
+        CreateQuery();
     }
 
-    public void UpdateQuery()
+    public void CreateQuery()
     {
         string query = $"//pudofinder.dpd.com.pl/widget?";
         
