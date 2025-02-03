@@ -1,0 +1,77 @@
+﻿@using DPD_App.Models
+@inject IJSRuntime JS
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Map" OnClick="OpenMap">Select Point</MudButton>
+
+<MudDialog @bind-Visible="_mapVisible" ContentStyle="width: 850px; height: 850px" Style="max-width: 80%">
+    <DialogContent>
+        <iframe id="myIframe" width="100%" height="100%" src="@CreateQuery()" allow="geolocation *"></iframe>
+        <script width="100%" height="100%" src="@CreateQuery()" allow="geolocation *"></script>
+    </DialogContent>
+</MudDialog>
+
+<script id="dpd-widget" type="text/javascript">
+
+    let dotNetHelper;
+
+    window.setDotNetHelper = (helper) => {
+        dotNetHelper = helper;
+    };
+
+    function pointSelected(pointID) {
+        if (dotNetHelper) {
+            dotNetHelper.invokeMethodAsync('UpdatePointId', pointID);
+        } else {
+            console.warn('DotNetHelper is not set!');
+        }
+    }
+</script>
+
+@code{
+    [Parameter] public Package Package { get; set; } = null!;
+    [Parameter] public Profile Profile { get; set; } = null!;
+    private bool _mapVisible;
+    private DotNetObjectReference<MapPopup>? dotNetRef;
+    
+    private void OpenMap()
+    {
+        _mapVisible = !_mapVisible;
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("setDotNetHelper", dotNetRef);
+        }
+    }
+    
+    public string CreateQuery()
+    {
+        var query = "//pudofinder.dpd.com.pl/widget?";
+        
+        query += $"key={Profile.WidgetKey}";
+        
+        query += $"&query={Package.Receiver.CountryCode}";
+        
+        foreach (var mapFilter in Globals.MapFilters)
+        {
+            if (mapFilter.IsActive)
+            {
+                query += "&" + mapFilter.Value + "=1";
+            }
+        }
+
+        return query;
+    }
+    
+    [JSInvokable]
+    public void UpdatePointId(string pointId)
+    {
+        Package.Services.DpdPickup.pudo = pointId;
+        _mapVisible = false;
+        StateHasChanged();
+    }
+
+}

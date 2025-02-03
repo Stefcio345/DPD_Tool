@@ -10,7 +10,7 @@
 
     <!-- My Pudo API Key -->
     <MudItem xs="6">
-        <MudStack Justify="Justify.SpaceBetween" Style="height: 100%">
+        <MudStack Style="height: 100%">
             <MudPanel>
                 <MudTextField Immediate="true" Value="key" T="string" Label="MyPudoAPI Key" Required="true" RequiredError="Key is required!" Variant="Variant.Outlined" TextChanged="OnKeyChanged"/>
             </MudPanel>
@@ -54,7 +54,7 @@
                                 <MudTextField Immediate="true" T="string" Value="ZipCode" Label="Zip Code" Variant="Variant.Outlined" ValueChanged="OnAddressSelectZipCode"/>
                             </MudItem>
                             <MudItem xs="6">
-                                <MudSlider Immediate="true" T="int" Size="Size.Large" Value="MaxPudoNumberValue" Min="1" Max="25" Step="1" Color="Color.Primary" ValueChanged="MaxPudoNumberValueChanged">Value: @MaxPudoNumberValue.ToString()</MudSlider>
+                                <MudSlider Immediate="true" T="int" Size="Size.Large" Value="MaxPudoNumberValue" Min="1" Max="25" Step="1" Color="Color.Primary" ValueChanged="MaxPudoNumberValueChanged">Max number of points: @MaxPudoNumberValue.ToString()</MudSlider>
                             </MudItem>
                             break;
 
@@ -66,7 +66,7 @@
                                 <MudTextField Immediate="true" T="string" Value="Longitude" Label="Longitude" Variant="Variant.Outlined" ValueChanged="OnGeolocationSelectLongitude"/>
                             </MudItem>
                             <MudItem xs="6">
-                                <MudSlider Immediate="true" T="decimal" Size="Size.Large" Value="Distance" Min="100" Max="50000" Color="Color.Primary" ValueChanged="OnGeolocationSelectDistance">Value: @Distance.ToString()</MudSlider>
+                                <MudSlider Immediate="true" T="decimal" Size="Size.Large" Value="Distance" Min="100" Max="50000" Color="Color.Primary" ValueChanged="OnGeolocationSelectDistance">Distance: @Distance.ToString()</MudSlider>
                             </MudItem>
                             break;
                     }
