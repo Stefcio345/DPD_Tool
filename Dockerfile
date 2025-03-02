@@ -1,21 +1,20 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
-ARG BUILD_CONFIGURATION=Release
+# Use the official .NET runtime image
+FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
+
+# Use the official .NET SDK image for building the application
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-COPY DPD_App/DPD_App.csproj DPD_App/
+# Copy the project files and restore dependencies
+COPY ["./DPD_App/DPD_App.csproj", "./"]
+RUN dotnet restore
 
+# Copy the rest of the application files and publish the app
 COPY . .
+RUN dotnet publish -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o /publish
 
-WORKDIR /app/DPD_App
-RUN dotnet build DPD_App.csproj -c $BUILD_CONFIGURATION -o /app/build
-
-FROM build as publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish DPD_App.csproj -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=true
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 as final
+# Create the final image with the published app
+FROM base AS final
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "DPD_App.dll"]
+COPY --from=build /publish .
+ENTRYPOINT ["./DPD_App"]
