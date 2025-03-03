@@ -1,10 +1,11 @@
-﻿using System.Text.Json.Serialization;
-using DPD_App.Models;
+﻿using DPD_App.Models;
 
 namespace DPD_App;
 
 public class Globals
 {
+    public static string HostName = "Start";
+
     public static string SaveLocation = "./Data/";
 
     public static List<WsdlAddress> WsdlAddresses = new List<WsdlAddress>

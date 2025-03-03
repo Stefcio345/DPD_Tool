@@ -1,8 +1,19 @@
-﻿@page "/"
-@page "/GenerateLabels"
+﻿@page "/{HostName}/GenerateLabels"
 @using System.Text.RegularExpressions
 @using DPD_App.Models
 @inject AppState AppState
+@inject AuthService AuthService
+
+@code
+{
+    [Parameter] public string HostName { get; set; }
+    protected override Task OnInitializedAsync()
+    {
+        AuthService.AuthHostname(HostName);
+        AppState.CurrentPage = "Generate Labels";
+        return base.OnInitializedAsync();
+    }
+}
 
 <PageTitle>GenerateLabels</PageTitle>
 
@@ -406,12 +417,6 @@
     {
         get => AppState.GenerateLabelsState.package;
         set => AppState.GenerateLabelsState.package = value;
-    }
-
-    protected override Task OnInitializedAsync()
-    {
-        AppState.CurrentPage = "Generate Labels";
-        return base.OnInitializedAsync();
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)

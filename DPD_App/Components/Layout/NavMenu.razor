@@ -1,11 +1,11 @@
 ﻿@inject AppState AppState
 
 <MudNavMenu Bordered="true" Color="Color.Success">
-    <MudNavLink Href="/GenerateLabels" Icon="@Icons.Material.Filled.Label">Generate Labels</MudNavLink>
-    <MudNavLink Href="/MyPudoAPI" Icon="@Icons.Material.Filled.DataObject">MyPudoAPI</MudNavLink>
-    <MudNavLink Href="/PudoFinder" Icon="@Icons.Material.Filled.Map">PudoFinder</MudNavLink>
-    <MudNavLink Href="/SoapAPI" Icon="@Icons.Material.Filled.Api">Soap API</MudNavLink>
-    <MudNavLink Href="/Compare" Icon="@Icons.Material.Filled.CompareArrows">Compare</MudNavLink>
+    <MudNavLink Href=@($"{Globals.HostName}/GenerateLabels") Icon="@Icons.Material.Filled.Label">Generate Labels</MudNavLink>
+    <MudNavLink Href=@($"{Globals.HostName}/MyPudoAPI") Icon="@Icons.Material.Filled.DataObject">MyPudoAPI</MudNavLink>
+    <MudNavLink Href=@($"{Globals.HostName}/PudoFinder") Icon="@Icons.Material.Filled.Map">PudoFinder</MudNavLink>
+    <MudNavLink Href=@($"{Globals.HostName}/SoapAPI") Icon="@Icons.Material.Filled.Api">Soap API</MudNavLink>
+    <MudNavLink Href=@($"{Globals.HostName}/Compare") Icon="@Icons.Material.Filled.CompareArrows">Compare</MudNavLink>
     <!-- <MudNavGroup Title="Notes" Icon="@Icons.Material.Filled.Notes" Expanded="true">
         @foreach (var file in NotesService.GetNotes())
         {

@@ -1,7 +1,18 @@
-﻿@page "/Compare"
-@using MudBlazor.Extensions
+﻿@page "/{HostName}/Compare"
 @inject IJSRuntime jsRuntime
 @inject AppState AppState
+@inject AuthService AuthService
+
+@code
+{
+    [Parameter] public string HostName { get; set; }
+    protected override Task OnInitializedAsync()
+    {
+        AuthService.AuthHostname(HostName);
+        AppState.CurrentPage = "Compare Text";
+        return base.OnInitializedAsync();
+    }
+}
 
 <Style>
     .my-comparer-class {
@@ -39,12 +50,6 @@
     {
         get => AppState.CompareState.ModifiedModel;
         set => AppState.CompareState.ModifiedModel = value;
-    }
-    
-    protected override Task OnInitializedAsync()
-    {
-        AppState.CurrentPage = "Compare Text";
-        return base.OnInitializedAsync();
     }
 
     private StandaloneDiffEditorConstructionOptions DiffEditorConstructionOptions(StandaloneDiffEditor editor)

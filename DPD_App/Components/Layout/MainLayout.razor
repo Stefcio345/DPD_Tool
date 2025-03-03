@@ -20,13 +20,13 @@
             <MudItem xs="5" Class="d-flex justify-start flex-grow-1 gap-4">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
                 <MudPaper Class="py-1">
-                    <MudText Class="mx-4"  Typo="Typo.h4" Style="white-space: nowrap"><b>DPD API Integration Tool</b></MudText>
+                    <MudText Class="mx-4"  Typo="Typo.h4" Style="white-space: nowrap"><b>DPD Toolbox</b></MudText>
                 </MudPaper>
                 @if (AppState.CurrentPage is not null)
                 {
                     <MudIcon Icon="@Icons.Material.Filled.ArrowForwardIos" Class="mt-3"/>
                     <MudPaper Class="py-1" Style="align-content: center" >
-                        <MudText Class="mx-2" Typo="Typo.h5">@AppState.CurrentPage</MudText>
+                        <MudText Class="mx-2" Typo="Typo.h5" Style="text-wrap: nowrap">@AppState.CurrentPage</MudText>
                     </MudPaper>
                 }
             </MudItem>
@@ -73,7 +73,7 @@
     </MudDrawer>
     
     <CascadingValue Value="AppState.CurrentProfile">
-        <MudMainContent Class="pt-20 px-8 mt-5">
+        <MudMainContent Class="pt-10 px-8 mt-5">
             @Body
         </MudMainContent>
     </CascadingValue>
@@ -93,19 +93,18 @@
             _isDarkMode = await _mudThemeProvider.GetSystemPreference();
             
             //TODO Fix This
-            _ = BlazorMonaco.Editor.Global.DefineTheme(JsRuntime, "my_theme", new StandaloneThemeData
+            await BlazorMonaco.Editor.Global.DefineTheme(JsRuntime, "Default", new StandaloneThemeData
                 {
                     Inherit = true,
                     Base = "vs",
                     Colors = new Dictionary<string, string>
                     {
-                        { "background", "#594ae2" },
-                        { "foreground", "#594ae2" }
-                    }
+                        { "editor.background", "#2A2024" }
+                    },
                 }
             );
             
-            _ = BlazorMonaco.Editor.Global.SetTheme(JsRuntime, _isDarkMode ? "vs-dark" : "my_theme");
+            await BlazorMonaco.Editor.Global.SetTheme(JsRuntime, _isDarkMode ? "vs-dark" : "Default");
             StateHasChanged();
         }
 
@@ -148,11 +147,11 @@
         StateHasChanged();
     }
 
-    private void ChangedTheme()
+    private async void ChangedTheme()
     {
         _isDarkMode = !_isDarkMode;
         //Set Editor theme
-        BlazorMonaco.Editor.Global.SetTheme(JsRuntime, _isDarkMode ? "vs-dark" : "my_theme");
+        _ = BlazorMonaco.Editor.Global.SetTheme(JsRuntime, _isDarkMode ? "vs-dark" : "Default");
         StateHasChanged();
     }
 

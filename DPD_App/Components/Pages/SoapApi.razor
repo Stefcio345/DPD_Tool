@@ -1,7 +1,19 @@
-﻿@page "/SoapAPI"
+﻿@page "/{HostName}/SoapAPI"
 @using DPD_App.Models
 @inject IJSRuntime JS
 @inject AppState AppState
+@inject AuthService AuthService
+
+@code
+{
+    [Parameter] public string HostName { get; set; }
+    protected override Task OnInitializedAsync()
+    {
+        AuthService.AuthHostname(HostName);
+        AppState.CurrentPage = "Soap Interface";
+        return base.OnInitializedAsync();
+    }
+}
 
 <Style>
     .resize-handle {
@@ -11,6 +23,8 @@
         cursor: col-resize;
     }
 </Style>
+
+
 
 <script>
     window.initializeResizeHandle = (elementId, dotNetHelper) => {
@@ -114,8 +128,6 @@
             ActiveTab = Tabs.FirstOrDefault(t => t.IsActive);
             ActiveTab.Data.Update = true;
         }
-
-        AppState.CurrentPage = "Soap Interface";
     }
     
     private void ActivateTab(TabItem tab)

@@ -1,0 +1,58 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JsRuntime
+@inject ISnackbar Snackbar
+@inject AppState AppState
+
+<MudPopoverProvider/>
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" DefaultScrollbar="false" Theme="new StandardTheme()"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout>
+    
+    <CascadingValue Value="AppState.CurrentProfile">
+        <MudMainContent Class="pa-10">
+            @Body
+        </MudMainContent>
+    </CascadingValue>
+
+</MudLayout>
+
+@code{
+    private bool _isDarkMode;
+    private bool _open;
+    private bool _openSettings;
+    private MudThemeProvider _mudThemeProvider = new MudThemeProvider();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+        }
+        StateHasChanged();
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
+    }
+    
+    protected override Task OnInitializedAsync()
+    {
+        AppState.OnChange += StateHasChanged;
+        AppState.InitializeAppState();
+        return base.OnInitializedAsync();
+    }
+
+    private ThemeManagerTheme _themeManager = new ThemeManagerTheme();
+    public bool ThemeManagerOpen;
+
+    void OpenThemeManager(bool value)
+    {
+        ThemeManagerOpen = value;
+    }
+
+    void UpdateTheme(ThemeManagerTheme value)
+    {
+        _themeManager = value;
+        StateHasChanged();
+    }
+
+}

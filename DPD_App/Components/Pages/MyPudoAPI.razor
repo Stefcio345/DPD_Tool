@@ -1,8 +1,19 @@
-﻿@page "/MyPudoAPI"
+﻿@page "/{HostName}/MyPudoAPI"
 @using System.Text.Json
 @using DPD_App.Models
 @using DPD_App.Json
 @inject AppState AppState
+@inject AuthService AuthService
+
+@code
+{
+    [Parameter] public string HostName { get; set; }
+    protected override void OnInitialized()
+    {
+        AuthService.AuthHostname(HostName);
+        AppState.CurrentPage = "MyPudoAPI";
+    }
+}
 
 <PageTitle>MyPudoAPI</PageTitle>
 
@@ -374,15 +385,14 @@
         get => AppState.MyPudoApiState.dateFromValue;
         set => AppState.MyPudoApiState.dateFromValue = value;
     }
-    
+
     protected override Task OnInitializedAsync()
     {
         SelectedCountry = Countries.GetDefault();
         key = CurrentProfile.PudoKey;
-        AppState.CurrentPage = "MyPudoAPI";
         return base.OnInitializedAsync();
     }
-
+    
     private void OnKeyChanged(string obj)
     {
         key = obj;

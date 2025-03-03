@@ -1,6 +1,18 @@
-﻿@page "/PudoFinder"
+﻿@page "/{HostName}/PudoFinder"
 @using DPD_App.Models
 @inject AppState AppState
+@inject AuthService AuthService
+
+@code
+{
+    [Parameter] public string HostName { get; set; }
+    protected override Task OnInitializedAsync()
+    {
+        AuthService.AuthHostname(HostName);
+        AppState.CurrentPage = "PudoFinder";
+        return base.OnInitializedAsync();
+    }
+}
 
 <PageTitle>PudoFinder</PageTitle>
 
@@ -74,13 +86,14 @@
     
     private string? _key;
 
-    protected override Task OnInitializedAsync()
+    protected override void OnAfterRender(bool firstRender)
     {
-        _key = CurrentProfile.WidgetKey;
-        AppState.CurrentPage = "PudoFinder";
-        return base.OnInitializedAsync();
+        if (firstRender)
+        {
+            _key = CurrentProfile.WidgetKey;
+        }
     }
-
+    
     private void OnCountrySelect(Country obj)
     {
         SelectedCountry = obj;
