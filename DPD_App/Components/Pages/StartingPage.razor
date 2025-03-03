@@ -1,8 +1,19 @@
 @page "/"
-@page "/Start"
+@page "/{HostName}"
 @using DPD_App.Components.Layout
 @layout EmptyLayout
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
+
+@code
+{
+    [Parameter] public string HostName { get; set; }
+    protected override Task OnInitializedAsync()
+    {
+        AuthService.AuthHostname(HostName);
+        return base.OnInitializedAsync();
+    }
+}
 
 <MudText>DPD App</MudText>
 <MudButton OnClick="StartApp" Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Start">Start app</MudButton>

@@ -1,6 +1,109 @@
-namespace DPD_App.Components.Pages;
+@page "/{HostName}/History"
+@using System.Text.Json
+@using DPD_App.Models
+@using DPD_App.Json
+@inject AppState AppState
+@inject AuthService AuthService
 
-public class PackagesHistory
+@code
+{
+    [Parameter] public string HostName { get; set; }
+    protected override void OnInitialized()
+    {
+        AuthService.AuthHostname(HostName);
+        AppState.CurrentPage = "Packages history";
+    }
+}
+
+
+<PageTitle>PudoFinder</PageTitle>
+
+<MudPanel Margin="ma-4">
+    <MudDataGrid T="Package" Items="@Packages.GetList()"
+                 ShowFilterIcons="false" Virtualize="true" Dense="true" Filterable ReadOnly="true"
+                 FixedHeader Height="500px" Class="mb-10" Hover="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
+        <Columns>
+            <HierarchyColumn T="Package"/>
+            <PropertyColumn Property="x => x.PackageId"/>
+            <PropertyColumn Property="x => x.Receiver.Address"/>
+            <PropertyColumn Property="x => x.Receiver.City"/>
+            <PropertyColumn Property="x => x.Receiver.CountryCode"/>
+            <PropertyColumn Property="x => x.Receiver.PostalCode"/>
+            <PropertyColumn Property="x => x.Sender.Name"/>
+            <PropertyColumn Property="x => x.Sender.Company"/>
+            <PropertyColumn Property="x => x.Ref1"/>
+            <PropertyColumn Property="x => x.Ref2"/>
+        </Columns>
+        <RowLoadingContent>
+            <tr class="mud-table-row">
+                <td class="mud-table-cell" colspan="1000">
+                    Loading...
+                </td>
+            </tr>
+        </RowLoadingContent>
+        <ChildRowContent>
+            <MudCard Elevation="3">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">Details for package</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudStack Row="true">
+                        <MudPaper Class="pa-2">
+                            <MudText>Ref1: @context.Item.Ref1</MudText>
+                            <MudText>Ref2: @context.Item.Ref2</MudText>
+                            <MudText>Ref3: @context.Item.Ref3</MudText>
+                            <MudText>Services: @context.Item.Services</MudText>
+                        </MudPaper>
+                        
+                        <!-- Adress details -->
+                        <MudTable Items="@([context.Item.Receiver, context.Item.Sender])" Context="addressDetails" Hover="true" Breakpoint="Breakpoint.Sm">
+                            <HeaderContent>
+                                <MudTh>Company</MudTh>
+                                <MudTh>Name</MudTh>
+                                <MudTh>Address</MudTh>
+                                <MudTh>City</MudTh>
+                                <MudTh>CountryCode</MudTh>
+                                <MudTh>PostalCode</MudTh>
+                                <MudTh>Phone</MudTh>
+                                <MudTh>Email</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Day">@addressDetails.Company</MudTd>
+                                <MudTd DataLabel="Day">@addressDetails.Name</MudTd>
+                                <MudTd DataLabel="Day">@addressDetails.Address</MudTd>
+                                <MudTd DataLabel="Day">@addressDetails.City</MudTd>
+                                <MudTd DataLabel="Day">@addressDetails.CountryCode</MudTd>
+                                <MudTd DataLabel="Day">@addressDetails.PostalCode</MudTd>
+                                <MudTd DataLabel="Day">@addressDetails.Phone</MudTd>
+                                <MudTd DataLabel="Day">@addressDetails.Email</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                        
+                        <!-- Parcels list -->
+                        <MudTable Items="context.Item.Parcels" Context="parcel" Hover="true" Breakpoint="Breakpoint.Sm">
+                            <HeaderContent>
+                                <MudTh>content</MudTh>
+                                <MudTh>waybill</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="Content">@parcel.Content</MudTd>
+                                <MudTd DataLabel="Content">@parcel.Waybill</MudTd>
+                            </RowTemplate>
+                        </MudTable>
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+        </ChildRowContent>
+        <PagerContent>
+            <MudDivider/>
+            <MudText Typo="Typo.h6" Class="pa-1 pl-3">Number of Packages: @Packages.GetList().Count</MudText>
+        </PagerContent>
+    </MudDataGrid>
+</MudPanel>
+
+@code
 {
     
 }

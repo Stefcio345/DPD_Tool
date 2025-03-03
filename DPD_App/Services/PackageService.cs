@@ -22,6 +22,9 @@ public class PackageService
         
         //Detect Errors in response
         if (!PackageResponseIsValid(generatePackagesResponse)) return;
+        
+        //Set package ID
+        package.PackageId = generatePackagesResponse.Return.Packages.Package.PackageId;
             
         //Set Waybill numbers
         for (var i = 0; i < package.Parcels.Count; i++)
@@ -30,6 +33,8 @@ public class PackageService
             package.Parcels[i].ParcelId = generatePackagesResponse.Return.Packages.Package.Parcels.Parcel[i].ParcelId;
             package.Parcels[i].Status = generatePackagesResponse.Return.Packages.Package.Parcels.Parcel[i].Status;
         }
+        
+        Packages.AddPackage(package);
 
         await GenerateLabel(package, profile);
     }

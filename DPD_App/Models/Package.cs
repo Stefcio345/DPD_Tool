@@ -1,8 +1,14 @@
-﻿namespace DPD_App.Models;
+﻿using System.Text.Json.Serialization;
 
+namespace DPD_App.Models;
+
+[JsonSerializable(typeof(Packages))]
+[JsonSourceGenerationOptions(WriteIndented = true)]
 public class Package
 {
     public List<Parcel> Parcels { get; set; }
+    
+    public string? PackageId { get; set; }
     
     public string? Base64Label { get; set; }
     public string? Base64Protocol { get; set; }
@@ -60,4 +66,37 @@ public class Package
         await PackageService.GenerateProtocol(this, profile);
     }
     
+}
+
+public class Packages
+{
+    private static List<Package> List = new List<Package>();
+
+    public static void AddPackage(Package package)
+    {
+        List.Add(package);
+        SaveState();
+    }
+
+    public static List<Package> GetList()
+    {
+        return List;
+    }
+
+    public static void SaveState()
+    {
+        SaveKeeper.SaveToFile(List, "Packages.json", SaveType.PACKAGES);
+    }
+
+    public static void LoadState()
+    {
+        if (File.Exists(Globals.SaveLocation + "Packages.json"))
+        {
+            List = SaveKeeper.LoadFromFile<List<Package>>("Packages.json");
+        }
+        else
+        {
+            SaveKeeper.SaveToFile(List, "Packages.json", SaveType.PACKAGES);
+        }
+    }
 }

@@ -5,6 +5,7 @@ namespace DPD_App.Models;
 
 [JsonSerializable(typeof(List<Profile>))]
 [JsonSerializable(typeof(List<Country>))]
+[JsonSerializable(typeof(List<Package>))]
 [JsonSerializable(typeof(AppState))]
 [JsonSourceGenerationOptions(WriteIndented = true)]
 internal partial class JsonContext : JsonSerializerContext
@@ -23,6 +24,8 @@ public class SaveKeeper()
                 JsonContext.Default.ListProfile),
             SaveType.COUNTRIES => JsonSerializer.Serialize(objectToSave,
                 JsonContext.Default.ListCountry),
+            SaveType.PACKAGES => JsonSerializer.Serialize(objectToSave,
+                JsonContext.Default.ListPackage),
             _ => throw new ArgumentOutOfRangeException(nameof(saveType), saveType, null)
         };
 
@@ -41,12 +44,16 @@ public class SaveKeeper()
             case SaveType.DEFAULT:
                 Profiles.SaveState();
                 Countries.SaveState();
+                Packages.SaveState();
                 break;
             case SaveType.PROFILES:
                 Profiles.SaveState();
                 break;
             case SaveType.COUNTRIES:
                 Countries.SaveState();
+                break;
+            case SaveType.PACKAGES:
+                Packages.SaveState();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(saveType), saveType, null);
@@ -57,6 +64,7 @@ public class SaveKeeper()
     {
         Profiles.LoadState();
         Countries.LoadState();
+        Packages.LoadState();
     }
 }
 
@@ -64,5 +72,6 @@ public enum SaveType
 {
     DEFAULT,
     PROFILES,
-    COUNTRIES
+    COUNTRIES,
+    PACKAGES,
 }
