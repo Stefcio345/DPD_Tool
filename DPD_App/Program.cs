@@ -2,11 +2,21 @@ using System.Diagnostics;
 using DPD_App;
 using DPD_App.Components;
 using DPD_App.Models;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 
 //Create necessary directories
 Directory.CreateDirectory(Globals.SaveLocation);
 SaveKeeper.LoadState();
+
+// Define hostname
+for (int i = 0; i < args.Length; i++)
+{
+    if (args[i] == "--InstanceName" && i + 1 < args.Length)
+    {
+        Globals.HostName = args[i + 1];
+    }
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +25,8 @@ builder.Services.AddMudServices();
 
 builder.Services.AddSingleton<AppState>();
 builder.Services.AddScoped<AppState>();
+
+builder.Services.AddScoped<AuthService>();
 
 builder.WebHost.UseStaticWebAssets();
 

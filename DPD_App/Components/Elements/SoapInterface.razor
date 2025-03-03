@@ -36,12 +36,12 @@
                     @if (Data.CurrentMethod.System == API_SYSTEM.EMPTY)
                     {
                         <MudMenu @ref="SelectEnvironment" Label="Select Environment" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
-                            <ChooseSoapMethod Data="Data" Parent="this" Hover="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
+                            <ChooseSoapMethod Data="Data" Parent="this" Hover="false" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
                         </MudMenu>
                     }
                     else
                     {
-                        <ChooseSoapMethod Data="Data" Parent="this" Hover="true" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
+                        <ChooseSoapMethod Data="Data" Parent="this" Hover="false" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"/>
                     }
                 </MudItem>
                 

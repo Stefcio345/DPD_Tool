@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BlazorMonaco" Version="3.2.0" />
-      <PackageReference Include="MudBlazor" Version="8.0.0-preview.5" />
-      <PackageReference Include="MudBlazor.ThemeManager" Version="2.0.0" />
+      <PackageReference Include="BlazorMonaco" Version="3.3.0" />
+      <PackageReference Include="MudBlazor" Version="8.3.0" />
+      <PackageReference Include="MudBlazor.ThemeManager" Version="3.0.0" />
       <PackageReference Include="PSC.Blazor.Components.MarkdownEditor" Version="8.0.5" />
     </ItemGroup>
 

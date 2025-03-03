@@ -1,0 +1,21 @@
+@page "/"
+@page "/Start"
+@using DPD_App.Components.Layout
+@layout EmptyLayout
+@inject NavigationManager NavigationManager
+
+<MudText>DPD App</MudText>
+<MudButton OnClick="StartApp" Variant="Variant.Filled" Size="Size.Large" StartIcon="@Icons.Material.Filled.Start">Start app</MudButton>
+
+@code {
+    private void GoToSection()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void StartApp()
+    {
+        NavigationManager.NavigateTo($"/{Globals.HostName}/GenerateLabels");
+    }
+
+}
