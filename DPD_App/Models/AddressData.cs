@@ -17,6 +17,18 @@ public class AddressData
     public string Phone { get; set; }
     
     public string Email { get; set; }
+
+    public AddressData()
+    {
+        Company = "firma";
+        Name = "imie i nazwisko";
+        Address = "adres";
+        City = "miasto";
+        CountryCode = "PL"; 
+        PostalCode = "02274";
+        Phone = "123 123 123";
+        Email = "nazwa@domena.pl";
+    }
     
     public AddressData(AddressTemplate addressTemplate = AddressTemplate.STANDARD)
     {

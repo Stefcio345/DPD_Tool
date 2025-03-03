@@ -455,7 +455,7 @@
         {
             TrackingLinks.Add(new TrackingLinkService(parcel.Waybill));
         }
-        
+
         if (AppState.Settings.SaveLabelsToFile) FileService.SaveBase64ToPDF(Package.Base64Label, PrintType.Label);
         
         _processingLabel = false;
