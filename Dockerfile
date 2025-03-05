@@ -17,4 +17,5 @@ RUN dotnet publish -c Release -r linux-x64 --self-contained true -p:PublishSingl
 FROM base AS final
 WORKDIR /app
 COPY --from=build /publish .
-ENTRYPOINT ["./DPD_App"]
+ENV INSTANCE_NAME = "Start"
+ENTRYPOINT ./DPD_App --InstanceName $INSTANCE_NAME
