@@ -14,15 +14,16 @@ This is a **Blazor Server** application that provides complete implementation of
 
 ### Prerequisites  
 
-- [.NET 8+](https://dotnet.microsoft.com/)  
+- [.NET 8+](https://dotnet.microsoft.com/)
+- [ASPNET Core](https://learn.microsoft.com/pl-pl/aspnet/overview)
 - Any modern browser (Chrome, Edge, Firefox, etc.)  
 
 ### Installation  
 
 1. Clone the repository:  
    ```sh
-   git clone https://github.com/your-username/your-repo.git
-   cd your-repo
+   git clone https://github.com/Stefcio345/DPD_Tool.git
+   cd DPD_Tool/DPD_App
    ```
 
 2. Restore dependencies:  
@@ -35,7 +36,7 @@ This is a **Blazor Server** application that provides complete implementation of
    dotnet run
    ```
 
-4. Open the browser and navigate to `https://localhost:5001` or `http://localhost:5000`.  
+4. Open the browser and navigate to `https://localhost:5218`.  
 
 
 ## Contributing  
