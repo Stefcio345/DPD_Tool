@@ -14,7 +14,8 @@ This is a **Blazor Server** application that provides complete implementation of
 
 ### Prerequisites  
 
-- [.NET 8+](https://dotnet.microsoft.com/)  
+- [.NET 8+](https://dotnet.microsoft.com/)
+- [ASPNET Core](https://learn.microsoft.com/pl-pl/aspnet/overview)
 - Any modern browser (Chrome, Edge, Firefox, etc.)  
 
 ### Installation  
@@ -22,7 +23,7 @@ This is a **Blazor Server** application that provides complete implementation of
 1. Clone the repository:  
    ```sh
    git clone https://github.com/Stefcio345/DPD_Tool.git
-   cd DPD_Tool
+   cd DPD_Tool/DPD_App
    ```
 
 2. Restore dependencies:  
