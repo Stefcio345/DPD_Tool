@@ -158,7 +158,7 @@ public class PackageService
         if (response.Return.Status == "OK") return true;
     
         //Check FID Errors
-        if (response.Return.Status != "ERROR")
+        if (response.Return.Status == "DISALLOWED_FID")
             throw new SoapException("Login error", new SoapError("Incorrect Fid value", response.Return.Status!));
         
         //Check packages Errors
