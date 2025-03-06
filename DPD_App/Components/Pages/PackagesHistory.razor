@@ -1,7 +1,5 @@
 @page "/{HostName}/History"
-@using System.Text.Json
 @using DPD_App.Models
-@using DPD_App.Json
 @inject AppState AppState
 @inject AuthService AuthService
 
@@ -13,6 +11,11 @@
         AuthService.AuthHostname(HostName);
         AppState.CurrentPage = "Packages history";
     }
+
+    private void OnRowRightClick(DataGridRowClickEventArgs<Package> obj)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 
@@ -21,9 +24,14 @@
 <MudPanel Margin="ma-4">
     <MudDataGrid T="Package" Items="@Packages.GetList()"
                  ShowFilterIcons="false" Virtualize="true" Dense="true" Filterable ReadOnly="true"
-                 FixedHeader Height="500px" Class="mb-10" Hover="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu">
+                 FixedHeader Height="500px" Class="mb-10" Hover="true" FilterMode="@DataGridFilterMode.ColumnFilterMenu"
+                 MultiSelection="true"
+                 RowContextMenuClick="OnRowRightClick"
+                 SelectedItems="@_selectedPackages">
         <Columns>
             <HierarchyColumn T="Package"/>
+            <SelectColumn T="Package"/>
+            <PropertyColumn Property="x => x.Created"/>
             <PropertyColumn Property="x => x.PackageId"/>
             <PropertyColumn Property="x => x.Receiver.Address"/>
             <PropertyColumn Property="x => x.Receiver.City"/>
@@ -98,6 +106,7 @@
         </ChildRowContent>
         <PagerContent>
             <MudDivider/>
+            <MudDataGridPager T="Package" />
             <MudText Typo="Typo.h6" Class="pa-1 pl-3">Number of Packages: @Packages.GetList().Count</MudText>
         </PagerContent>
     </MudDataGrid>
@@ -105,5 +114,5 @@
 
 @code
 {
-    
+    private HashSet<Package> _selectedPackages = [];
 }

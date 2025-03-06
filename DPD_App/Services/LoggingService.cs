@@ -5,6 +5,21 @@ namespace DPD_App;
 public class LoggingService
 {
     public static AppSettings Settings { get; set; }
+    
+    public static void Log(string content)
+    {
+        //Dont log if settings turned off
+        if (!Settings.LogRequests) return;
+        
+        var newstring = content;
+        
+        if(Settings.ShortenLogs)
+            newstring = ShortenString(newstring);
+
+        var logMessage = $"[{DateTime.Now}] INFO: {newstring}";
+        if (Settings.LogToFile) FileService.SaveTextToFile(logMessage, Settings.LogSaveLocation); 
+        if (Settings.LogToConsole) Console.WriteLine(logMessage);
+    }
     public static void Log(LoggingType type, string content)
     {
         //Dont log if settings turned off

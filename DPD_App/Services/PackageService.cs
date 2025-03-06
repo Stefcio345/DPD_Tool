@@ -23,6 +23,7 @@ public class PackageService
         //Detect Errors in response
         if (!PackageResponseIsValid(generatePackagesResponse)) return;
         
+        package.Created = DateTime.Now;
         //Set package ID
         package.PackageId = generatePackagesResponse.Return.Packages.Package.PackageId;
             

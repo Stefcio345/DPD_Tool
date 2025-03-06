@@ -27,6 +27,8 @@ public class Package
     public string? Ref3 { get; set; }
     
     public Services Services { get; set; }
+    
+    public DateTime Created { get; set; }
 
     public bool International => Sender.CountryCode != Receiver.CountryCode;
 
@@ -71,7 +73,12 @@ public class Package
 public class Packages
 {
     private static List<Package> List = new List<Package>();
-
+    
+    public static void RemovePackage(Package package)
+    {
+        List.Remove(package);
+        SaveState();
+    }
     public static void AddPackage(Package package)
     {
         List.Add(package);

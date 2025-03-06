@@ -2,7 +2,6 @@ using System.Diagnostics;
 using DPD_App;
 using DPD_App.Components;
 using DPD_App.Models;
-using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 
 //Create necessary directories
@@ -15,6 +14,7 @@ for (int i = 0; i < args.Length; i++)
     if (args[i] == "--InstanceName" && i + 1 < args.Length)
     {
         Globals.HostName = args[i + 1];
+        LoggingService.Log($"Using InstanceName: {Globals.HostName}");
     }
 }
 
@@ -44,7 +44,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();

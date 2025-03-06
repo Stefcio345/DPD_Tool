@@ -65,8 +65,8 @@ public class AppSettings
     public bool LogRequests { get; set; } = false;
     public bool ShortenLogs { get; set; } = true;
     public int MaxLogSize { get; set; } = 1000;
-    public bool LogToConsole { get; set; } = false;
-    public bool LogToFile { get; set; } = false;
+    public bool LogToConsole { get; set; } = true;
+    public bool LogToFile { get; set; } = true;
     public string LogSaveLocation { get; set; } = "Logs";
     
     public bool MiniDrawer { get; set; } = false;
