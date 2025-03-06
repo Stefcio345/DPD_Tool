@@ -36,7 +36,7 @@ This is a **Blazor Server** application that provides complete implementation of
    dotnet run
    ```
 
-4. Open the browser and navigate to `https://localhost:5001` or `http://localhost:5000`.  
+4. Open the browser and navigate to `https://localhost:5218`.  
 
 
 ## Contributing  
