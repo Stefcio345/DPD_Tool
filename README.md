@@ -21,8 +21,8 @@ This is a **Blazor Server** application that provides complete implementation of
 
 1. Clone the repository:  
    ```sh
-   git clone https://github.com/your-username/your-repo.git
-   cd your-repo
+   git clone https://github.com/Stefcio345/DPD_Tool.git
+   cd DPD_Tool
    ```
 
 2. Restore dependencies:  
